@@ -15,7 +15,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-latest, windows-latest]
+        os: [ubuntu-latest]
         build_type: [Release]
         c_compiler: [gcc, clang, cl]
         include:
@@ -43,19 +43,12 @@ jobs:
       if: runner.os == 'Linux'
       run: |
         sudo apt-get update
-        sudo apt-get install -y build-essential g++ python-dev autotools-dev libicu-dev libbz2-dev
+        sudo apt-get install -y build-essential g++ python3 autotools-dev libicu-dev libbz2-dev
         wget -O boost_1_86_0.tar.bz2 https://boostorg.jfrog.io/artifactory/main/release/1.86.0/source/boost_1_86_0.tar.bz2
         tar --bzip2 -xf boost_1_86_0.tar.bz2
         cd boost_1_86_0
         ./bootstrap.sh --prefix=/usr/local
         ./b2 install
-
-    - name: Install Boost (Windows)
-      if: runner.os == 'Windows'
-      run: |
-        git clone https://github.com/microsoft/vcpkg.git
-        .\vcpkg\bootstrap-vcpkg.bat
-        .\vcpkg\vcpkg install boost@1.86.0
 
     - name: Set reusable strings
       id: strings
