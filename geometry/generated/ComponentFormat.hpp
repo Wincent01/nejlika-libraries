@@ -1,0 +1,83 @@
+#pragma once
+
+#include <cstdint>
+#include <string>
+
+namespace nejlika::geometry {
+
+/**
+ * 
+ *         The data format of components.
+ *         
+ */
+enum ComponentFormat : uint
+{
+    /**
+     * Unknown, or don't care, format.
+     */
+    F_UNKNOWN = 0,
+    F_INT8_1 = 65793,
+    F_INT8_2 = 131330,
+    F_INT8_3 = 196867,
+    F_INT8_4 = 262404,
+    F_UINT8_1 = 65797,
+    F_UINT8_2 = 131334,
+    F_UINT8_3 = 196871,
+    F_UINT8_4 = 262408,
+    F_NORMINT8_1 = 65801,
+    F_NORMINT8_2 = 131338,
+    F_NORMINT8_3 = 196875,
+    F_NORMINT8_4 = 262412,
+    F_NORMUINT8_1 = 65805,
+    F_NORMUINT8_2 = 131342,
+    F_NORMUINT8_3 = 196879,
+    F_NORMUINT8_4 = 262416,
+    F_INT16_1 = 66065,
+    F_INT16_2 = 131602,
+    F_INT16_3 = 197139,
+    F_INT16_4 = 262676,
+    F_UINT16_1 = 66069,
+    F_UINT16_2 = 131606,
+    F_UINT16_3 = 197143,
+    F_UINT16_4 = 262680,
+    F_NORMINT16_1 = 66073,
+    F_NORMINT16_2 = 131610,
+    F_NORMINT16_3 = 197147,
+    F_NORMINT16_4 = 262684,
+    F_NORMUINT16_1 = 66077,
+    F_NORMUINT16_2 = 131614,
+    F_NORMUINT16_3 = 197151,
+    F_NORMUINT16_4 = 262688,
+    F_INT32_1 = 66593,
+    F_INT32_2 = 132130,
+    F_INT32_3 = 197667,
+    F_INT32_4 = 263204,
+    F_UINT32_1 = 66597,
+    F_UINT32_2 = 132134,
+    F_UINT32_3 = 197671,
+    F_UINT32_4 = 263208,
+    F_NORMINT32_1 = 66601,
+    F_NORMINT32_2 = 132138,
+    F_NORMINT32_3 = 197675,
+    F_NORMINT32_4 = 263212,
+    F_NORMUINT32_1 = 66605,
+    F_NORMUINT32_2 = 132142,
+    F_NORMUINT32_3 = 197679,
+    F_NORMUINT32_4 = 263216,
+    F_FLOAT16_1 = 66097,
+    F_FLOAT16_2 = 131634,
+    F_FLOAT16_3 = 197171,
+    F_FLOAT16_4 = 262708,
+    F_FLOAT32_1 = 66613,
+    F_FLOAT32_2 = 132150,
+    F_FLOAT32_3 = 197687,
+    F_FLOAT32_4 = 263224,
+    F_UINT_10_10_10_L1 = 66617,
+    F_NORMINT_10_10_10_L1 = 66618,
+    F_NORMINT_11_11_10 = 66619,
+    F_NORMUINT8_4_BGRA = 262460,
+    F_NORMINT_10_10_10_2 = 66621,
+    F_UINT_10_10_10_2 = 66622,
+};
+
+}

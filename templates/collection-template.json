@@ -1,0 +1,34 @@
+{
+    "name": "collection",
+    "parameters": {},
+    "variables": {
+        "collection": {
+            "type": "array",
+            "array-type": {
+                "type": "id"
+            },
+            "aliases": [
+                "values",
+                "items",
+                "mods",
+                "patches"
+            ]
+        }
+    },
+    "actions": {
+        "add": {
+            "prepare": [
+            ],
+            "apply": [
+                {
+                    "type": "cascade",
+                    "value": [
+                        "variables",
+                        "collection"
+                    ],
+                    "allow-none": true
+                }
+            ]
+        }
+    }
+}

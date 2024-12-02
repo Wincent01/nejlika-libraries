@@ -1,0 +1,57 @@
+{
+    "name": "sql",
+    "parameters": {
+
+    },
+    "variables": {
+        "values": {
+            "type": "object",
+            "object-properties": {
+                "sql": {
+                    "required": true,
+                    "nullable": false,
+                    "type": "string",
+                    "aliases": [
+                        "query",
+                        "sql-query",
+                        "command",
+                        "dml"
+                    ]
+                },
+                "binds": {
+                    "required": false,
+                    "nullable": false,
+                    "type": "array",
+                    "aliases": [
+                        "bind",
+                        "variables",
+                        "params",
+                        "parameters"
+                    ],
+                    "array-type": {
+                        "type": "id-any"
+                    }
+                }
+            }
+        }
+    },
+    "actions": {
+        "add": {
+            "apply": [
+                {
+                    "type": "sql",
+                    "value": [
+                        "variables",
+                        "values",
+                        "sql"
+                    ],
+                    "bind": [
+                        "variables",
+                        "values",
+                        "binds"
+                    ]
+                }
+            ]
+        }
+    }
+}

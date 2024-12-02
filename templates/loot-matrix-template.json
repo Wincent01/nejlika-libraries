@@ -1,0 +1,133 @@
+{
+    "name": "loot-matrix",
+    "parameters": {
+
+    },
+    "variables": {
+        "values": {
+            "type": "object",
+            "object-properties": {
+                "loot-table-index": {
+                    "type": "id",
+                    "aliases": [
+                        "LootTableIndex",
+                        "loot-table"
+                    ]
+                },
+                "rarity-table-index": {
+                    "type": "id",
+                    "aliases": [
+                        "RarityTableIndex",
+                        "rarity",
+                        "rarity-table"
+                    ]
+                },
+                "percent": {
+                    "type": "number",
+                    "aliases": [
+                        "percent"
+                    ]
+                },
+                "min-to-drop": {
+                    "type": "integer",
+                    "aliases": [
+                        "minToDrop",
+                        "min"
+                    ]
+                },
+                "max-to-drop": {
+                    "type": "integer",
+                    "aliases": [
+                        "maxToDrop",
+                        "max"
+                    ]
+                },
+                "flag-id": {
+                    "required": false,
+                    "nullable": true,
+                    "type": "id",
+                    "aliases": [
+                        "flagID",
+                        "flag"
+                    ]
+                }
+            }
+        }
+    },
+    "actions": {
+        "add": {
+            "prepare": [
+                {
+                    "type": "generate-id",
+                    "table": "LootMatrix",
+                    "column": "LootMatrixIndex"
+                },
+                {
+                    "type": "generate-id",
+                    "table": "LootMatrix",
+                    "column": "id",
+                    "variable": "--id",
+                    "sync": false
+                }
+            ],
+            "apply": [
+                {
+                    "type": "insert",
+                    "table": "LootMatrix",
+                    "columns": {
+                        "LootMatrixIndex": [
+                            "id"
+                        ],
+                        "LootTableIndex": [
+                            "variables",
+                            "values",
+                            "loot-table-index"
+                        ],
+                        "RarityTableIndex": [
+                            "variables",
+                            "values",
+                            "rarity-table-index"
+                        ],
+                        "percent": [
+                            "variables",
+                            "values",
+                            "percent"
+                        ],
+                        "minToDrop": [
+                            "variables",
+                            "values",
+                            "min-to-drop"
+                        ],
+                        "maxToDrop": [
+                            "variables",
+                            "values",
+                            "max-to-drop"
+                        ],
+                        "id": [
+                            "--id"
+                        ],
+                        "flagID": {
+                            "value": [
+                                "variables",
+                                "values",
+                                "flag-id"
+                            ],
+                            "default": null
+                        },
+                        "gate_version": null
+                    }
+                },
+                {
+                    "type": "insert",
+                    "table": "LootMatrixIndex",
+                    "columns": {
+                        "LootMatrixIndex": [
+                            "id"
+                        ],
+                        "inNpcEditor": false
+                    }
+                }
+            ]
+        }
+    }
+}

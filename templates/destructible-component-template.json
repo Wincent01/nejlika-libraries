@@ -1,0 +1,293 @@
+{
+    "name": "destructible-component",
+    "parameters": {
+
+    },
+    "variables": {
+        "values": {
+            "type": "object",
+            "object-properties": {
+                "faction": {
+                    "required": false,
+                    "nullable": true,
+                    "type": "id",
+                    "aliases": [
+                        "faction"
+                    ],
+                    "description": "The faction this object belongs to.",
+                    "default-hint": -1,
+                    "hide-by-default": false
+                },
+                "faction-list": {
+                    "required": false,
+                    "nullable": false,
+                    "type": "array",
+                    "array-type": {
+                        "type": "id"
+                    },
+                    "aliases": [
+                        "factionList"
+                    ],
+                    "description": "A list of factions this object belongs to.",
+                    "default-hint": "-1",
+                    "hide-by-default": false
+                },
+                "life": {
+                    "required": false,
+                    "nullable": true,
+                    "type": "integer",
+                    "aliases": [
+                        "life"
+                    ],
+                    "description": "The amount of health this object has.",
+                    "default-hint": null,
+                    "hide-by-default": false
+                },
+                "imagination": {
+                    "required": false,
+                    "nullable": true,
+                    "type": "integer",
+                    "aliases": [
+                        "imagination"
+                    ],
+                    "description": "The amount of imagination this object has.",
+                    "default-hint": null,
+                    "hide-by-default": false
+                },
+                "loot-matrix-index": {
+                    "required": false,
+                    "nullable": true,
+                    "type": "id",
+                    "types": [
+                        "loot-matrix"
+                    ],
+                    "aliases": [
+                        "LootMatrixIndex",
+                        "loot-matrix"
+                    ],
+                    "description": "The loot matrix this object uses.",
+                    "default-hint": null,
+                    "hide-by-default": false
+                },
+                "currency-index": {
+                    "required": false,
+                    "nullable": true,
+                    "type": "id",
+                    "aliases": [
+                        "CurrencyIndex",
+                        "currency"
+                    ],
+                    "description": "The currency this object drops.",
+                    "default-hint": null,
+                    "hide-by-default": false
+                },
+                "level": {
+                    "required": false,
+                    "nullable": true,
+                    "type": "integer",
+                    "aliases": [
+                        "level"
+                    ],
+                    "description": "The level of this object.",
+                    "default-hint": null,
+                    "hide-by-default": false
+                },
+                "armor": {
+                    "required": false,
+                    "nullable": true,
+                    "type": "number",
+                    "aliases": [
+                        "armor"
+                    ],
+                    "description": "The amount of armor this object has.",
+                    "default-hint": null,
+                    "hide-by-default": false
+                },
+                "death-behavior": {
+                    "required": false,
+                    "nullable": false,
+                    "type": "integer",
+                    "aliases": [
+                        "death_behavior"
+                    ],
+                    "description": "The behavior of this object when it dies.",
+                    "default-hint": 2,
+                    "hide-by-default": true
+                },
+                "isnpc": {
+                    "required": false,
+                    "nullable": true,
+                    "type": "boolean",
+                    "aliases": [
+                        "isnpc"
+                    ],
+                    "description": "Whether this object is an NPC.",
+                    "default-hint": false,
+                    "hide-by-default": false
+                },
+                "attack-priority": {
+                    "required": false,
+                    "nullable": false,
+                    "type": "integer",
+                    "aliases": [
+                        "attack_priority"
+                    ],
+                    "description": "The priority of this object when attacking.",
+                    "default-hint": 1,
+                    "hide-by-default": true
+                },
+                "is-smashable": {
+                    "required": false,
+                    "nullable": false,
+                    "type": "boolean",
+                    "aliases": [
+                        "isSmashable"
+                    ],
+                    "description": "Whether this object can be smashed.",
+                    "default-hint": false,
+                    "hide-by-default": false
+                },
+                "difficulty-level": {
+                    "required": false,
+                    "nullable": true,
+                    "type": "integer",
+                    "aliases": [
+                        "difficultyLevel"
+                    ],
+                    "description": "The difficulty level of this object (?).",
+                    "default-hint": null,
+                    "hide-by-default": true
+                }
+            }
+        }
+    },
+    "actions": {
+        "add": {
+            "prepare": [
+                {
+                    "type": "generate-id",
+                    "table": "DestructibleComponent",
+                    "column": "id"
+                }
+            ],
+            "apply": [
+                {
+                    "type": "insert",
+                    "table": "DestructibleComponent",
+                    "columns": {
+                        "id": [
+                            "id"
+                        ],
+                        "faction": {
+                            "value": [
+                                "variables",
+                                "values",
+                                "faction"
+                            ],
+                            "default": -1
+                        },
+                        "factionList": {
+                            "value": [
+                                "variables",
+                                "values",
+                                "faction-list"
+                            ],
+                            "default": "-1",
+                            "extra": {
+                                "seperator": ","
+                            }
+                        },
+                        "life": {
+                            "value": [
+                                "variables",
+                                "values",
+                                "life"
+                            ],
+                            "default": null
+                        },
+                        "imagination": {
+                            "value": [
+                                "variables",
+                                "values",
+                                "imagination"
+                            ],
+                            "default": null
+                        },
+                        "LootMatrixIndex": {
+                            "value": [
+                                "variables",
+                                "values",
+                                "loot-matrix-index"
+                            ],
+                            "default": null
+                        },
+                        "CurrencyIndex": {
+                            "value": [
+                                "variables",
+                                "values",
+                                "currency-index"
+                            ],
+                            "default": null
+                        },
+                        "level": {
+                            "value": [
+                                "variables",
+                                "values",
+                                "level"
+                            ],
+                            "default": null
+                        },
+                        "armor": {
+                            "value": [
+                                "variables",
+                                "values",
+                                "armor"
+                            ],
+                            "default": null
+                        },
+                        "death_behavior": {
+                            "value": [
+                                "variables",
+                                "values",
+                                "death-behavior"
+                            ],
+                            "default": 2
+                        },
+                        "isnpc": {
+                            "value": [
+                                "variables",
+                                "values",
+                                "isnpc"
+                            ],
+                            "default": false
+                        },
+                        "attack_priority": {
+                            "value": [
+                                "variables",
+                                "values",
+                                "attack-priority"
+                            ],
+                            "default": 1
+                        },
+                        "isSmashable": {
+                            "value": [
+                                "variables",
+                                "values",
+                                "is-smashable"
+                            ],
+                            "default": false
+                        },
+                        "difficultyLevel": {
+                            "value": [
+                                "variables",
+                                "values",
+                                "difficulty-level"
+                            ],
+                            "default": null
+                        }
+                    }
+                }
+            ]
+        }
+    }
+}

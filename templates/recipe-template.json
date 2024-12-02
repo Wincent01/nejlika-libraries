@@ -1,0 +1,136 @@
+{
+    "name": "recipe",
+    "parameters": {},
+    "variables": {
+        "values": {
+            "type": "object",
+            "object-properties": {
+                "item": {
+                    "type": "id",
+                    "types": [
+                        "object"
+                    ]
+                },
+                "item-component": {
+                    "required": false,
+                    "type": "id"
+                },
+                "components": {
+                    "type": "array",
+                    "array-type": {
+                        "type": "object",
+                        "object-properties": {
+                            "component": {
+                                "type": "id",
+                                "types": [
+                                    "object"
+                                ],
+                                "aliases": [
+                                    "item"
+                                ]
+                            },
+                            "count": {
+                                "type": "integer"
+                            }
+                        }
+                    },
+                    "aliases": [
+                        "items"
+                    ]
+                }
+            }
+        }
+    },
+    "actions": {
+        "add": {
+            "apply": [
+                {
+                    "type": "for-each",
+                    "value": [
+                        "variables",
+                        "values",
+                        "components"
+                    ],
+                    "iterator": "entry",
+                    "operation": {
+                        "type": "and",
+                        "operations": [
+                            {
+                                "type": "concat",
+                                "variable": "--recipe",
+                                "value": [
+                                    "variables",
+                                    "values",
+                                    "components",
+                                    "$entry.indexer",
+                                    "component"
+                                ]
+                            },
+                            {
+                                "type": "concat",
+                                "variable": "--recipe",
+                                "value": ":"
+                            },
+                            {
+                                "type": "concat",
+                                "variable": "--recipe",
+                                "value": [
+                                    "variables",
+                                    "values",
+                                    "components",
+                                    "$entry.indexer",
+                                    "count"
+                                ]
+                            },
+                            {
+                                "type": "concat",
+                                "variable": "--recipe",
+                                "value": ","
+                            }
+                        ]
+                    }
+                },
+                {
+                    "type": "pop",
+                    "variable": "--recipe"
+                },
+                {
+                    "type": "select",
+                    "table": "ComponentsRegistry",
+                    "keys": {
+                        "id": [
+                            "variables",
+                            "values",
+                            "item"
+                        ],
+                        "component_type": 11
+                    },
+                    "columns": {
+                        "component_id": {
+                            "variable": "--item-component",
+                            "default": [
+                                "variables",
+                                "values",
+                                "item-component"
+                            ]
+                        }
+                    }
+                },
+                {
+                    "type": "update",
+                    "table": "ItemComponent",
+                    "columns": {
+                        "currencyCosts": [
+                            "--recipe"
+                        ]
+                    },
+                    "keys": {
+                        "id": [
+                            "--item-component"
+                        ]
+                    }
+                }
+            ]
+        }
+    }
+}

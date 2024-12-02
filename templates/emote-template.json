@@ -1,0 +1,149 @@
+{
+    "name": "emote",
+    "parameters": {},
+    "variables": {
+        "values": {
+            "type": "object",
+            "object-properties": {
+                "icon": {
+                    "type": "resource",
+                    "arguments": {
+                        "prefix": "..\\..\\textures/../",
+                        "type": "dds"
+                    },
+                    "aliases": [
+                        "source",
+                        "IconPath",
+                        "image",
+                        "imageName",
+                        "iconFilename"
+                    ],
+                    "nullable": true,
+                    "required": false,
+                    "default-hint": "textures/ui/achievements/general_social.dds",
+                    "description": "The icon to display for the emote on the action-bar and other UI.",
+                    "hide-by-default": false
+                },
+                "animation": {
+                    "type": "string",
+                    "nullable": true,
+                    "required": false,
+                    "aliases": [
+                        "animationName",
+                        "animation-name"
+                    ],
+                    "description": "The animation to play when the emote is used.",
+                    "hide-by-default": false,
+                    "default-hint": null
+                },
+                "channel": {
+                    "type": "string",
+                    "nullable": true,
+                    "required": false,
+                    "description": "The emote channel.",
+                    "hide-by-default": true,
+                    "default-hint": null
+                },
+                "locked": {
+                    "type": "boolean",
+                    "nullable": true,
+                    "required": false,
+                    "description": "Whether the emote is locked by default.",
+                    "hide-by-default": true,
+                    "default-hint": false
+                }
+            }
+        },
+        "locales": {
+            "type": "object",
+            "object-properties": {
+                "text": {
+                    "type": "locale",
+                    "required": false,
+                    "nullable": false,
+                    "aliases": [
+                        "message",
+                        "messageText",
+                        "message-text",
+                        "menuText",
+                        "outputText"
+                    ],
+                    "description": "The title to display for the emote in the UI.",
+                    "hide-by-default": false,
+                    "default-hint": null
+                }
+            }
+        }
+    },
+    "actions": {
+        "add": {
+            "prepare": [
+                {
+                    "type": "generate-id",
+                    "table": "Emotes",
+                    "column": "id"
+                }
+            ],
+            "apply": [
+                {
+                    "type": "insert",
+                    "table": "Emotes",
+                    "columns": {
+                        "id": [
+                            "id"
+                        ],
+                        "locStatus": 2,
+                        "localize": true,
+                        "channel": {
+                            "value": [
+                                "variables",
+                                "values",
+                                "channel"
+                            ],
+                            "default": null
+                        },
+                        "animationName": {
+                            "value": [
+                                "variables",
+                                "values",
+                                "animation"
+                            ],
+                            "default": null
+                        },
+                        "iconFilename": {
+                            "value": [
+                                "variables",
+                                "values",
+                                "icon"
+                            ],
+                            "default": "..\\..\\textures\\ui\\Achievements/general_social.DDS"
+                        },
+                        "gate_version": null,
+                        "locked": {
+                            "value": [
+                                "variables",
+                                "values",
+                                "locked"
+                            ],
+                            "default": false
+                        }
+                    }
+                },
+                {
+                    "type": "locale",
+                    "value": [
+                        "variables",
+                        "locales",
+                        "text"
+                    ],
+                    "allow-none": true,
+                    "prefix": "Emotes_",
+                    "key": [
+                        "id"
+                    ],
+                    "suffix": "_outputText"
+                }
+            ]
+        }
+    }
+}

@@ -1,0 +1,61 @@
+{
+    "name": "locale",
+    "parameters": {},
+    "variables": {
+        "values": {
+            "type": "object",
+            "object-properties": {
+                "prefix": {
+                    "type": "string"
+                },
+                "key": {
+                    "type": "id"
+                },
+                "suffix": {
+                    "type": "string"
+                }
+            }
+        },
+        "locales": {
+            "type": "object",
+            "object-properties": {
+                "text": {
+                    "type": "locale",
+                    "aliases": [
+                        "locale"
+                    ]
+                }
+            }
+        }
+    },
+    "actions": {
+        "set": {
+            "apply": [
+                {
+                    "type": "locale",
+                    "value": [
+                        "variables",
+                        "locales",
+                        "text"
+                    ],
+                    "allow-none": false,
+                    "prefix": [
+                        "variables",
+                        "values",
+                        "prefix"
+                    ],
+                    "key": [
+                        "variables",
+                        "values",
+                        "key"
+                    ],
+                    "suffix": [
+                        "variables",
+                        "values",
+                        "suffix"
+                    ]
+                }
+            ]
+        }
+    }
+}

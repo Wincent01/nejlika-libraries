@@ -1,0 +1,311 @@
+{
+    "name": "task",
+    "parameters": {
+        "mission-id": {
+            "required": false,
+            "nullable": false,
+            "type": "id",
+            "types": [
+                "mission"
+            ]
+        }
+    },
+    "variables": {
+        "values": {
+            "type": "object",
+            "object-properties": {
+                "task-type": {
+                    "type": "enum",
+                    "enum": {
+                        "Smash": 0,
+                        "Script": 1,
+                        "Activity": 2,
+                        "Environment": 3,
+                        "MissionInteraction": 4,
+                        "Emote": 5,
+                        "Food": 9,
+                        "Skill": 10,
+                        "ItemCollection": 11,
+                        "Location": 12,
+                        "Minigame": 14,
+                        "NonMissionInteraction": 15,
+                        "MissionComplete": 16,
+                        "Powerup": 21,
+                        "PetTaming": 22,
+                        "Racing": 23,
+                        "PlayerFlag": 24,
+                        "VisitProperty": 30
+                    },
+                    "aliases": [
+                        "taskType",
+                        "type"
+                    ],
+                    "nullable": false,
+                    "required": true,
+                    "description": "The type of task the player must complete.",
+                    "hide-by-default": false
+                },
+                "target": {
+                    "required": false,
+                    "nullable": true,
+                    "type": "id-any",
+                    "aliases": [
+                        "target"
+                    ],
+                    "description": "The target of the task, such as an enemy to smash, an item to collect, or a location to visit.",
+                    "hide-by-default": false,
+                    "default-hint": null
+                },
+                "target-group": {
+                    "required": false,
+                    "nullable": true,
+                    "type": "array",
+                    "aliases": [
+                        "targetGroup"
+                    ],
+                    "array-type": {
+                        "type": "id-any"
+                    },
+                    "description": "The group of targets for the task, such as a group of enemies to smash.",
+                    "hide-by-default": false,
+                    "default-hint": null
+                },
+                "target-value": {
+                    "required": false,
+                    "nullable": true,
+                    "type": "integer",
+                    "aliases": [
+                        "targetValue"
+                    ],
+                    "description": "How many of the given target(s) that must be smashed/collected/scored/etc.",
+                    "hide-by-default": false,
+                    "default-hint": null
+                },
+                "task-param1": {
+                    "required": false,
+                    "nullable": true,
+                    "type": "array",
+                    "aliases": [
+                        "taskParam1",
+                        "param1",
+                        "parameters"
+                    ],
+                    "array-type": {
+                        "type": "id-any"
+                    },
+                    "description": "Additional parameters for the task when needed.",
+                    "hide-by-default": true,
+                    "default-hint": null
+                },
+                "large-task-icon": {
+                    "required": false,
+                    "nullable": true,
+                    "type": "resource",
+                    "arguments": {
+                        "prefix": "..\\..\\textures/../",
+                        "type": "dds"
+                    },
+                    "aliases": [
+                        "largeTaskIcon"
+                    ],
+                    "description": "The icon to display for the task.",
+                    "hide-by-default": false,
+                    "default-hint": null
+                },
+                "icon-id": {
+                    "required": false,
+                    "nullable": true,
+                    "type": "id",
+                    "types": [
+                        "icon"
+                    ],
+                    "aliases": [
+                        "IconID",
+                        "icon"
+                    ],
+                    "description": "The icon to display for the task.",
+                    "hide-by-default": false,
+                    "default-hint": null
+                },
+                "id": {
+                    "required": false,
+                    "nullable": false,
+                    "type": "id",
+                    "types": [
+                        "mission"
+                    ],
+                    "aliases": [
+                        "id",
+                        "mission",
+                        "mission-id"
+                    ],
+                    "description": "The mission this task belongs to. Should be null if this task is a child of a mission.",
+                    "hide-by-default": true,
+                    "default-hint": null
+                },
+                "large-task-icon-id": {
+                    "required": false,
+                    "nullable": true,
+                    "type": "id",
+                    "types": [
+                        "icon"
+                    ],
+                    "aliases": [
+                        "largeTaskIconID",
+                        "large-icon",
+                        "large-icon-id"
+                    ],
+                    "description": "The icon to display for the task, by reference.",
+                    "hide-by-default": true,
+                    "default-hint": null
+                }
+            }
+        },
+        "locales": {
+            "required": false,
+            "nullable": false,
+            "type": "object",
+            "object-properties": {
+                "description": {
+                    "required": false,
+                    "nullable": false,
+                    "type": "locale",
+                    "aliases": [
+                        "text"
+                    ],
+                    "description": "The description of the task.",
+                    "hide-by-default": false,
+                    "default-hint": null
+                }
+            }
+        }
+    },
+    "actions": {
+        "add": {
+            "prepare": [
+                {
+                    "type": "generate-id",
+                    "table": "MissionTasks",
+                    "column": "uid"
+                }
+            ],
+            "apply": [
+                {
+                    "type": "assign",
+                    "variable": "--mission-id",
+                    "options": [
+                        [
+                            "variables",
+                            "values",
+                            "id"
+                        ],
+                        [
+                            "parameters",
+                            "mission-id"
+                        ]
+                    ],
+                    "non-null": true
+                },
+                {
+                    "type": "insert",
+                    "table": "MissionTasks",
+                    "columns": {
+                        "id": [
+                            "--mission-id"
+                        ],
+                        "locStatus": 2,
+                        "taskType": [
+                            "variables",
+                            "values",
+                            "task-type"
+                        ],
+                        "target": {
+                            "value": [
+                                "variables",
+                                "values",
+                                "target"
+                            ],
+                            "default": null,
+                            "extra": {
+                                "seperator": ","
+                            }
+                        },
+                        "targetGroup": {
+                            "value": [
+                                "variables",
+                                "values",
+                                "target-group"
+                            ],
+                            "default": "",
+                            "extra": {
+                                "seperator": ","
+                            }
+                        },
+                        "targetValue": {
+                            "value": [
+                                "variables",
+                                "values",
+                                "target-value"
+                            ],
+                            "default": null
+                        },
+                        "taskParam1": {
+                            "value": [
+                                "variables",
+                                "values",
+                                "task-param1"
+                            ],
+                            "default": null,
+                            "extra": {
+                                "seperator": ","
+                            }
+                        },
+                        "largeTaskIcon": {
+                            "value": [
+                                "variables",
+                                "values",
+                                "large-task-icon"
+                            ],
+                            "default": null
+                        },
+                        "IconID": {
+                            "value": [
+                                "variables",
+                                "values",
+                                "icon-id"
+                            ],
+                            "default": null
+                        },
+                        "uid": [
+                            "id"
+                        ],
+                        "largeTaskIconID": {
+                            "value": [
+                                "variables",
+                                "values",
+                                "large-task-icon-id"
+                            ],
+                            "default": null
+                        },
+                        "localize": true,
+                        "gate_version": null
+                    }
+                },
+                {
+                    "type": "locale",
+                    "value": [
+                        "variables",
+                        "locales",
+                        "description"
+                    ],
+                    "allow-none": true,
+                    "prefix": "MissionTasks_",
+                    "key": [
+                        "id"
+                    ],
+                    "suffix": "_description"
+                }
+            ]
+        }
+    }
+}

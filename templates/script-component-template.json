@@ -1,0 +1,80 @@
+{
+    "name": "script-component",
+    "parameters": {
+
+    },
+    "variables": {
+        "values": {
+            "type": "object",
+            "object-properties": {
+                "script": {
+                    "required": false,
+                    "nullable": true,
+                    "type": "resource",
+                    "arguments": {
+                        "prefix": "",
+                        "type": "lua"
+                    },
+                    "aliases": [
+                        "script_name",
+                        "script-name",
+                        "server",
+                        "server-script"
+                    ]
+                },
+                "client-script": {
+                    "required": false,
+                    "nullable": true,
+                    "type": "resource",
+                    "arguments": {
+                        "prefix": "",
+                        "type": "lua"
+                    },
+                    "aliases": [
+                        "client_script_name",
+                        "client-script-name",
+                        "client"
+                    ]
+                }
+            }
+        }
+    },
+    "actions": {
+        "add": {
+            "prepare": [
+                {
+                    "type": "generate-id",
+                    "table": "ScriptComponent",
+                    "column": "id"
+                }
+            ],
+            "apply": [
+                {
+                    "type": "insert",
+                    "table": "ScriptComponent",
+                    "columns": {
+                        "id": [
+                            "id"
+                        ],
+                        "script_name": {
+                            "value": [
+                                "variables",
+                                "values",
+                                "script"
+                            ],
+                            "default": null
+                        },
+                        "client_script_name": {
+                            "value": [
+                                "variables",
+                                "values",
+                                "client-script"
+                            ],
+                            "default": null
+                        }
+                    }
+                }
+            ]
+        }
+    }
+}

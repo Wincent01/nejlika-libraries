@@ -1,0 +1,199 @@
+{
+    "name": "transform-object",
+    "parameters": {},
+    "variables": {
+        "values": {
+            "type": "object",
+            "object-properties": {
+                "zone": {
+                    "type": "id",
+                    "aliases": [
+                        "world"
+                    ]
+                },
+                "level-id": {
+                    "type": "id",
+                    "aliases": [
+                        "level"
+                    ]
+                },
+                "level-layer": {
+                    "type": "id",
+                    "aliases": [
+                        "layer"
+                    ]
+                },
+                "lot": {
+                    "required": false,
+                    "type": "id",
+                    "types": [
+                        "object"
+                    ],
+                    "aliases": [
+                        "template",
+                        "template-id"
+                    ]
+                },
+                "object-id": {
+                    "required": false,
+                    "type": "id",
+                    "types": [
+                        "level-object"
+                    ],
+                    "aliases": [
+                        "object",
+                        "id"
+                    ]
+                },
+                "position": {
+                    "required": false,
+                    "type": "object",
+                    "object-properties": {
+                        "x": {
+                            "type": "number"
+                        },
+                        "y": {
+                            "type": "number"
+                        },
+                        "z": {
+                            "type": "number"
+                        }
+                    }
+                },
+                "rotation": {
+                    "required": false,
+                    "type": "object",
+                    "object-properties": {
+                        "x": {
+                            "type": "number"
+                        },
+                        "y": {
+                            "type": "number"
+                        },
+                        "z": {
+                            "type": "number"
+                        },
+                        "w": {
+                            "type": "number"
+                        }
+                    }
+                },
+                "scale": {
+                    "required": false,
+                    "type": "number"
+                }
+            }
+        }
+    },
+    "actions": {
+        "add": {
+            "apply": [
+                {
+                    "type": "transform-world-object",
+                    "zone": [
+                        "variables",
+                        "values",
+                        "zone"
+                    ],
+                    "level-id": [
+                        "variables",
+                        "values",
+                        "level-id"
+                    ],
+                    "level-layer": [
+                        "variables",
+                        "values",
+                        "level-layer"
+                    ],
+                    "lot": {
+                        "value": [
+                            "variables",
+                            "values",
+                            "lot"
+                        ],
+                        "default": null
+                    },
+                    "object-id": {
+                        "value": [
+                            "variables",
+                            "values",
+                            "object-id"
+                        ],
+                        "default": null
+                    },
+                    "x": {
+                        "value": [
+                            "variables",
+                            "values",
+                            "position",
+                            "x"
+                        ],
+                        "default": null
+                    },
+                    "y": {
+                        "value": [
+                            "variables",
+                            "values",
+                            "position",
+                            "y"
+                        ],
+                        "default": null
+                    },
+                    "z": {
+                        "value": [
+                            "variables",
+                            "values",
+                            "position",
+                            "z"
+                        ],
+                        "default": null
+                    },
+                    "rx": {
+                        "value": [
+                            "variables",
+                            "values",
+                            "rotation",
+                            "x"
+                        ],
+                        "default": null
+                    },
+                    "ry": {
+                        "value": [
+                            "variables",
+                            "values",
+                            "rotation",
+                            "y"
+                        ],
+                        "default": null
+                    },
+                    "rz": {
+                        "value": [
+                            "variables",
+                            "values",
+                            "rotation",
+                            "z"
+                        ],
+                        "default": null
+                    },
+                    "rw": {
+                        "value": [
+                            "variables",
+                            "values",
+                            "rotation",
+                            "w"
+                        ],
+                        "default": null
+                    },
+                    "scale": {
+                        "value": [
+                            "variables",
+                            "values",
+                            "scale"
+                        ],
+                        "default": null
+                    }
+                }
+            ]
+        }
+    }
+}

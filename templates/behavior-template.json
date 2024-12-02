@@ -1,0 +1,213 @@
+{
+    "name": "behavior",
+    "parameters": {},
+    "variables": {
+        "values": {
+            "type": "object",
+            "object-properties": {
+                "behavior-type": {
+                    "type": "enum",
+                    "enum": {
+                        "BasicAttack": 1,
+                        "TacArc": 2,
+                        "And": 3,
+                        "ProjectileAttack": 4,
+                        "Heal": 5,
+                        "Movement Switch": 6,
+                        "AoE": 7,
+                        "PlayEffect": 8,
+                        "Immunity": 9,
+                        "DamageBuff": 10,
+                        "Damage Absorption": 11,
+                        "Over Time": 12,
+                        "Imagination": 13,
+                        "Target Caster": 14,
+                        "Stun": 15,
+                        "Duration": 16,
+                        "Knockback": 17,
+                        "AttackDelay": 18,
+                        "Car Boost": 19,
+                        "FallSpeed": 20,
+                        "Shield": 21,
+                        "RepairArmor": 22,
+                        "Speed": 23,
+                        "DarkInspiration": 24,
+                        "LootBuff": 25,
+                        "VentureVision": 26,
+                        "Spawn Object": 27,
+                        "LayBrick": 28,
+                        "Switch": 29,
+                        "Buff": 30,
+                        "Jetpack": 31,
+                        "Skill Event": 32,
+                        "Consume Item": 33,
+                        "SkillCastFailed": 34,
+                        "ImitationSkunkStink": 35,
+                        "ChangeIdleFlags": 36,
+                        "ApplyBuff": 37,
+                        "Chain": 38,
+                        "ChangeOrientation": 39,
+                        "ForceMovement": 40,
+                        "Interrupt": 41,
+                        "AlterCooldown": 42,
+                        "ChargeUp": 43,
+                        "SwitchMultiple": 44,
+                        "Start": 45,
+                        "End": 46,
+                        "AlterChainDelay": 47,
+                        "Camera": 48,
+                        "RemoveBuff": 49,
+                        "Grab": 50,
+                        "ModularBuild": 51,
+                        "NPC Combat Skill": 52,
+                        "Block": 53,
+                        "Verify": 54,
+                        "Taunt": 55,
+                        "AirMovement": 56,
+                        "SpawnQuickbuild": 57,
+                        "PullToPoint": 58,
+                        "PropertyRotate": 59,
+                        "DamageReduction": 60,
+                        "PropertyTeleport": 61,
+                        "ClearTarget": 62,
+                        "TakePicture": 63,
+                        "Mount": 64,
+                        "SkillSet": 65
+                    },
+                    "aliases": [
+                        "type"
+                    ]
+                },
+                "effect": {
+                    "type": "id",
+                    "types": [
+                        "effect"
+                    ],
+                    "required": false,
+                    "nullable": false,
+                    "aliases": [
+                        "effect-id",
+                        "effectID"
+                    ]
+                },
+                "effect-handle": {
+                    "type": "id-any",
+                    "required": false,
+                    "nullable": true,
+                    "aliases": [
+                        "handle",
+                        "hook",
+                        "effectHandle"
+                    ]
+                },
+                "parameters": {
+                    "type": "object",
+                    "required": false,
+                    "nullable": false,
+                    "array-type": {
+                        "type": "id-lax"
+                    },
+                    "aliases": [
+                        "parameter",
+                        "params",
+                        "variables"
+                    ]
+                }
+            }
+        }
+    },
+    "actions": {
+        "add": {
+            "prepare": [
+                {
+                    "type": "generate-id",
+                    "table": "BehaviorTemplate",
+                    "column": "behaviorID"
+                },
+                {
+                    "type": "cascade",
+                    "value": [
+                        "variables",
+                        "values",
+                        "parameters"
+                    ],
+                    "allow-none": true,
+                    "identifiers-only": true
+                }
+            ],
+            "apply": [
+                {
+                    "type": "cascade",
+                    "value": [
+                        "variables",
+                        "values",
+                        "parameters"
+                    ],
+                    "allow-none": true
+                },
+                {
+                    "type": "insert",
+                    "table": "BehaviorTemplate",
+                    "columns": {
+                        "behaviorID": [
+                            "id"
+                        ],
+                        "templateID": [
+                            "variables",
+                            "values",
+                            "behavior-type"
+                        ],
+                        "effectID": {
+                            "value": [
+                                "variables",
+                                "values",
+                                "effect"
+                            ],
+                            "default": 0
+                        },
+                        "effectHandle": {
+                            "value": [
+                                "variables",
+                                "values",
+                                "effect-handle"
+                            ],
+                            "default": null
+                        }
+                    }
+                },
+                {
+                    "type": "for-each",
+                    "value": [
+                        "variables",
+                        "values",
+                        "parameters"
+                    ],
+                    "iterator": "entry",
+                    "allow-none": true,
+                    "operation": {
+                        "type": "insert",
+                        "table": "BehaviorParameter",
+                        "columns": {
+                            "behaviorID": [
+                                "id"
+                            ],
+                            "parameterID": [
+                                "variable",
+                                "entry.key"
+                            ],
+                            "value": {
+                                "value": [
+                                    "variables",
+                                    "values",
+                                    "parameters",
+                                    "$entry.key"
+                                ],
+                                "default": 0
+                            }
+                        }
+                    }
+                }
+            ]
+        }
+    }
+}

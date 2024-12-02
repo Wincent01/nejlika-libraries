@@ -1,0 +1,117 @@
+{
+    "name": "effect",
+    "parameters": {},
+    "variables": {
+        "values": {
+            "type": "object",
+            "object-properties": {
+                "source": {
+                    "type": "string",
+                    "required": false,
+                    "nullable": true,
+                    "aliases": [
+                        "effectName"
+                    ],
+                    "description": "The effect name. Name of file (?). Sorry...",
+                    "default-hint": null,
+                    "hide-by-default": false
+                },
+                "type": {
+                    "type": "string",
+                    "required": false,
+                    "nullable": false,
+                    "aliases": [
+                        "effectType"
+                    ],
+                    "description": "The effect type, case that matches when this effect should be chosen. Common once include \"cast\" and \"onhit\".",
+                    "default-hint": "cast",
+                    "hide-by-default": false
+                },
+                "bone": {
+                    "type": "string",
+                    "required": false,
+                    "nullable": false,
+                    "aliases": [
+                        "boneName"
+                    ],
+                    "description": "Name of bone in rigged model to attach effect to.",
+                    "default-hint": null,
+                    "hide-by-default": true
+                },
+                "animation": {
+                    "type": "string",
+                    "required": false,
+                    "nullable": true,
+                    "aliases": [
+                        "animationName"
+                    ],
+                    "description": "Name of animation to play when effect is cast.",
+                    "default-hint": null,
+                    "hide-by-default": false
+                },
+                "attach-to-object": {
+                    "type": "boolean",
+                    "required": false,
+                    "nullable": false,
+                    "description": "If true, the effect will attach to the object that is casting it.",
+                    "default-hint": false,
+                    "hide-by-default": false
+                },
+                "use-secondary": {
+                    "type": "boolean",
+                    "required": false,
+                    "nullable": false,
+                    "description": "(?).",
+                    "default-hint": false,
+                    "hide-by-default": true
+                }
+            }
+        }
+    },
+    "actions": {
+        "add": {
+            "prepare": [
+                {
+                    "type": "generate-id",
+                    "table": "BehaviorEffect",
+                    "column": "effectID"
+                }
+            ],
+            "apply": [
+                {
+                    "type": "insert",
+                    "table": "BehaviorEffect",
+                    "columns": {
+                        "effectID": ["id"],
+                        "effectType": {
+                            "value": ["variables", "values", "type"],
+                            "default": "cast"
+                        },
+                        "effectName": {
+                            "value": ["variables", "values", "source"],
+                            "default": null
+                        },
+                        "boneName": {
+                            "value": ["variables", "values", "bone"],
+                            "default": null
+                        },
+                        "animationName": {
+                            "value": ["variables", "values", "animation"],
+                            "default": null
+                        },
+                        "attachToObject": {
+                            "value": ["variables", "values", "attach-to-object"],
+                            "default": false,
+                            "nullable": false
+                        },
+                        "useSecondary": {
+                            "value": ["variables", "values", "use-secondary"],
+                            "default": false,
+                            "nullable": false
+                        }
+                    }
+                }
+            ]
+        }
+    }
+}

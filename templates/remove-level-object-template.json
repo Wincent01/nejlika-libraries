@@ -1,0 +1,125 @@
+{
+    "name": "remove-level-object",
+    "parameters": {},
+    "variables": {
+        "values": {
+            "type": "object",
+            "object-properties": {
+                "zone": {
+                    "type": "id",
+                    "aliases": [
+                        "world"
+                    ]
+                },
+                "level-id": {
+                    "type": "id",
+                    "aliases": [
+                        "level"
+                    ]
+                },
+                "level-layer": {
+                    "type": "id",
+                    "aliases": [
+                        "layer"
+                    ]
+                },
+                "object-ids": {
+                    "required": false,
+                    "type": "array",
+                    "array-type": {
+                        "type": "id",
+                        "types": [
+                            "level-object"
+                        ]
+                    },
+                    "aliases": [
+                        "objects"
+                    ]
+                },
+                "templates": {
+                    "required": false,
+                    "type": "array",
+                    "array-type": {
+                        "type": "id",
+                        "types": [
+                            "object"
+                        ]
+                    },
+                    "aliases": [
+                        "lots"
+                    ]
+                }
+            }
+        }
+    },
+    "actions": {
+        "remove": {
+            "apply": [
+                {
+                    "type": "for-each",
+                    "allow-none": true,
+                    "value": [
+                        "variables",
+                        "values",
+                        "object-ids"
+                    ],
+                    "iterator": "entry",
+                    "operation": {
+                        "type": "remove-world-object",
+                        "zone": [
+                            "variables",
+                            "values",
+                            "zone"
+                        ],
+                        "level-id": [
+                            "variables",
+                            "values",
+                            "level-id"
+                        ],
+                        "level-layer": [
+                            "variables",
+                            "values",
+                            "level-layer"
+                        ],
+                        "object-id": [
+                            "entry"
+                        ],
+                        "lot": null
+                    }
+                },
+                {
+                    "type": "for-each",
+                    "allow-none": true,
+                    "value": [
+                        "variables",
+                        "values",
+                        "templates"
+                    ],
+                    "iterator": "lot",
+                    "operation": {
+                        "type": "remove-world-object",
+                        "zone": [
+                            "variables",
+                            "values",
+                            "zone"
+                        ],
+                        "level-id": [
+                            "variables",
+                            "values",
+                            "level-id"
+                        ],
+                        "level-layer": [
+                            "variables",
+                            "values",
+                            "level-layer"
+                        ],
+                        "lot": [
+                            "lot"
+                        ],
+                        "object-id": null
+                    }
+                }
+            ]
+        }
+    }
+}

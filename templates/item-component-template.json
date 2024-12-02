@@ -1,0 +1,935 @@
+{
+    "name": "item-component",
+    "parameters": {
+
+    },
+    "variables": {
+        "values": {
+            "type": "object",
+            "object-properties": {
+                "equip-location": {
+                    "required": false,
+                    "nullable": true,
+                    "type": "enum",
+                    "enum": [
+                        "special_r",
+                        "hair",
+                        "clavicle",
+                        "legs",
+                        "trinket_r",
+                        "special_l",
+                        "Extra_1",
+                        "0",
+                        "chest",
+                        "Karl Test",
+                        "head",
+                        "special_brick",
+                        "",
+                        "minifig_root",
+                        "Extra_2",
+                        "Extra_4",
+                        "Extra_3",
+                        "greeble_r",
+                        "greeble_l",
+                        "Accumulation_Root",
+                        "Extra_5",
+                        "root",
+                        "4",
+                        "locator1",
+                        "l_elbow",
+                        "r_elbow",
+                        "l_shoulder",
+                        "r_shoulder",
+                        "spine",
+                        "tail_a",
+                        "tail_b",
+                        "tail_c",
+                        "l_wrist",
+                        "r_wrist",
+                        "Extra_6",
+                        "wrist_l_Base",
+                        "hip_r"
+                    ],
+                    "aliases": [
+                        "equipLocation"
+                    ],
+                    "description": "The location where the item is equipped. 'special_r' is the right hand, 'special_l' is the left hand.",
+                    "default-hint": null,
+                    "hide-by-default": false
+                },
+                "base-value": {
+                    "required": false,
+                    "nullable": true,
+                    "type": "integer",
+                    "aliases": [
+                        "baseValue"
+                    ],
+                    "description": "The base value of the item, sell value is by default 0.1 times this value.",
+                    "default-hint": 0,
+                    "hide-by-default": false
+                },
+                "is-kit-piece": {
+                    "required": false,
+                    "type": "boolean",
+                    "aliases": [
+                        "isKitPiece"
+                    ],
+                    "description": "Whether the item belongs to a kit.",
+                    "default-hint": false,
+                    "hide-by-default": true
+                },
+                "rarity": {
+                    "required": false,
+                    "nullable": true,
+                    "type": "integer",
+                    "aliases": [
+                        "rarity"
+                    ],
+                    "description": "The rarity of the item.",
+                    "default-hint": 1,
+                    "hide-by-default": false
+                },
+                "item-type": {
+                    "type": "enum",
+                    "enum": {
+                        "brick": 1,
+                        "hat": 2,
+                        "hair": 3,
+                        "neck": 4,
+                        "left-hand": 5,
+                        "right-hand": 6,
+                        "legs": 7,
+                        "left-trinket": 8,
+                        "right-trinket": 9,
+                        "behavior": 10,
+                        "property": 11,
+                        "model": 12,
+                        "collectible": 13,
+                        "consumable": 14,
+                        "chest": 15,
+                        "egg": 16,
+                        "pet-food": 17,
+                        "quest-object": 18,
+                        "pet-inventory-item": 19,
+                        "package": 20,
+                        "loot-model": 21,
+                        "vehicle": 22,
+                        "lup-model": 23,
+                        "mount": 24
+                    },
+                    "aliases": [
+                        "itemType"
+                    ],
+                    "description": "The type of the item.",
+                    "hide-by-default": false
+                },
+                "item-info": {
+                    "required": false,
+                    "nullable": true,
+                    "type": "integer",
+                    "aliases": [
+                        "itemInfo"
+                    ],
+                    "description": "The item info (?).",
+                    "default-hint": null,
+                    "hide-by-default": true
+                },
+                "in-loot-table": {
+                    "required": false,
+                    "type": "boolean",
+                    "aliases": [
+                        "inLootTable"
+                    ],
+                    "description": "Whether the item is in a loot table.",
+                    "default-hint": false,
+                    "hide-by-default": true
+                },
+                "in-vendor": {
+                    "required": false,
+                    "type": "boolean",
+                    "aliases": [
+                        "inVendor"
+                    ],
+                    "description": "Whether the item is in a vendor.",
+                    "default-hint": false,
+                    "hide-by-default": true
+                },
+                "is-unique": {
+                    "required": false,
+                    "type": "boolean",
+                    "aliases": [
+                        "isUnique"
+                    ],
+                    "description": "Whether the item is unique, and the player can only have one of it.",
+                    "default-hint": false,
+                    "hide-by-default": true
+                },
+                "is-bop": {
+                    "required": false,
+                    "type": "boolean",
+                    "aliases": [
+                        "isBOP",
+                        "bind-on-pickup"
+                    ],
+                    "description": "Whether the item is bind on pickup and cannot be traded.",
+                    "default-hint": false,
+                    "hide-by-default": false
+                },
+                "is-boe": {
+                    "required": false,
+                    "type": "boolean",
+                    "aliases": [
+                        "isBOE",
+                        "bind-on-equip"
+                    ],
+                    "description": "Whether the item is bind on equip and can be traded.",
+                    "default-hint": false,
+                    "hide-by-default": false
+                },
+                "req-flag-id": {
+                    "required": false,
+                    "nullable": true,
+                    "type": "id",
+                    "aliases": [
+                        "reqFlagID"
+                    ],
+                    "description": "The flag required to use the item.",
+                    "default-hint": 0,
+                    "hide-by-default": true
+                },
+                "req-specialty-id": {
+                    "required": false,
+                    "nullable": true,
+                    "type": "id",
+                    "aliases": [
+                        "reqSpecialtyID",
+                        "specialty-id",
+                        "specialty"
+                    ],
+                    "description": "The faction specialty required to use the item (?).",
+                    "default-hint": 0,
+                    "hide-by-default": true
+                },
+                "req-spec-rank": {
+                    "required": false,
+                    "nullable": true,
+                    "type": "id",
+                    "aliases": [
+                        "reqSpecRank",
+                        "specialty-rank"
+                    ],
+                    "description": "The rank of the faction specialty required to use the item (?).",
+                    "default-hint": 0,
+                    "hide-by-default": true
+                },
+                "req-achievement-id": {
+                    "required": false,
+                    "nullable": true,
+                    "type": "id",
+                    "types": [
+                        "mission"
+                    ],
+                    "aliases": [
+                        "reqAchievementID",
+                        "achievement-id",
+                        "achievement"
+                    ],
+                    "description": "The achievement required to use the item.",
+                    "default-hint": 0,
+                    "hide-by-default": true
+                },
+                "stack-size": {
+                    "required": false,
+                    "nullable": true,
+                    "type": "integer",
+                    "aliases": [
+                        "stackSize"
+                    ],
+                    "description": "The number of items in a stack.",
+                    "default-hint": 1,
+                    "hide-by-default": false
+                },
+                "color": {
+                    "required": false,
+                    "nullable": true,
+                    "type": "id",
+                    "aliases": [
+                        "color1"
+                    ],
+                    "description": "The color of the item, sometimes affects rendering.",
+                    "default-hint": null,
+                    "hide-by-default": true
+                },
+                "decal": {
+                    "required": false,
+                    "nullable": true,
+                    "type": "id",
+                    "aliases": [
+                        "decal"
+                    ],
+                    "description": "The decal of the item, sometimes affects rendering.",
+                    "default-hint": null,
+                    "hide-by-default": true
+                },
+                "offset-group-id": {
+                    "required": false,
+                    "nullable": true,
+                    "type": "id",
+                    "aliases": [
+                        "offsetGroupID",
+                        "offset-group"
+                    ],
+                    "description": "The offset group this item should use, affects where on the player or NPC it appears.",
+                    "default-hint": null,
+                    "hide-by-default": false
+                },
+                "build-types": {
+                    "required": false,
+                    "nullable": true,
+                    "type": "integer",
+                    "aliases": [
+                        "buildTypes"
+                    ],
+                    "description": "(?)",
+                    "default-hint": null,
+                    "hide-by-default": true
+                },
+                "req-precondition": {
+                    "required": false,
+                    "nullable": true,
+                    "type": "array",
+                    "array-type": {
+                        "type": "id-any"
+                    },
+                    "aliases": [
+                        "reqPrecondition",
+                        "preconditions",
+                        "precondition"
+                    ],
+                    "description": "The preconditions required to use the item.",
+                    "default-hint": null,
+                    "hide-by-default": true
+                },
+                "animation-flag": {
+                    "required": false,
+                    "nullable": true,
+                    "type": "integer",
+                    "aliases": [
+                        "animationFlag"
+                    ],
+                    "description": "(?)",
+                    "default-hint": null,
+                    "hide-by-default": true
+                },
+                "equip-effects": {
+                    "required": false,
+                    "nullable": true,
+                    "type": "id",
+                    "aliases": [
+                        "equipEffects"
+                    ],
+                    "description": "Effects that occur when the item is equipped (?).",
+                    "default-hint": null,
+                    "hide-by-default": true
+                },
+                "item-rating": {
+                    "required": false,
+                    "nullable": true,
+                    "type": "integer",
+                    "aliases": [
+                        "itemRating"
+                    ],
+                    "description": "The rating of the item (?).",
+                    "default-hint": null,
+                    "hide-by-default": true
+                },
+                "is-two-handed": {
+                    "required": false,
+                    "type": "boolean",
+                    "aliases": [
+                        "isTwoHanded"
+                    ],
+                    "description": "Whether the item is two-handed.",
+                    "default-hint": false,
+                    "hide-by-default": false
+                },
+                "min-num-required": {
+                    "required": false,
+                    "nullable": true,
+                    "type": "integer",
+                    "aliases": [
+                        "minNumRequired"
+                    ],
+                    "description": "(?)",
+                    "default-hint": null,
+                    "hide-by-default": true
+                },
+                "del-res-index": {
+                    "required": false,
+                    "nullable": true,
+                    "type": "integer",
+                    "aliases": [
+                        "delResIndex"
+                    ],
+                    "description": "(?)",
+                    "default-hint": null,
+                    "hide-by-default": true
+                },
+                "currency-lot": {
+                    "required": false,
+                    "nullable": true,
+                    "type": "id",
+                    "types": [
+                        "object"
+                    ],
+                    "aliases": [
+                        "currencyLOT"
+                    ],
+                    "description": "The item required to buy this item beyond coins.",
+                    "default-hint": null,
+                    "hide-by-default": false
+                },
+                "alt-currency-cost": {
+                    "required": false,
+                    "nullable": true,
+                    "type": "integer",
+                    "aliases": [
+                        "altCurrencyCost",
+                        "currency-cost"
+                    ],
+                    "description": "The cost of the item in the alternate currency.",
+                    "default-hint": null,
+                    "hide-by-default": false
+                },
+                "sub-items": {
+                    "required": false,
+                    "nullable": true,
+                    "type": "array",
+                    "aliases": [
+                        "subItems",
+                        "proxy-items",
+                        "proxies"
+                    ],
+                    "array-type": {
+                        "type": "id",
+                        "types": [
+                            "object"
+                        ]
+                    },
+                    "description": "The items that are equipped when this item is equipped.",
+                    "default-hint": null,
+                    "hide-by-default": true
+                },
+                "audio-event-use": {
+                    "required": false,
+                    "nullable": true,
+                    "type": "string",
+                    "aliases": [
+                        "audioEventUse"
+                    ],
+                    "description": "The audio event that plays when the item is used (?).",
+                    "default-hint": null,
+                    "hide-by-default": true
+                },
+                "no-equip-animation": {
+                    "required": false,
+                    "type": "boolean",
+                    "aliases": [
+                        "noEquipAnimation"
+                    ],
+                    "description": "Whether the item has no equip animation (?).",
+                    "default-hint": false,
+                    "hide-by-default": true
+                },
+                "commendation-lot": {
+                    "required": false,
+                    "nullable": true,
+                    "type": "id",
+                    "types": [
+                        "object"
+                    ],
+                    "aliases": [
+                        "commendationLOT"
+                    ],
+                    "description": "The currency, often faction tokens, it costs to buy this item from a commendation vendor.",
+                    "default-hint": null,
+                    "hide-by-default": true
+                },
+                "commendation-cost": {
+                    "required": false,
+                    "nullable": true,
+                    "type": "integer",
+                    "aliases": [
+                        "commendationCost"
+                    ],
+                    "description": "How many faction tokens are required to buy this item from a commendation vendor.",
+                    "default-hint": null,
+                    "hide-by-default": true
+                },
+                "audio-equip-meta-event-set": {
+                    "required": false,
+                    "nullable": true,
+                    "type": "string",
+                    "aliases": [
+                        "audioEquipMetaEventSet"
+                    ],
+                    "description": "(?)",
+                    "default-hint": null,
+                    "hide-by-default": true
+                },
+                "currency-costs": {
+                    "required": false,
+                    "nullable": true,
+                    "type": "array",
+                    "array-type": {
+                        "type": "object",
+                        "object-properties": {
+                            "component": {
+                                "type": "id",
+                                "types": [
+                                    "object"
+                                ],
+                                "aliases": [
+                                    "item"
+                                ],
+                                "description": "The item required to craft this item.",
+                                "hide-by-default": false
+                            },
+                            "count": {
+                                "type": "integer",
+                                "description": "The number of the item required to craft this item.",
+                                "hide-by-default": false
+                            }
+                        }
+                    },
+                    "aliases": [
+                        "currencyCosts",
+                        "components"
+                    ],
+                    "description": "The items required to craft this item.",
+                    "default-hint": null,
+                    "hide-by-default": false
+                },
+                "ingredient-info": {
+                    "required": false,
+                    "nullable": true,
+                    "type": "string",
+                    "aliases": [
+                        "ingredientInfo"
+                    ],
+                    "description": "The ingredient info (?).",
+                    "default-hint": null,
+                    "hide-by-default": true
+                },
+                "forge-type": {
+                    "required": false,
+                    "nullable": true,
+                    "type": "integer",
+                    "aliases": [
+                        "forgeType"
+                    ],
+                    "description": "(?)",
+                    "default-hint": null,
+                    "hide-by-default": true
+                },
+                "sell-multiplier": {
+                    "required": false,
+                    "nullable": true,
+                    "type": "number",
+                    "aliases": [
+                        "SellMultiplier"
+                    ],
+                    "description": "The multiplier for the sell value of the item.",
+                    "default-hint": null,
+                    "hide-by-default": true
+                }
+            }
+        }
+    },
+    "actions": {
+        "add": {
+            "prepare": [
+                {
+                    "type": "generate-id",
+                    "table": "ItemComponent",
+                    "column": "id"
+                }
+            ],
+            "apply": [
+                {
+                    "type": "for-each",
+                    "value": [
+                        "variables",
+                        "values",
+                        "currency-costs"
+                    ],
+                    "iterator": "entry",
+                    "operation": {
+                        "type": "and",
+                        "operations": [
+                            {
+                                "type": "concat",
+                                "variable": "--recipe",
+                                "value": [
+                                    "variables",
+                                    "values",
+                                    "currency-costs",
+                                    "$entry.indexer",
+                                    "component"
+                                ]
+                            },
+                            {
+                                "type": "concat",
+                                "variable": "--recipe",
+                                "value": ":"
+                            },
+                            {
+                                "type": "concat",
+                                "variable": "--recipe",
+                                "value": [
+                                    "variables",
+                                    "values",
+                                    "currency-costs",
+                                    "$entry.indexer",
+                                    "count"
+                                ]
+                            },
+                            {
+                                "type": "concat",
+                                "variable": "--recipe",
+                                "value": ","
+                            }
+                        ]
+                    },
+                    "allow-none": true
+                },
+                {
+                    "type": "pop",
+                    "variable": "--recipe",
+                    "allow-none": true
+                },
+                {
+                    "type": "insert",
+                    "table": "ItemComponent",
+                    "columns": {
+                        "id": [
+                            "id"
+                        ],
+                        "equipLocation": {
+                            "value": [
+                                "variables",
+                                "values",
+                                "equip-location"
+                            ],
+                            "default": null
+                        },
+                        "baseValue": {
+                            "value": [
+                                "variables",
+                                "values",
+                                "base-value"
+                            ],
+                            "default": 0
+                        },
+                        "isKitPiece": {
+                            "value":[
+                                "variables",
+                                "values",
+                                "is-kit-piece"
+                            ],
+                            "default": false
+                        },
+                        "rarity": {
+                            "value": [
+                                "variables",
+                                "values",
+                                "rarity"
+                            ],
+                            "default": 1
+                        },
+                        "itemType": [
+                            "variables",
+                            "values",
+                            "item-type"
+                        ],
+                        "itemInfo": {
+                            "value": [
+                                "variables",
+                                "values",
+                                "item-info"
+                            ],
+                            "default": null
+                        },
+                        "inLootTable": {
+                            "value":[
+                                "variables",
+                                "values",
+                                "in-loot-table"
+                            ],
+                            "default": false
+                        },
+                        "inVendor": {
+                            "value":[
+                                "variables",
+                                "values",
+                                "in-vendor"
+                            ],
+                            "default": false
+                        },
+                        "isUnique": {
+                            "value":[
+                                "variables",
+                                "values",
+                                "is-unique"
+                            ],
+                            "default": false
+                        },
+                        "isBOP": {
+                            "value":[
+                                "variables",
+                                "values",
+                                "is-bop"
+                            ],
+                            "default": false
+                        },
+                        "isBOE": {
+                            "value":[
+                                "variables",
+                                "values",
+                                "is-boe"
+                            ],
+                            "default": false
+                        },
+                        "reqFlagID": {
+                            "value": [
+                                "variables",
+                                "values",
+                                "req-flag-id"
+                            ],
+                            "default": 0
+                        },
+                        "reqSpecialtyID": {
+                            "value": [
+                                "variables",
+                                "values",
+                                "req-specialty-id"
+                            ],
+                            "default": 0
+                        },
+                        "reqSpecRank": {
+                            "value": [
+                                "variables",
+                                "values",
+                                "req-spec-rank"
+                            ],
+                            "default": 0
+                        },
+                        "reqAchievementID": {
+                            "value": [
+                                "variables",
+                                "values",
+                                "req-achievement-i-d"
+                            ],
+                            "default": 0
+                        },
+                        "stackSize": {
+                            "value": [
+                                "variables",
+                                "values",
+                                "stack-size"
+                            ],
+                            "default": 1
+                        },
+                        "color1": {
+                            "value": [
+                                "variables",
+                                "values",
+                                "color"
+                            ],
+                            "default": null
+                        },
+                        "decal": {
+                            "value": [
+                                "variables",
+                                "values",
+                                "decal"
+                            ],
+                            "default": null
+                        },
+                        "offsetGroupID": {
+                            "value": [
+                                "variables",
+                                "values",
+                                "offset-group-id"
+                            ],
+                            "default": null
+                        },
+                        "buildTypes": {
+                            "value": [
+                                "variables",
+                                "values",
+                                "build-types"
+                            ],
+                            "default": null
+                        },
+                        "reqPrecondition": {
+                            "value": [
+                                "variables",
+                                "values",
+                                "req-precondition"
+                            ],
+                            "default": null,
+                            "extra": {
+                                "separator": ""
+                            }
+                        },
+                        "animationFlag": {
+                            "value": [
+                                "variables",
+                                "values",
+                                "animation-flag"
+                            ],
+                            "default": null
+                        },
+                        "equipEffects": {
+                            "value": [
+                                "variables",
+                                "values",
+                                "equip-effects"
+                            ],
+                            "default": null
+                        },
+                        "readyForQA": false,
+                        "itemRating": {
+                            "value": [
+                                "variables",
+                                "values",
+                                "item-rating"
+                            ],
+                            "default": null
+                        },
+                        "isTwoHanded": {
+                            "value":[
+                                "variables",
+                                "values",
+                                "is-two-handed"
+                            ],
+                            "default": false
+                        },
+                        "minNumRequired": {
+                            "value": [
+                                "variables",
+                                "values",
+                                "min-num-required"
+                            ],
+                            "default": null
+                        },
+                        "delResIndex": {
+                            "value": [
+                                "variables",
+                                "values",
+                                "del-res-index"
+                            ],
+                            "default": null
+                        },
+                        "currencyLOT": {
+                            "value": [
+                                "variables",
+                                "values",
+                                "currency-lot"
+                            ],
+                            "default": null
+                        },
+                        "altCurrencyCost": {
+                            "value": [
+                                "variables",
+                                "values",
+                                "alt-currency-cost"
+                            ],
+                            "default": null
+                        },
+                        "subItems": {
+                            "value": [
+                                "variables",
+                                "values",
+                                "sub-items"
+                            ],
+                            "default": null
+                        },
+                        "audioEventUse": {
+                            "value": [
+                                "variables",
+                                "values",
+                                "audio-event-use"
+                            ],
+                            "default": null
+                        },
+                        "noEquipAnimation": {
+                            "value":[
+                                "variables",
+                                "values",
+                                "no-equip-animation"
+                            ],
+                            "default": false
+                        },
+                        "commendationLOT": {
+                            "value": [
+                                "variables",
+                                "values",
+                                "commendation-lot"
+                            ],
+                            "default": null
+                        },
+                        "commendationCost": {
+                            "value": [
+                                "variables",
+                                "values",
+                                "commendation-cost"
+                            ],
+                            "default": null
+                        },
+                        "audioEquipMetaEventSet": {
+                            "value": [
+                                "variables",
+                                "values",
+                                "audio-equip-meta-event-set"
+                            ],
+                            "default": null
+                        },
+                        "currencyCosts": {
+                            "value": [
+                                "--recipe"
+                            ],
+                            "default": null
+                        },
+                        "ingredientInfo": {
+                            "value": [
+                                "variables",
+                                "values",
+                                "ingredient-info"
+                            ],
+                            "default": null
+                        },
+                        "locStatus": null,
+                        "forgeType": {
+                            "value": [
+                                "variables",
+                                "values",
+                                "forge-type"
+                            ],
+                            "default": null
+                        },
+                        "SellMultiplier": {
+                            "value": [
+                                "variables",
+                                "values",
+                                "sell-multiplier"
+                            ],
+                            "default": null
+                        }
+                    }
+                }
+            ]
+        }
+    }
+}

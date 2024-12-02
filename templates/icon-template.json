@@ -1,0 +1,69 @@
+{
+    "name": "icon",
+    "parameters": {},
+    "variables": {
+        "values": {
+            "type": "object",
+            "object-properties": {
+                "icon": {
+                    "type": "resource",
+                    "arguments": {
+                        "prefix": "..\\..\\textures/../",
+                        "type": "dds"
+                    },
+                    "aliases": [
+                        "source",
+                        "IconPath"
+                    ],
+                    "description": "The icon resource."
+                },
+                "name": {
+                    "type": "string",
+                    "required": false,
+                    "nullable": true,
+                    "aliases": [
+                        "IconName"
+                    ],
+                    "description": "The name of the icon.",
+                    "default-hint": null,
+                    "hide-by-default": true
+                }
+            }
+        }
+    },
+    "actions": {
+        "add": {
+            "prepare": [
+                {
+                    "type": "generate-id",
+                    "table": "Icons",
+                    "column": "IconID"
+                }
+            ],
+            "apply": [
+                {
+                    "type": "insert",
+                    "table": "Icons",
+                    "columns": {
+                        "IconID": [
+                            "id"
+                        ],
+                        "IconPath": [
+                            "variables",
+                            "values",
+                            "icon"
+                        ],
+                        "IconName": {
+                            "value": [
+                                "variables",
+                                "values",
+                                "name"
+                            ],
+                            "default": null
+                        }
+                    }
+                }
+            ]
+        }
+    }
+}

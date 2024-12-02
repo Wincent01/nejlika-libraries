@@ -1,0 +1,45 @@
+{
+    "name": "file",
+    "parameters": {},
+    "variables": {
+        "values": {
+            "type": "object",
+            "object-properties": {
+                "source": {
+                    "type": "string",
+                    "aliases": [
+                        "src",
+                        "file",
+                        "input"
+                    ]
+                },
+                "destination": {
+                    "type": "string",
+                    "aliases": [
+                        "dest",
+                        "output"
+                    ]
+                }
+            }
+        }
+    },
+    "actions": {
+        "add": {
+            "apply": [
+                {
+                    "type": "file-copy",
+                    "source": [
+                        "variables",
+                        "values",
+                        "source"
+                    ],
+                    "destination": [
+                        "variables",
+                        "values",
+                        "destination"
+                    ]
+                }
+            ]
+        }
+    }
+}

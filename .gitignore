@@ -1,0 +1,7 @@
+build
+.vscode
+**/node_modules/**
+*.spec
+**/libbcrypt/**
+**/mariadb-connector-cpp/**
+.venv

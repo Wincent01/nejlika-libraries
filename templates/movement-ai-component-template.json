@@ -1,0 +1,146 @@
+{
+    "name": "movement-ai-component",
+    "parameters": {},
+    "variables": {
+        "values": {
+            "type": "object",
+            "object-properties": {
+                "MovementType": {
+                    "required": false,
+                    "nullable": false,
+                    "type": "string",
+                    "default": "Wander",
+                    "description": "The type of movement. Always 'Wander'.",
+                    "hide-by-default": true,
+                    "default-hint": "Wander"
+                },
+                "WanderChance": {
+                    "required": false,
+                    "nullable": false,
+                    "type": "number",
+                    "description": "Chance to start wandering, in percentage (?).",
+                    "hide-by-default": true,
+                    "default-hint": 90
+                },
+                "WanderDelayMin": {
+                    "required": false,
+                    "nullable": false,
+                    "type": "number",
+                    "description": "Minimum delay before wandering.",
+                    "hide-by-default": true,
+                    "default-hint": 3
+                },
+                "WanderDelayMax": {
+                    "required": false,
+                    "nullable": false,
+                    "type": "number",
+                    "description": "Maximum delay before wandering.",
+                    "hide-by-default": true,
+                    "default-hint": 6
+                },
+                "WanderSpeed": {
+                    "required": false,
+                    "nullable": false,
+                    "type": "number",
+                    "description": "Speed at which the AI wanders.",
+                    "hide-by-default": true,
+                    "default-hint": 0.5
+                },
+                "WanderRadius": {
+                    "required": false,
+                    "nullable": false,
+                    "type": "number",
+                    "description": "Radius within which the AI can wander.",
+                    "hide-by-default": true,
+                    "default-hint": 8
+                },
+                "attachedPath": {
+                    "required": false,
+                    "nullable": true,
+                    "type": "string",
+                    "description": "Optional path the AI is attached to.",
+                    "hide-by-default": true,
+                    "default-hint": null
+                }
+            }
+        }
+    },
+    "actions": {
+        "add": {
+            "prepare": [
+                {
+                    "type": "generate-id",
+                    "table": "MovementAIComponent",
+                    "column": "id"
+                }
+            ],
+            "apply": [
+                {
+                    "type": "insert",
+                    "table": "MovementAIComponent",
+                    "columns": {
+                        "id": [
+                            "id"
+                        ],
+                        "MovementType": {
+                            "value": [
+                                "variables",
+                                "values",
+                                "MovementType"
+                            ],
+                            "default": "Wander"
+                        },
+                        "WanderChance": {
+                            "value": [
+                                "variables",
+                                "values",
+                                "WanderChance"
+                            ],
+                            "default": 90
+                        },
+                        "WanderDelayMin": {
+                            "value": [
+                                "variables",
+                                "values",
+                                "WanderDelayMin"
+                            ],
+                            "default": 3
+                        },
+                        "WanderDelayMax": {
+                            "value": [
+                                "variables",
+                                "values",
+                                "WanderDelayMax"
+                            ],
+                            "default": 6
+                        },
+                        "WanderSpeed": {
+                            "value": [
+                                "variables",
+                                "values",
+                                "WanderSpeed"
+                            ],
+                            "default": 0.5
+                        },
+                        "WanderRadius": {
+                            "value": [
+                                "variables",
+                                "values",
+                                "WanderRadius"
+                            ],
+                            "default": 8
+                        },
+                        "attachedPath": {
+                            "value": [
+                                "variables",
+                                "values",
+                                "attachedPath"
+                            ],
+                            "default": null
+                        }
+                    }
+                }
+            ]
+        }
+    }
+}

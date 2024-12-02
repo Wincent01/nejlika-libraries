@@ -1,0 +1,661 @@
+{
+    "name": "object",
+    "parameters": {
+
+    },
+    "variables": {
+        "values": {
+            "type": "object",
+            "object-properties": {
+                "name": {
+                    "type": "string",
+                    "aliases": [
+                        "name"
+                    ],
+                    "required": false,
+                    "default-hint": "unnamed",
+                    "description": "The internal name of the object",
+                    "hide-by-default": true
+                },
+                "placeable": {
+                    "type": "boolean",
+                    "aliases": [
+                        "placeable"
+                    ],
+                    "required": false,
+                    "default-hint": true,
+                    "description": "Whether the object can be placed in the world with Happy Flower (?)",
+                    "hide-by-default": true
+                },
+                "type": {
+                    "type": "enum",
+                    "enum": [
+                        "LEGO brick",
+                        "NPC",
+                        "",
+                        "Environmental",
+                        "UserGeneratedNPCs",
+                        "Misc",
+                        "Structure",
+                        "Model",
+                        "Dummy",
+                        "Module",
+                        "Rebuildables",
+                        "Loot",
+                        "Enemies",
+                        "Zone Control Object",
+                        "PrimitiveModels",
+                        "Coin",
+                        "Smashables",
+                        "Powerup",
+                        "Shooting Gallery",
+                        "Mount",
+                        "MovingPlatforms",
+                        "HFHelper",
+                        "LEGO Brick",
+                        "vehicles",
+                        "HF Error Marker",
+                        "HF Error marker",
+                        "HF Marker",
+                        "Bouncers",
+                        "BlockingVolume",
+                        "Icon",
+                        "Blueprint",
+                        "Exhibits",
+                        "Zone",
+                        "Spring-Pads",
+                        "Property",
+                        "Interactives",
+                        "Pet",
+                        "Effect",
+                        "Vehicles",
+                        "Behavior",
+                        "Perf Mon",
+                        "Vehicle",
+                        "HF Gadgets",
+                        "LUP",
+                        "BlockingVolume for Vehicle only",
+                        "Switch",
+                        "Zone Control",
+                        "Enemy",
+                        "Overhead Icon",
+                        "ProjectileLauncher",
+                        "MissionGiver"
+                    ],
+                    "aliases": [
+                        "type"
+                    ],
+                    "description": "The category of the object"
+                },
+                "description": {
+                    "required": false,
+                    "nullable": true,
+                    "type": "string",
+                    "aliases": [
+                        "description"
+                    ],
+                    "default-hint": null,
+                    "description": "The internal description of the object",
+                    "hide-by-default": true
+                },
+                "npc-template-id": {
+                    "required": false,
+                    "nullable": true,
+                    "type": "integer",
+                    "aliases": [
+                        "npcTemplateID"
+                    ],
+                    "default-hint": null,
+                    "description": "The ID of the NPC template (?)",
+                    "hide-by-default": true
+                },
+                "display-name": {
+                    "required": false,
+                    "nullable": true,
+                    "type": "string",
+                    "aliases": [
+                        "displayName"
+                    ],
+                    "default-hint": null,
+                    "description": "The display name of the object (unused?)",
+                    "hide-by-default": true
+                },
+                "interaction-distance": {
+                    "required": false,
+                    "nullable": true,
+                    "type": "number",
+                    "aliases": [
+                        "interactionDistance"
+                    ],
+                    "default-hint": null,
+                    "description": "The distance at which the player can interact with the object, default works fine in most cases",
+                    "hide-by-default": true
+                },
+                "nametag": {
+                    "required": false,
+                    "nullable": true,
+                    "type": "boolean",
+                    "aliases": [
+                        "nametag",
+                        "name-tag"
+                    ],
+                    "default-hint": false,
+                    "description": "Whether the object has a nametag, should be true for NPCs"
+                },
+                "internal-notes": {
+                    "required": false,
+                    "nullable": true,
+                    "type": "string",
+                    "aliases": [
+                        "_internalNotes",
+                        "notes",
+                        "note"
+                    ],
+                    "default-hint": null,
+                    "description": "Internal notes about the object",
+                    "hide-by-default": true
+                },
+                "hq-valid": {
+                    "required": false,
+                    "nullable": true,
+                    "type": "boolean",
+                    "aliases": [
+                        "HQ_valid"
+                    ],
+                    "default-hint": true,
+                    "description": "(?)",
+                    "hide-by-default": true
+                },
+                "components": {
+                    "type": "array",
+                    "description": "The components attached to the object, creates one ComponentsRegistry entry for each component",
+                    "array-type": {
+                        "type": "object",
+                        "object-properties": {
+                            "id": {
+                                "type": "id",
+                                "required": false,
+                                "nullable": false,
+                                "aliases": [
+                                    "component"
+                                ],
+                                "default-hint": 0,
+                                "description": "Reference to the component, should be default (0) for components which do not have a seperate table"
+                            },
+                            "type": {
+                                "type": "enum",
+                                "enum": {
+                                    "ControllablePhysicsComponent": 1,
+                                    "RenderComponent": 2,
+                                    "SimplePhysicsComponent": 3,
+                                    "CharacterComponent": 4,
+                                    "ScriptComponent": 5,
+                                    "BouncerComponent": 6,
+                                    "DestructibleComponent": 7,
+                                    "GhostComponent": 8,
+                                    "SkillComponent": 9,
+                                    "SpawnerComponent": 10,
+                                    "ItemComponent": 11,
+                                    "RebuildComponent": 12,
+                                    "RebuildStartComponent": 13,
+                                    "RebuildActivatorComponent": 14,
+                                    "IconOnlyComponent": 15,
+                                    "VendorComponent": 16,
+                                    "InventoryComponent": 17,
+                                    "ProjectilePhysicsComponent": 18,
+                                    "ShootingGalleryComponent": 19,
+                                    "RigidBodyPhantomPhysicsComponent": 20,
+                                    "DropEffectComponent": 21,
+                                    "ChestComponent": 22,
+                                    "CollectibleComponent": 23,
+                                    "BlueprintComponent": 24,
+                                    "MovingPlatformComponent": 25,
+                                    "PetComponent": 26,
+                                    "PlatformBoundaryComponent": 27,
+                                    "ModuleComponent": 28,
+                                    "ArcadeComponent": 29,
+                                    "VehiclePhysicsComponent": 30,
+                                    "MovementAIComponent": 31,
+                                    "ExhibitComponent": 32,
+                                    "OverheadIconComponent": 33,
+                                    "PetControlComponent": 34,
+                                    "MinifigComponent": 35,
+                                    "PropertyComponent": 36,
+                                    "PetCreatorComponent": 37,
+                                    "ModelBuilderComponent": 38,
+                                    "ScriptedActivityComponent": 39,
+                                    "PhantomPhysicsComponent": 40,
+                                    "SpringpadComponent": 41,
+                                    "B3BehaviorsComponent": 42,
+                                    "PropertyEntranceComponent": 43,
+                                    "FXComponent": 44,
+                                    "PropertyManagementComponent": 45,
+                                    "SecondVehiclePhysicsComponent": 46,
+                                    "PhysicsSystemComponent": 47,
+                                    "QuickBuildComponent": 48,
+                                    "SwitchComponent": 49,
+                                    "MinigameComponent": 50,
+                                    "ChanglingComponent": 51,
+                                    "ChoiceBuildComponent": 52,
+                                    "PackageComponent": 53,
+                                    "SoundRepeaterComponent": 54,
+                                    "SoundAmbient2DComponent": 55,
+                                    "SoundAmbient3DComponent": 56,
+                                    "PreconditionComponent": 57,
+                                    "PlayerFlagsComponent": 58,
+                                    "CustomBuildAssemblyComponent": 59,
+                                    "BaseCombatAIComponent": 60,
+                                    "ModuleAssemblyComponent": 61,
+                                    "ShowcaseModelHandlerComponent": 62,
+                                    "RacingModuleComponent": 63,
+                                    "GenericActivatorComponent": 64,
+                                    "PropertyVendorComponent": 65,
+                                    "HFLightDirectionGadgetComponent": 66,
+                                    "RocketLaunchComponent": 67,
+                                    "RocketLandingComponent": 68,
+                                    "TriggerComponent": 69,
+                                    "DroppedLootComponent": 70,
+                                    "RacingControlComponent": 71,
+                                    "FactionTriggerComponent": 72,
+                                    "MissionNPCComponent": 73,
+                                    "RacingStatsComponent": 74,
+                                    "LUPExhibitComponent": 75,
+                                    "BBBComponent": 76,
+                                    "SoundTriggerComponent": 77,
+                                    "ProximityMonitorComponent": 78,
+                                    "RacingSoundTriggerComponent": 79,
+                                    "ChatComponent": 80,
+                                    "FriendsListComponent": 81,
+                                    "GuildComponent": 82,
+                                    "LocalSystemComponent": 83,
+                                    "MissionComponent": 84,
+                                    "MutableModelBehaviorsComponent": 85,
+                                    "PathfindingControlComponent": 86,
+                                    "PetTamingControlComponent": 87,
+                                    "PropertyEditorComponent": 88,
+                                    "SkinnedRenderComponent": 89,
+                                    "SlashCommandComponent": 90,
+                                    "StatusEffectComponent": 91,
+                                    "TeamsComponent": 92,
+                                    "TextEffectComponent": 93,
+                                    "TradeComponent": 94,
+                                    "UserControlComponent": 95,
+                                    "IgnoreListComponent": 96,
+                                    "LUPLaunchpadComponent": 97,
+                                    "BuffComponent": 98,
+                                    "InteractionManagerComponent": 99,
+                                    "DonationVendorComponent": 100,
+                                    "CombatMediatorComponent": 101,
+                                    "Component107": 107,
+                                    "Possesable": 108
+                                },
+                                "description": "The type of the component"
+                            }
+                        }
+                    }
+                },
+                "skills": {
+                    "type": "array",
+                    "required": false,
+                    "nullable": false,
+                    "description": "The skills attached to the object, creates one ObjectSkills entry for each skill. Make sure to add a SkillComponent with ID 0.",
+                    "default-hint": "none",
+                    "array-type": {
+                        "type": "object",
+                        "object-properties": {
+                            "id": {
+                                "type": "id",
+                                "required": true,
+                                "nullable": false,
+                                "aliases": [
+                                    "skill",
+                                    "skill-id"
+                                ],
+                                "types": [
+                                    "skill"
+                                ],
+                                "description": "Reference to the skill"
+                            },
+                            "type": {
+                                "type": "enum",
+                                "required": false,
+                                "nullable": true,
+                                "enum": {
+                                    "Use": 0,
+                                    "Equip": 1,
+                                    "Consumable": 3
+                                },
+                                "description": "The type of the skill, when it is used",
+                                "default-hint": null
+                            }
+                        }
+                    }
+                },
+                "map-icons": {
+                    "type": "array",
+                    "required": false,
+                    "nullable": false,
+                    "description": "The icons that can appear above the NPC's head and on the map",
+                    "array-type": {
+                        "type": "object",
+                        "object-properties": {
+                            "icon": {
+                                "type": "id",
+                                "required": true,
+                                "nullable": false,
+                                "aliases": [
+                                    "npc-icon",
+                                    "iconID"
+                                ],
+                                "description": "Reference to the npc icon, distinct from normal icons"
+                            },
+                            "state": {
+                                "type": "enum",
+                                "required": true,
+                                "nullable": false,
+                                "enum": {
+                                    "Mission Rewarding": 0,
+                                    "Mission Available": 1,
+                                    "Mission Active": 2,
+                                    "Mission Ready To Complete": 4,
+                                    "Mission Complete": 8,
+                                    "Mission Complete Available": 9,
+                                    "Mission Complete Active": 10,
+                                    "Mission Complete Ready To Complete": 12,
+                                    "Vendor": 66,
+                                    "Launch Pad or Bank": 69,
+                                    "Pet A": 109,
+                                    "Pet B": 110,
+                                    "Pet C": 111,
+                                    "Pet D": 105,
+                                    "Thinking": 100,
+                                    "Requires Items": 70,
+                                    "Brick Donation": 65,
+                                    "Choice Quickbuild": 68
+                                },
+                                "description": "The state when the icon is shown",
+                                "aliases": [
+                                    "iconState"
+                                ]
+                            }
+                        }
+                    },
+                    "aliases": [
+                        "icons"
+                    ],
+                    "default-hint": "none"
+                }
+            }
+        },
+        "locales": {
+            "required": false,
+            "type": "object",
+            "object-properties": {
+                "name": {
+                    "required": false,
+                    "type": "locale",
+                    "description": "The name of the object"
+                },
+                "description": {
+                    "required": false,
+                    "type": "locale",
+                    "description": "The description of the object, shown in the inventory"
+                }
+            }
+        }
+    },
+    "actions": {
+        "add": {
+            "prepare": [
+                {
+                    "type": "generate-id",
+                    "table": "Objects",
+                    "column": "id"
+                },
+                {
+                    "type": "cascade",
+                    "value": [
+                        "variables",
+                        "values",
+                        "components"
+                    ],
+                    "allow-none": true,
+                    "identifiers-only": true
+                }
+            ],
+            "apply": [
+                {
+                    "type": "cascade",
+                    "value": [
+                        "variables",
+                        "values",
+                        "components"
+                    ],
+                    "allow-none": true
+                },
+                {
+                    "type": "insert",
+                    "table": "Objects",
+                    "columns": {
+                        "id": [
+                            "id"
+                        ],
+                        "name": {
+                            "value": [
+                                "variables",
+                                "values",
+                                "name"
+                            ],
+                            "default": "unnamed"
+                        },
+                        "placeable": {
+                            "value": [
+                                "variables",
+                                "values",
+                                "placeable"
+                            ],
+                            "default": true
+                        },
+                        "type": [
+                            "variables",
+                            "values",
+                            "type"
+                        ],
+                        "description": {
+                            "value": [
+                                "variables",
+                                "values",
+                                "description"
+                            ],
+                            "default": null
+                        },
+                        "localize": true,
+                        "npcTemplateID": {
+                            "value": [
+                                "variables",
+                                "values",
+                                "npc-template-id"
+                            ],
+                            "default": null
+                        },
+                        "displayName": {
+                            "value": [
+                                "variables",
+                                "values",
+                                "display-name"
+                            ],
+                            "default": null
+                        },
+                        "interactionDistance": {
+                            "value": [
+                                "variables",
+                                "values",
+                                "interaction-distance"
+                            ],
+                            "default": null
+                        },
+                        "nametag": {
+                            "value": [
+                                "variables",
+                                "values",
+                                "nametag"
+                            ],
+                            "default": false
+                        },
+                        "_internalNotes": {
+                            "value": [
+                                "variables",
+                                "values",
+                                "internal-notes"
+                            ],
+                            "default": null
+                        },
+                        "locStatus": 2,
+                        "gate_version": null,
+                        "HQ_valid": {
+                            "value": [
+                                "variables",
+                                "values",
+                                "h-q-valid"
+                            ],
+                            "default": true
+                        }
+                    }
+                },
+                {
+                    "type": "for-each",
+                    "value": [
+                        "variables",
+                        "values",
+                        "components"
+                    ],
+                    "iterator": "entry",
+                    "operation": {
+                        "type": "insert",
+                        "table": "ComponentsRegistry",
+                        "columns": {
+                            "id": [
+                                "id"
+                            ],
+                            "component_type": [
+                                "variables",
+                                "values",
+                                "components",
+                                "$entry.indexer",
+                                "type"
+                            ],
+                            "component_id": {
+                                "value": [
+                                    "variables",
+                                    "values",
+                                    "components",
+                                    "$entry.indexer",
+                                    "id"
+                                ],
+                                "default": 0
+                            }
+                        }
+                    }
+                },
+                {
+                    "type": "for-each",
+                    "value": [
+                        "variables",
+                        "values",
+                        "skills"
+                    ],
+                    "allow-none": true,
+                    "iterator": "entry",
+                    "operation": {
+                        "type": "insert",
+                        "table": "ObjectSkills",
+                        "columns": {
+                            "skillID": [
+                                "variables",
+                                "values",
+                                "skills",
+                                "$entry.indexer",
+                                "id"
+                            ],
+                            "castOnType": {
+                                "value": [
+                                    "variables",
+                                    "values",
+                                    "skills",
+                                    "$entry.indexer",
+                                    "type"
+                                ],
+                                "default": null
+                            },
+                            "AICombatWeight": 100,
+                            "objectTemplate": [
+                                "id"
+                            ]
+                        }
+                    }
+                },
+                {
+                    "type": "for-each",
+                    "value": [
+                        "variables",
+                        "values",
+                        "map-icons"
+                    ],
+                    "allow-none": true,
+                    "iterator": "entry",
+                    "operation": {
+                        "type": "insert",
+                        "table": "mapIcon",
+                        "columns": {
+                            "iconID": [
+                                "variables",
+                                "values",
+                                "map-icons",
+                                "$entry.indexer",
+                                "icon"
+                            ],
+                            "iconState": [
+                                "variables",
+                                "values",
+                                "map-icons",
+                                "$entry.indexer",
+                                "state"
+                            ],
+                            "LOT": [
+                                "id"
+                            ]
+                        }
+                    }
+                },
+                {
+                    "type": "locale",
+                    "value": [
+                        "variables",
+                        "locales",
+                        "name"
+                    ],
+                    "allow-none": true,
+                    "prefix": "Objects_",
+                    "key": [
+                        "id"
+                    ],
+                    "suffix": "_name"
+                },
+                {
+                    "type": "locale",
+                    "value": [
+                        "variables",
+                        "locales",
+                        "description"
+                    ],
+                    "allow-none": true,
+                    "prefix": "Objects_",
+                    "key": [
+                        "id"
+                    ],
+                    "suffix": "_description"
+                }
+            ]
+        }
+    }
+}

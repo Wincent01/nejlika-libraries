@@ -1,0 +1,1 @@
+{"client":"path/to/client","database":"path/to/cdclient.sqlite","sqlite_to_fdb":"path/to/sqlite_to_fdb","fdb_to_sqlite":"path/to/fdb_to_sqlite","lookup":"lookup.json","locale":"locale.xml","mods":"mods","artifacts":"artifacts","added_resources":"res/maps/__nejlika__"}

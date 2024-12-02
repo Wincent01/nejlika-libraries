@@ -1,0 +1,279 @@
+{
+    "name": "skill",
+    "parameters": {},
+    "variables": {
+        "values": {
+            "type": "object",
+            "object-properties": {
+                "behavior": {
+                    "type": "id",
+                    "types": [
+                        "behavior"
+                    ],
+                    "aliases": [
+                        "root"
+                    ]
+                },
+                "imagination-cost": {
+                    "type": "integer",
+                    "required": false,
+                    "nullable": false,
+                    "aliases": [
+                        "cost"
+                    ]
+                },
+                "cooldown-group": {
+                    "type": "integer",
+                    "required": false,
+                    "nullable": false,
+                    "aliases": [
+                        "group",
+                        "cooldowngroup"
+                    ]
+                },
+                "cooldown": {
+                    "type": "number",
+                    "required": false,
+                    "nullable": false
+                },
+                "icon": {
+                    "type": "id",
+                    "required": false,
+                    "nullable": true,
+                    "types": [
+                        "icon"
+                    ]
+                },
+                "behaviors": {
+                    "type": "array",
+                    "required": false,
+                    "nullable": false,
+                    "array-type": {
+                        "type": "id",
+                        "types": [
+                            "behavior"
+                        ]
+                    }
+                },
+                "oom-skills": {
+                    "type": "array",
+                    "required": false,
+                    "nullable": true,
+                    "array-type": {
+                        "type": "id",
+                        "types": [
+                            "skill"
+                        ]
+                    },
+                    "aliases": [
+                        "oom",
+                        "oomSkillID"
+                    ]
+                },
+                "imagination-bonus-ui": {
+                    "type": "integer",
+                    "required": false,
+                    "nullable": true,
+                    "aliases": [
+                        "imagination-bonus",
+                        "imaginationBonusUI",
+                        "imBonusUI"
+                    ]
+                },
+                "life-bonus-ui": {
+                    "type": "integer",
+                    "required": false,
+                    "nullable": true,
+                    "aliases": [
+                        "life-bonus",
+                        "lifeBonusUI",
+                        "health-bonus-ui",
+                        "healthBonusUI",
+                        "health-bonus"
+                    ]
+                },
+                "armor-bonus-ui": {
+                    "type": "integer",
+                    "required": false,
+                    "nullable": true,
+                    "aliases": [
+                        "armor-bonus",
+                        "armorBonusUI"
+                    ]
+                },
+                "hide-icon": {
+                    "type": "boolean",
+                    "required": false,
+                    "nullable": false,
+                    "aliases": [
+                        "hideIcon"
+                    ]
+                }
+            }
+        },
+        "locales": {
+            "type": "object",
+            "required": false,
+            "object-properties": {
+                "name": {
+                    "type": "locale",
+                    "required": false,
+                    "nullable": false
+                },
+                "description": {
+                    "type": "locale",
+                    "required": false,
+                    "nullable": false
+                }
+            }
+        }
+    },
+    "actions": {
+        "add": {
+            "prepare": [
+                {
+                    "type": "generate-id",
+                    "table": "SkillBehavior",
+                    "column": "skillID"
+                },
+                {
+                    "type": "cascade",
+                    "value": [
+                        "variables",
+                        "values",
+                        "behaviors"
+                    ],
+                    "allow-none": true,
+                    "identifiers-only": true
+                }
+            ],
+            "apply": [
+                {
+                    "type": "cascade",
+                    "value": [
+                        "variables",
+                        "values",
+                        "behaviors"
+                    ],
+                    "allow-none": true
+                },
+                {
+                    "type": "insert",
+                    "table": "SkillBehavior",
+                    "columns": {
+                        "skillID": [
+                            "id"
+                        ],
+                        "locStatus": 2,
+                        "localize": true,
+                        "behaviorID": [
+                            "variables",
+                            "values",
+                            "behavior"
+                        ],
+                        "imaginationCost": {
+                            "value": [
+                                "variables",
+                                "values",
+                                "imagination-cost"
+                            ],
+                            "default": 0
+                        },
+                        "cooldowngroup": {
+                            "value": [
+                                "variables",
+                                "values",
+                                "cooldown-group"
+                            ],
+                            "default": null
+                        },
+                        "cooldown": {
+                            "value": [
+                                "variables",
+                                "values",
+                                "cooldown"
+                            ],
+                            "default": 0.0
+                        },
+                        "inNpcEditor": 0,
+                        "skillIcon": {
+                            "value": [
+                                "variables",
+                                "values",
+                                "icon"
+                            ],
+                            "default": null
+                        },
+                        "oomSkillID": {
+                            "value": [
+                                "variables",
+                                "values",
+                                "oom-skills"
+                            ],
+                            "default": null,
+                            "extra": {
+                                "seperator": ","
+                            }
+                        },
+                        "imBonusUI": {
+                            "value": [
+                                "variables",
+                                "values",
+                                "imagination-bonus-ui"
+                            ],
+                            "default": null
+                        },
+                        "lifeBonusUI": {
+                            "value": [
+                                "variables",
+                                "values",
+                                "life-bonus-ui"
+                            ],
+                            "default": null
+                        },
+                        "armorBonusUI": {
+                            "value": [
+                                "variables",
+                                "values",
+                                "armor-bonus-ui"
+                            ],
+                            "default": null
+                        },
+                        "hideIcon": {
+                            "value": [
+                                "variables",
+                                "values",
+                                "hide-icon"
+                            ],
+                            "default": false
+                        }
+                    }
+                },
+                {
+                    "type": "locale",
+                    "value": [
+                        "variables",
+                        "locales",
+                        "name"
+                    ],
+                    "allow-none": true,
+                    "prefix": "SkillBehavior_",
+                    "key": ["id"],
+                    "suffix": "_name"
+                },
+                {
+                    "type": "locale",
+                    "value": [
+                        "variables",
+                        "locales",
+                        "description"
+                    ],
+                    "allow-none": true,
+                    "prefix": "SkillBehavior_",
+                    "key": ["id"],
+                    "suffix": "_descriptionUI"
+                }
+            ]
+        }
+    }
+}

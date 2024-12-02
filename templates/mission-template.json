@@ -1,0 +1,1376 @@
+{
+    "name": "mission",
+    "parameters": {},
+    "variables": {
+        "values": {
+            "type": "object",
+            "object-properties": {
+                "defined-type": {
+                    "type": "enum",
+                    "aliases": [
+                        "defined_type",
+                        "type"
+                    ],
+                    "enum": [
+                        "Battle",
+                        "Build",
+                        "Events",
+                        "General",
+                        "Hidden",
+                        "LUPs",
+                        "Location",
+                        "Play",
+                        "Racing",
+                        "Test"
+                    ],
+                    "required": false,
+                    "nullable": false,
+                    "description": "Which category the mission belongs to, \"Location\" for missions that appear in the world.",
+                    "default-hint": "Hidden",
+                    "hide-by-default": false
+                },
+                "defined-subtype": {
+                    "required": false,
+                    "nullable": true,
+                    "type": "string",
+                    "aliases": [
+                        "defined_subtype",
+                        "subtype"
+                    ],
+                    "description": "The sub-category of the mission, like a world title, if applicable.",
+                    "default-hint": "Hidden",
+                    "hide-by-default": false
+                },
+                "ui-sort-order": {
+                    "required": false,
+                    "nullable": true,
+                    "type": "integer",
+                    "aliases": [
+                        "UISortOrder",
+                        "sort-order",
+                        "ui-sort-order",
+                        "order"
+                    ],
+                    "description": "The order in which the mission appears in the UI.",
+                    "default-hint": null,
+                    "hide-by-default": true
+                },
+                "offer-object-id": {
+                    "required": false,
+                    "nullable": false,
+                    "type": "id",
+                    "aliases": [
+                        "offer_objectID",
+                        "offer-object-id",
+                        "offer-id",
+                        "offer"
+                    ],
+                    "description": "The object that offers this mission, like an NPC. Should be -1 for achivements.",
+                    "default-hint": -1,
+                    "hide-by-default": false
+                },
+                "target-object-id": {
+                    "required": false,
+                    "nullable": false,
+                    "type": "id",
+                    "aliases": [
+                        "target_objectID",
+                        "target-object-id",
+                        "target-id",
+                        "target"
+                    ],
+                    "description": "The object that accepts this mission when complete, like an NPC. Should be -1 for achivements.",
+                    "default-hint": -1,
+                    "hide-by-default": false
+                },
+                "reward-currency": {
+                    "required": false,
+                    "nullable": false,
+                    "type": "integer",
+                    "aliases": [
+                        "reward_currency",
+                        "currency"
+                    ],
+                    "description": "The amount of currency rewarded by the mission.",
+                    "default-hint": 0,
+                    "hide-by-default": false
+                },
+                "lego-score": {
+                    "required": false,
+                    "nullable": false,
+                    "type": "integer",
+                    "aliases": [
+                        "LegoScore",
+                        "score",
+                        "reward-score",
+                        "xp",
+                        "experience"
+                    ],
+                    "description": "The amount of experience rewarded by the mission.",
+                    "default-hint": 0,
+                    "hide-by-default": false
+                },
+                "reward-reputation": {
+                    "required": false,
+                    "nullable": true,
+                    "type": "integer",
+                    "aliases": [
+                        "reward_reputation",
+                        "reputation"
+                    ],
+                    "description": "The amount of reputation rewarded by the mission.",
+                    "default-hint": 0,
+                    "hide-by-default": true
+                },
+                "is-choice-reward": {
+                    "required": false,
+                    "nullable": true,
+                    "type": "boolean",
+                    "aliases": [
+                        "isChoiceReward"
+                    ],
+                    "description": "Whether the reward is a choice of items or whether the items are given automatically.",
+                    "default-hint": false,
+                    "hide-by-default": false
+                },
+                "reward-items": {
+                    "required": false,
+                    "nullable": false,
+                    "type": "array",
+                    "array-type": {
+                        "type": "object",
+                        "object-properties": {
+                            "id": {
+                                "type": "id",
+                                "aliases": [
+                                    "item-id",
+                                    "item"
+                                ],
+                                "description": "An item rewarded by the mission."
+                            },
+                            "count": {
+                                "type": "integer",
+                                "aliases": [
+                                    "item-count",
+                                    "amount"
+                                ],
+                                "description": "The amount of the item rewarded by the mission."
+                            }
+                        }
+                    },
+                    "aliases": [
+                        "items"
+                    ],
+                    "description": "The items rewarded by the mission.",
+                    "default-hint": "None",
+                    "hide-by-default": false
+                },
+                "reward-emotes": {
+                    "required": false,
+                    "nullable": false,
+                    "type": "array",
+                    "array-type": {
+                        "type": "id",
+                        "types": [
+                            "emote"
+                        ]
+                    },
+                    "aliases": [
+                        "emotes"
+                    ],
+                    "description": "The emotes rewarded by the mission.",
+                    "default-hint": "None",
+                    "hide-by-default": true
+                },
+                "reward-maximagination": {
+                    "required": false,
+                    "nullable": false,
+                    "type": "integer",
+                    "aliases": [
+                        "reward_maximagination",
+                        "maximagination",
+                        "max-imagination"
+                    ],
+                    "description": "The amount of imagination capacity rewarded by the mission.",
+                    "default-hint": 0,
+                    "hide-by-default": true
+                },
+                "reward-maxhealth": {
+                    "required": false,
+                    "nullable": false,
+                    "type": "integer",
+                    "aliases": [
+                        "reward_maxhealth",
+                        "maxhealth",
+                        "max-health"
+                    ],
+                    "description": "The amount of health capacity rewarded by the mission.",
+                    "default-hint": 0,
+                    "hide-by-default": true
+                },
+                "reward-maxinventory": {
+                    "required": false,
+                    "nullable": false,
+                    "type": "integer",
+                    "aliases": [
+                        "reward_maxinventory",
+                        "maxinventory",
+                        "max-inventory"
+                    ],
+                    "description": "The amount of inventory space rewarded by the mission.",
+                    "default-hint": 0,
+                    "hide-by-default": true
+                },
+                "reward-maxmodel": {
+                    "required": false,
+                    "nullable": true,
+                    "type": "integer",
+                    "aliases": [
+                        "reward_maxmodel",
+                        "maxmodel",
+                        "max-model"
+                    ],
+                    "description": "The amount of models space rewarded by the mission.",
+                    "default-hint": null,
+                    "hide-by-default": true
+                },
+                "reward-maxwidget": {
+                    "required": false,
+                    "nullable": true,
+                    "type": "integer",
+                    "aliases": [
+                        "reward_maxwidget",
+                        "maxwidget",
+                        "max-widget"
+                    ],
+                    "description": "The amount of widgets space rewarded by the mission.",
+                    "default-hint": null,
+                    "hide-by-default": true
+                },
+                "reward-maxwallet": {
+                    "required": false,
+                    "nullable": true,
+                    "type": "integer",
+                    "aliases": [
+                        "reward_maxwallet",
+                        "maxwallet",
+                        "max-wallet"
+                    ],
+                    "description": "The amount of currency space rewarded by the mission.",
+                    "default-hint": null,
+                    "hide-by-default": true
+                },
+                "repeatable": {
+                    "required": false,
+                    "type": "boolean",
+                    "aliases": [
+                        "repeatable",
+                        "is-repeatable"
+                    ],
+                    "description": "Whether the mission can be repeated.",
+                    "default-hint": false,
+                    "hide-by-default": true
+                },
+                "reward-currency-repeatable": {
+                    "required": false,
+                    "nullable": true,
+                    "type": "integer",
+                    "aliases": [
+                        "reward_currency_repeatable",
+                        "currency-repeatable"
+                    ],
+                    "description": "The amount of currency rewarded by the mission when repeated.",
+                    "default-hint": null,
+                    "hide-by-default": true
+                },
+                "reward-items-repeatable": {
+                    "required": false,
+                    "type": "array",
+                    "array-type": {
+                        "type": "object",
+                        "object-properties": {
+                            "id": {
+                                "type": "id",
+                                "aliases": [
+                                    "item-id",
+                                    "item"
+                                ],
+                                "description": "An item rewarded by the mission when repeated."
+                            },
+                            "count": {
+                                "type": "integer",
+                                "aliases": [
+                                    "item-count",
+                                    "amount"
+                                ],
+                                "description": "The amount of the item rewarded by the mission when repeated."
+                            }
+                        }
+                    },
+                    "aliases": [
+                        "reward-items-repeat"
+                    ],
+                    "description": "The items rewarded by the mission when repeated.",
+                    "default-hint": "None",
+                    "hide-by-default": true
+                },
+                "time-limit": {
+                    "required": false,
+                    "nullable": true,
+                    "type": "integer",
+                    "aliases": [
+                        "time_limit"
+                    ],
+                    "description": "The time limit for the mission.",
+                    "default-hint": null,
+                    "hide-by-default": true
+                },
+                "is-mission": {
+                    "required": false,
+                    "type": "boolean",
+                    "aliases": [
+                        "isMission"
+                    ],
+                    "description": "Whether the object is a mission (true) or an achievement (false).",
+                    "default-hint": true,
+                    "hide-by-default": false
+                },
+                "mission-icon-id": {
+                    "required": false,
+                    "nullable": true,
+                    "type": "id",
+                    "types": [
+                        "icon"
+                    ],
+                    "aliases": [
+                        "missionIconID",
+                        "icon"
+                    ],
+                    "description": "The icon to display for the mission in the UI.",
+                    "default-hint": null,
+                    "hide-by-default": false
+                },
+                "turn-in-icon": {
+                    "required": false,
+                    "nullable": true,
+                    "type": "id",
+                    "types": [
+                        "icon"
+                    ],
+                    "aliases": [
+                        "turn-in-icon-id",
+                        "tooltip-icon"
+                    ],
+                    "description": "The icon to display with the tooltip for the mission when it is ready to turn in.",
+                    "default-hint": null,
+                    "hide-by-default": false
+                },
+                "prerequisites": {
+                    "required": false,
+                    "nullable": true,
+                    "type": "array",
+                    "array-type": {
+                        "type": "id-any",
+                        "types": [
+                            "mission"
+                        ]
+                    },
+                    "aliases": [
+                        "prereqMissionID",
+                        "prerequisites",
+                        "prereq-mission-id"
+                    ],
+                    "description": "The missions that must be completed before this mission is available.",
+                    "default-hint": "None",
+                    "hide-by-default": false
+                },
+                "in-motd": {
+                    "required": false,
+                    "nullable": false,
+                    "type": "boolean",
+                    "aliases": [
+                        "inMOTD",
+                        "is-mission-of-the-day"
+                    ],
+                    "description": "Whether the mission is in the mission of the day pool.",
+                    "default-hint": false,
+                    "hide-by-default": true
+                },
+                "cooldown-time": {
+                    "required": false,
+                    "nullable": true,
+                    "type": "integer",
+                    "aliases": [
+                        "cooldownTime"
+                    ],
+                    "description": "The time before the mission can be repeated.",
+                    "default-hint": null,
+                    "hide-by-default": true
+                },
+                "is-random": {
+                    "required": false,
+                    "nullable": true,
+                    "type": "boolean",
+                    "aliases": [
+                        "isRandom"
+                    ],
+                    "description": "Whether the mission is randomly selected from a pool.",
+                    "default-hint": false,
+                    "hide-by-default": true
+                },
+                "random-pool": {
+                    "required": false,
+                    "nullable": true,
+                    "type": "string",
+                    "aliases": [
+                        "randomPool"
+                    ],
+                    "description": "The pool of missions from which the mission is randomly selected.",
+                    "default-hint": null,
+                    "hide-by-default": true
+                },
+                "ui-prereq-id": {
+                    "required": false,
+                    "nullable": true,
+                    "type": "integer",
+                    "aliases": [
+                        "UIPrereqID",
+                        "ui-prerequisite-id",
+                        "ui-prerequisites"
+                    ],
+                    "description": "(?)",
+                    "default-hint": null,
+                    "hide-by-default": true
+                },
+                "hud-states": {
+                    "required": false,
+                    "nullable": true,
+                    "type": "string",
+                    "aliases": [
+                        "HUDStates"
+                    ],
+                    "description": "(?)",
+                    "default-hint": null,
+                    "hide-by-default": true
+                },
+                "reward-bankinventory": {
+                    "required": false,
+                    "nullable": true,
+                    "type": "integer",
+                    "aliases": [
+                        "reward_bankinventory",
+                        "bankinventory",
+                        "bank-inventory"
+                    ],
+                    "description": "The amount of bank inventory space rewarded by the mission.",
+                    "default-hint": 0,
+                    "hide-by-default": true
+                },
+                "tasks": {
+                    "required": false,
+                    "nullable": false,
+                    "type": "array",
+                    "array-type": {
+                        "type": "id",
+                        "types": [
+                            "task"
+                        ],
+                        "arguments": {
+                            "mission-id": ["root", "id"]
+                        }
+                    },
+                    "aliases": [
+                        "mission-tasks"
+                    ],
+                    "description": "The tasks that must be completed to finish the mission.",
+                    "default-hint": "None",
+                    "hide-by-default": false
+                },
+                "cinematics": {
+                    "required": false,
+                    "nullable": false,
+                    "type": "object",
+                    "object-properties": {
+                        "accepted": {
+                            "required": false,
+                            "nullable": true,
+                            "type": "string",
+                            "description": "The cinematic that plays when the mission is accepted.",
+                            "default-hint": null,
+                            "hide-by-default": false
+                        },
+                        "accepted-leadin": {
+                            "required": false,
+                            "nullable": true,
+                            "type": "number",
+                            "description": "(?)",
+                            "default-hint": null,
+                            "hide-by-default": true
+                        },
+                        "completed": {
+                            "required": false,
+                            "nullable": true,
+                            "type": "string",
+                            "description": "The cinematic that plays when the mission is completed.",
+                            "default-hint": null,
+                            "hide-by-default": false
+                        },
+                        "completed-leadin": {
+                            "required": false,
+                            "nullable": true,
+                            "type": "number",
+                            "description": "(?)",
+                            "default-hint": null,
+                            "hide-by-default": true
+                        },
+                        "repeatable": {
+                            "required": false,
+                            "nullable": true,
+                            "type": "string",
+                            "description": "The cinematic that plays when the mission is repeated.",
+                            "default-hint": null,
+                            "hide-by-default": true
+                        },
+                        "repeatable-leadin": {
+                            "required": false,
+                            "nullable": true,
+                            "type": "number",
+                            "description": "(?)",
+                            "default-hint": null,
+                            "hide-by-default": true
+                        },
+                        "repeatable-complete": {
+                            "required": false,
+                            "nullable": true,
+                            "type": "string",
+                            "description": "The cinematic that plays when the mission is repeated and completed.",
+                            "default-hint": null,
+                            "hide-by-default": true
+                        },
+                        "repeatable-complete-leadin": {
+                            "required": false,
+                            "nullable": true,
+                            "type": "number",
+                            "description": "(?)",
+                            "default-hint": null,
+                            "hide-by-default": true
+                        }
+                    },
+                    "aliases": [
+                        "mission-cinematics"
+                    ],
+                    "description": "The cinematics that play when the mission changes states.",
+                    "default-hint": "None",
+                    "hide-by-default": true
+                }
+            }
+        },
+        "locales": {
+            "type": "object",
+            "required": false,
+            "nullable": false,
+            "object-properties": {
+                "name": {
+                    "type": "locale",
+                    "required": false,
+                    "aliases": [
+                        "title"
+                    ],
+                    "description": "The title of the mission.",
+                    "hide-by-default": false,
+                    "default-hint": null
+                },
+                "accept-chat-bubble": {
+                    "type": "locale",
+                    "required": false,
+                    "aliases": [
+                        "accept",
+                        "chat-accept"
+                    ],
+                    "description": "The chat bubble text that appears when the mission is accepted.",
+                    "hide-by-default": false,
+                    "default-hint": null
+                },
+                "chat-state-available": {
+                    "type": "locale",
+                    "required": false,
+                    "aliases": [
+                        "chat-available",
+                        "chat_state_1"
+                    ],
+                    "description": "The chat bubble text that appears when the mission is available.",
+                    "hide-by-default": false,
+                    "default-hint": null
+                },
+                "chat-state-active": {
+                    "type": "locale",
+                    "required": false,
+                    "aliases": [
+                        "chat-active",
+                        "chat_state_2"
+                    ],
+                    "description": "The chat bubble text that appears when the mission is active.",
+                    "hide-by-default": false,
+                    "default-hint": null
+                },
+                "chat-state-ready-to-complete": {
+                    "type": "locale",
+                    "required": false,
+                    "aliases": [
+                        "chat-ready-to-complete",
+                        "chat-ready",
+                        "chat_state_3"
+                    ],
+                    "description": "The chat bubble text that appears when the mission is ready to complete.",
+                    "hide-by-default": false,
+                    "default-hint": null
+                },
+                "chat-state-complete": {
+                    "type": "locale",
+                    "required": false,
+                    "aliases": [
+                        "chat-complete",
+                        "chat_state_4"
+                    ],
+                    "description": "The chat bubble text that appears when the mission is complete.",
+                    "hide-by-default": false,
+                    "default-hint": null
+                },
+                "completion-success-tooltip": {
+                    "type": "locale",
+                    "required": false,
+                    "aliases": [
+                        "success-tooltip",
+                        "completion_success_tip"
+                    ],
+                    "description": "The tooltip that appears when the mission is completed and ready to turn in.",
+                    "hide-by-default": false,
+                    "default-hint": null
+                },
+                "in-progress": {
+                    "type": "locale",
+                    "required": false,
+                    "aliases": [
+                        "progress",
+                        "in-progress",
+                        "in_progress"
+                    ],
+                    "description": "The text that appears in the talk UI when the mission is in progress.",
+                    "hide-by-default": false,
+                    "default-hint": null
+                },
+                "offer": {
+                    "type": "locale",
+                    "required": false,
+                    "aliases": [
+                        
+                    ],
+                    "description": "The text that appears in the talk UI when the mission is offered.",
+                    "hide-by-default": false,
+                    "default-hint": null
+                },
+                "ready-to-complete": {
+                    "type": "locale",
+                    "required": false,
+                    "aliases": [
+                        "ready",
+                        "ready-to-complete",
+                        "ready_to_complete"
+                    ],
+                    "description": "The text that appears in the talk UI when the mission is ready to complete.",
+                    "hide-by-default": false,
+                    "default-hint": null
+                }
+            }
+        }
+    },
+    "actions": {
+        "add": {
+            "prepare": [
+                {
+                    "type": "generate-id",
+                    "table": "Missions",
+                    "column": "id"
+                }
+            ],
+            "apply": [
+                {
+                    "type": "insert",
+                    "table": "Missions",
+                    "columns": {
+                        "id": [
+                            "id"
+                        ],
+                        "defined_type": {
+                            "value": [
+                                "variables",
+                                "values",
+                                "defined-type"
+                            ],
+                            "default": "Hidden"
+                        },
+                        "defined_subtype": {
+                            "value": [
+                                "variables",
+                                "values",
+                                "defined-subtype"
+                            ],
+                            "default": "Hidden"
+                        },
+                        "UISortOrder": {
+                            "value": [
+                                "variables",
+                                "values",
+                                "ui-sort-order"
+                            ],
+                            "default": null
+                        },
+                        "offer_objectID": {
+                            "value": [
+                                "variables",
+                                "values",
+                                "offer-object-id"
+                            ],
+                            "default": -1
+                        },
+                        "target_objectID": {
+                            "value": [
+                                "variables",
+                                "values",
+                                "target-object-id"
+                            ],
+                            "default": -1
+                        },
+                        "reward_currency": {
+                            "value": [
+                                "variables",
+                                "values",
+                                "reward-currency"
+                            ],
+                            "default": 0
+                        },
+                        "LegoScore": {
+                            "value": [
+                                "variables",
+                                "values",
+                                "lego-score"
+                            ],
+                            "default": 0
+                        },
+                        "reward_reputation": {
+                            "value": [
+                                "variables",
+                                "values",
+                                "reward-reputation"
+                            ],
+                            "default": 0
+                        },
+                        "isChoiceReward": {
+                            "value": [
+                                "variables",
+                                "values",
+                                "is-choice-reward"
+                            ],
+                            "default": false
+                        },
+                        "reward_item1": {
+                            "value": [
+                                "variables",
+                                "values",
+                                "reward-items",
+                                "[0]",
+                                "id"
+                            ],
+                            "default": -1
+                        },
+                        "reward_item1_count": {
+                            "value": [
+                                "variables",
+                                "values",
+                                "reward-items",
+                                "[0]",
+                                "count"
+                            ],
+                            "default": 0
+                        },
+                        "reward_item2": {
+                            "value": [
+                                "variables",
+                                "values",
+                                "reward-items",
+                                "[1]",
+                                "id"
+                            ],
+                            "default": -1
+                        },
+                        "reward_item2_count": {
+                            "value": [
+                                "variables",
+                                "values",
+                                "reward-items",
+                                "[1]",
+                                "count"
+                            ],
+                            "default": 0
+                        },
+                        "reward_item3": {
+                            "value": [
+                                "variables",
+                                "values",
+                                "reward-items",
+                                "[2]",
+                                "id"
+                            ],
+                            "default": -1
+                        },
+                        "reward_item3_count": {
+                            "value": [
+                                "variables",
+                                "values",
+                                "reward-items",
+                                "[2]",
+                                "count"
+                            ],
+                            "default": 0
+                        },
+                        "reward_item4": {
+                            "value": [
+                                "variables",
+                                "values",
+                                "reward-items",
+                                "[3]",
+                                "id"
+                            ],
+                            "default": -1
+                        },
+                        "reward_item4_count": {
+                            "value": [
+                                "variables",
+                                "values",
+                                "reward-items",
+                                "[3]",
+                                "count"
+                            ],
+                            "default": 0
+                        },
+                        "reward_emote": {
+                            "value": [
+                                "variables",
+                                "values",
+                                "reward-emotes",
+                                "[0]"
+                            ],
+                            "default": -1
+                        },
+                        "reward_emote2": {
+                            "value": [
+                                "variables",
+                                "values",
+                                "reward-emotes",
+                                "[1]"
+                            ],
+                            "default": -1
+                        },
+                        "reward_emote3": {
+                            "value": [
+                                "variables",
+                                "values",
+                                "reward-emotes",
+                                "[2]"
+                            ],
+                            "default": -1
+                        },
+                        "reward_emote4": {
+                            "value": [
+                                "variables",
+                                "values",
+                                "reward-emotes",
+                                "[3]"
+                            ],
+                            "default": -1
+                        },
+                        "reward_maximagination": {
+                            "value": [
+                                "variables",
+                                "values",
+                                "reward-maximagination"
+                            ],
+                            "default": 0
+                        },
+                        "reward_maxhealth": {
+                            "value": [
+                                "variables",
+                                "values",
+                                "reward-maxhealth"
+                            ],
+                            "default": 0
+                        },
+                        "reward_maxinventory": {
+                            "value": [
+                                "variables",
+                                "values",
+                                "reward-maxinventory"
+                            ],
+                            "default": 0
+                        },
+                        "reward_maxmodel": {
+                            "value": [
+                                "variables",
+                                "values",
+                                "reward-maxmodel"
+                            ],
+                            "default": null
+                        },
+                        "reward_maxwidget": {
+                            "value": [
+                                "variables",
+                                "values",
+                                "reward-maxwidget"
+                            ],
+                            "default": null
+                        },
+                        "reward_maxwallet": {
+                            "value": [
+                                "variables",
+                                "values",
+                                "reward-maxwallet"
+                            ],
+                            "default": null
+                        },
+                        "repeatable": {
+                            "value": [
+                                "variables",
+                                "values",
+                                "repeatable"
+                            ],
+                            "default": false
+                        },
+                        "reward_currency_repeatable": {
+                            "value": [
+                                "variables",
+                                "values",
+                                "reward-currency-repeatable"
+                            ],
+                            "default": null
+                        },
+                        "reward_item1_repeatable": {
+                            "value": [
+                                "variables",
+                                "values",
+                                "reward-items-repeatable",
+                                "[0]",
+                                "id"
+                            ],
+                            "default": -1
+                        },
+                        "reward_item1_repeat_count": {
+                            "value": [
+                                "variables",
+                                "values",
+                                "reward-items-repeatable",
+                                "[0]",
+                                "count"
+                            ],
+                            "default": 1
+                        },
+                        "reward_item2_repeatable": {
+                            "value": [
+                                "variables",
+                                "values",
+                                "reward-items-repeatable",
+                                "[1]",
+                                "id"
+                            ],
+                            "default": -1
+                        },
+                        "reward_item2_repeat_count": {
+                            "value": [
+                                "variables",
+                                "values",
+                                "reward-items-repeatable",
+                                "[1]",
+                                "count"
+                            ],
+                            "default": 1
+                        },
+                        "reward_item3_repeatable": {
+                            "value": [
+                                "variables",
+                                "values",
+                                "reward-items-repeatable",
+                                "[2]",
+                                "id"
+                            ],
+                            "default": -1
+                        },
+                        "reward_item3_repeat_count": {
+                            "value": [
+                                "variables",
+                                "values",
+                                "reward-items-repeatable",
+                                "[2]",
+                                "count"
+                            ],
+                            "default": 1
+                        },
+                        "reward_item4_repeatable": {
+                            "value": [
+                                "variables",
+                                "values",
+                                "reward-items-repeatable",
+                                "[3]",
+                                "id"
+                            ],
+                            "default": -1
+                        },
+                        "reward_item4_repeat_count": {
+                            "value": [
+                                "variables",
+                                "values",
+                                "reward-items-repeatable",
+                                "[3]",
+                                "count"
+                            ],
+                            "default": 1
+                        },
+                        "time_limit": {
+                            "value": [
+                                "variables",
+                                "values",
+                                "time-limit"
+                            ],
+                            "default": null
+                        },
+                        "isMission": {
+                            "value": [
+                                "variables",
+                                "values",
+                                "is-mission"
+                            ],
+                            "default": true
+                        },
+                        "missionIconID": {
+                            "value": [
+                                "variables",
+                                "values",
+                                "mission-icon-id"
+                            ],
+                            "default": null
+                        },
+                        "prereqMissionID": {
+                            "value": [
+                                "variables",
+                                "values",
+                                "prerequisites"
+                            ],
+                            "default": null,
+                            "extra": {
+                                "seperator": ""
+                            }
+                        },
+                        "localize": true,
+                        "inMOTD": {
+                            "value": [
+                                "variables",
+                                "values",
+                                "in-motd"
+                            ],
+                            "default": false
+                        },
+                        "cooldownTime": {
+                            "value": [
+                                "variables",
+                                "values",
+                                "cooldown-time"
+                            ],
+                            "default": null
+                        },
+                        "isRandom": {
+                            "value": [
+                                "variables",
+                                "values",
+                                "is-random"
+                            ],
+                            "default": false
+                        },
+                        "randomPool": {
+                            "value": [
+                                "variables",
+                                "values",
+                                "random-pool"
+                            ],
+                            "default": null
+                        },
+                        "UIPrereqID": {
+                            "value": [
+                                "variables",
+                                "values",
+                                "ui-prereq-id"
+                            ],
+                            "default": null
+                        },
+                        "gate_version": null,
+                        "HUDStates": {
+                            "value": [
+                                "variables",
+                                "values",
+                                "hud-states"
+                            ],
+                            "default": null
+                        },
+                        "locStatus": 2,
+                        "reward_bankinventory": {
+                            "value": [
+                                "variables",
+                                "values",
+                                "reward-bankinventory"
+                            ],
+                            "default": 0
+                        }
+                    }
+                },
+                {
+                    "type": "insert",
+                    "table": "MissionText",
+                    "columns": {
+                        "id": [
+                            "id"
+                        ],
+                        "turnInIconID": {
+                            "value": [
+                                "variables",
+                                "values",
+                                "turn-in-icon"
+                            ],
+                            "default": null
+                        },
+                        "CinematicAccepted": {
+                            "value": [
+                                "variables",
+                                "values",
+                                "cinematics",
+                                "accepted"
+                            ],
+                            "default": null
+                        },
+                        "CinematicAcceptedLeadin": {
+                            "value": [
+                                "variables",
+                                "values",
+                                "cinematics",
+                                "accepted-leadin"
+                            ],
+                            "default": null
+                        },
+                        "CinematicCompleted": {
+                            "value": [
+                                "variables",
+                                "values",
+                                "cinematics",
+                                "completed"
+                            ],
+                            "default": null
+                        },
+                        "CinematicCompletedLeadin": {
+                            "value": [
+                                "variables",
+                                "values",
+                                "cinematics",
+                                "completed-leadin"
+                            ],
+                            "default": null
+                        },
+                        "CinematicRepeatable": {
+                            "value": [
+                                "variables",
+                                "values",
+                                "cinematics",
+                                "repeatable"
+                            ],
+                            "default": null
+                        },
+                        "CinematicRepeatableLeadin": {
+                            "value": [
+                                "variables",
+                                "values",
+                                "cinematics",
+                                "repeatable-leadin"
+                            ],
+                            "default": null
+                        },
+                        "CinematicRepeatableCompleted": {
+                            "value": [
+                                "variables",
+                                "values",
+                                "cinematics",
+                                "repeatable-complete"
+                            ],
+                            "default": null
+                        },
+                        "CinematicRepeatableCompletedLeadin": {
+                            "value": [
+                                "variables",
+                                "values",
+                                "cinematics",
+                                "repeatable-complete-leadin"
+                            ],
+                            "default": null
+                        },
+                        "localize": true,
+                        "locStatus": 2,
+                        "gate_version": null
+                    }
+                },
+                {
+                    "type": "cascade",
+                    "allow-none": true,
+                    "value": [
+                        "variables",
+                        "values",
+                        "tasks"
+                    ]
+                },
+                {
+                    "type": "locale",
+                    "value": [
+                        "variables",
+                        "locales",
+                        "name"
+                    ],
+                    "allow-none": true,
+                    "prefix": "Missions_",
+                    "key": [
+                        "id"
+                    ],
+                    "suffix": "_name"
+                },
+                {
+                    "type": "locale",
+                    "value": [
+                        "variables",
+                        "locales",
+                        "accept-chat-bubble"
+                    ],
+                    "allow-none": true,
+                    "prefix": "MissionText_",
+                    "key": [
+                        "id"
+                    ],
+                    "suffix": "_accept_chat_bubble"
+                },
+                {
+                    "type": "locale",
+                    "value": [
+                        "variables",
+                        "locales",
+                        "chat-state-available"
+                    ],
+                    "allow-none": true,
+                    "prefix": "MissionText_",
+                    "key": [
+                        "id"
+                    ],
+                    "suffix": "_chat_state_1"
+                },
+                {
+                    "type": "locale",
+                    "value": [
+                        "variables",
+                        "locales",
+                        "chat-state-active"
+                    ],
+                    "allow-none": true,
+                    "prefix": "MissionText_",
+                    "key": [
+                        "id"
+                    ],
+                    "suffix": "_chat_state_2"
+                },
+                {
+                    "type": "locale",
+                    "value": [
+                        "variables",
+                        "locales",
+                        "chat-state-ready-to-complete"
+                    ],
+                    "allow-none": true,
+                    "prefix": "MissionText_",
+                    "key": [
+                        "id"
+                    ],
+                    "suffix": "_chat_state_3"
+                },
+                {
+                    "type": "locale",
+                    "value": [
+                        "variables",
+                        "locales",
+                        "chat-state-complete"
+                    ],
+                    "allow-none": true,
+                    "prefix": "MissionText_",
+                    "key": [
+                        "id"
+                    ],
+                    "suffix": "_chat_state_4"
+                },
+                {
+                    "type": "locale",
+                    "value": [
+                        "variables",
+                        "locales",
+                        "completion-success-tooltip"
+                    ],
+                    "allow-none": true,
+                    "prefix": "MissionText_",
+                    "key": [
+                        "id"
+                    ],
+                    "suffix": "_completion_succeed_tip"
+                },
+                {
+                    "type": "locale",
+                    "value": [
+                        "variables",
+                        "locales",
+                        "in-progress"
+                    ],
+                    "allow-none": true,
+                    "prefix": "MissionText_",
+                    "key": [
+                        "id"
+                    ],
+                    "suffix": "_in_progress"
+                },
+                {
+                    "type": "locale",
+                    "value": [
+                        "variables",
+                        "locales",
+                        "offer"
+                    ],
+                    "allow-none": true,
+                    "prefix": "MissionText_",
+                    "key": [
+                        "id"
+                    ],
+                    "suffix": "_offer"
+                },
+                {
+                    "type": "locale",
+                    "value": [
+                        "variables",
+                        "locales",
+                        "ready-to-complete"
+                    ],
+                    "allow-none": true,
+                    "prefix": "MissionText_",
+                    "key": [
+                        "id"
+                    ],
+                    "suffix": "_ready_to_complete"
+                }
+            ]
+        }
+    }
+}

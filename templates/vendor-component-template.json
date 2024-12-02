@@ -1,0 +1,83 @@
+{
+    "name": "vendor-component",
+    "parameters": {
+
+    },
+    "variables": {
+        "values": {
+            "type": "object",
+            "object-properties": {
+                "buy-scalar": {
+                    "type": "number",
+                    "aliases": [
+                        "buyScalar"
+                    ]
+                },
+                "sell-scalar": {
+                    "type": "number",
+                    "aliases": [
+                        "sellScalar"
+                    ]
+                },
+                "refresh-time-seconds": {
+                    "type": "number",
+                    "aliases": [
+                        "refreshTimeSeconds"
+                    ]
+                },
+                "loot-matrix-index": {
+                    "type": "id",
+                    "types": [
+                        "loot-matrix"
+                    ],
+                    "aliases": [
+                        "LootMatrixIndex",
+                        "loot-matrix"
+                    ]
+                }
+            }
+        }
+    },
+    "actions": {
+        "add": {
+            "prepare": [
+                {
+                    "type": "generate-id",
+                    "table": "VendorComponent",
+                    "column": "id"
+                }
+            ],
+            "apply": [
+                {
+                    "type": "insert",
+                    "table": "VendorComponent",
+                    "columns": {
+                        "id": [
+                            "id"
+                        ],
+                        "buyScalar": [
+                            "variables",
+                            "values",
+                            "buy-scalar"
+                        ],
+                        "sellScalar": [
+                            "variables",
+                            "values",
+                            "sell-scalar"
+                        ],
+                        "refreshTimeSeconds": [
+                            "variables",
+                            "values",
+                            "refresh-time-seconds"
+                        ],
+                        "LootMatrixIndex": [
+                            "variables",
+                            "values",
+                            "loot-matrix-index"
+                        ]
+                    }
+                }
+            ]
+        }
+    }
+}

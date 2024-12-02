@@ -1,0 +1,275 @@
+{
+    "name": "camera-path",
+    "parameters": {},
+    "variables": {
+        "values": {
+            "type": "object",
+            "object-properties": {
+                "zone": {
+                    "type": "id",
+                    "aliases": [
+                        "world"
+                    ]
+                },
+                "name": {
+                    "type": "string"
+                },
+                "rotate-player": {
+                    "type": "boolean",
+                    "required": false,
+                    "default-hint": false,
+                    "description": "Whether or not the player should rotate (?).",
+                    "hide-by-default": true
+                },
+                "next-path": {
+                    "type": "string",
+                    "required": false,
+                    "description": "The name of the next path to follow after this one.",
+                    "hide-by-default": true,
+                    "default-hint": ""
+                },
+                "waypoints": {
+                    "type": "array",
+                    "array-type": {
+                        "type": "object",
+                        "object-properties": {
+                            "position": {
+                                "type": "object",
+                                "object-properties": {
+                                    "x": {
+                                        "type": "number"
+                                    },
+                                    "y": {
+                                        "type": "number"
+                                    },
+                                    "z": {
+                                        "type": "number"
+                                    }
+                                }
+                            },
+                            "rotation": {
+                                "type": "object",
+                                "object-properties": {
+                                    "x": {
+                                        "type": "number"
+                                    },
+                                    "y": {
+                                        "type": "number"
+                                    },
+                                    "z": {
+                                        "type": "number"
+                                    },
+                                    "w": {
+                                        "type": "number"
+                                    }
+                                }
+                            },
+                            "time": {
+                                "type": "number",
+                                "required": true,
+                                "description": "The time to wait at this waypoint before moving to the next one."
+                            },
+                            "field-of-view": {
+                                "type": "number",
+                                "required": false,
+                                "description": "The field of view to set the camera to at this waypoint.",
+                                "default-hint": 32,
+                                "aliases": [
+                                    "fov"
+                                ]
+                            },
+                            "tension": {
+                                "type": "number",
+                                "required": false,
+                                "description": "(?)",
+                                "default-hint": 0
+                            },
+                            "continuity": {
+                                "type": "number",
+                                "required": false,
+                                "description": "(?)",
+                                "default-hint": 0
+                            },
+                            "bias": {
+                                "type": "number",
+                                "required": false,
+                                "description": "(?)",
+                                "default-hint": 0
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "actions": {
+        "add": {
+            "prepare": [
+                {
+                    "type": "claim-world-id",
+                    "zone": [
+                        "variables",
+                        "values",
+                        "zone"
+                    ]
+                }
+            ],
+            "apply": [
+                {
+                    "type": "add-world-camera-path",
+                    "zone": [
+                        "variables",
+                        "values",
+                        "zone"
+                    ],
+                    "path": [
+                        "variables",
+                        "values",
+                        "name"
+                    ],
+                    "rotate-player": {
+                        "value": [
+                            "variables",
+                            "values",
+                            "rotate-player"
+                        ],
+                        "default": false
+                    },
+                    "next-path": {
+                        "value": [
+                            "variables",
+                            "values",
+                            "next-path"
+                        ],
+                        "default": ""
+                    }
+                },
+                {
+                    "type": "for-each",
+                    "value": [
+                        "variables",
+                        "values",
+                        "waypoints"
+                    ],
+                    "iterator": "entry",
+                    "operation": {
+                        "type": "add-world-camera-waypoint",
+                        "zone": [
+                            "variables",
+                            "values",
+                            "zone"
+                        ],
+                        "path": [
+                            "variables",
+                            "values",
+                            "name"
+                        ],
+                        "x": [
+                            "variables",
+                            "values",
+                            "waypoints",
+                            "$entry.indexer",
+                            "position",
+                            "x"
+                        ],
+                        "y": [
+                            "variables",
+                            "values",
+                            "waypoints",
+                            "$entry.indexer",
+                            "position",
+                            "y"
+                        ],
+                        "z": [
+                            "variables",
+                            "values",
+                            "waypoints",
+                            "$entry.indexer",
+                            "position",
+                            "z"
+                        ],
+                        "rx": [
+                            "variables",
+                            "values",
+                            "waypoints",
+                            "$entry.indexer",
+                            "rotation",
+                            "x"
+                        ],
+                        "ry": [
+                            "variables",
+                            "values",
+                            "waypoints",
+                            "$entry.indexer",
+                            "rotation",
+                            "y"
+                        ],
+                        "rz": [
+                            "variables",
+                            "values",
+                            "waypoints",
+                            "$entry.indexer",
+                            "rotation",
+                            "z"
+                        ],
+                        "rw": [
+                            "variables",
+                            "values",
+                            "waypoints",
+                            "$entry.indexer",
+                            "rotation",
+                            "w"
+                        ],
+                        "time": [
+                            "variables",
+                            "values",
+                            "waypoints",
+                            "$entry.indexer",
+                            "time"
+                        ],
+                        "fov": {
+                            "value": [
+                                "variables",
+                                "values",
+                                "waypoints",
+                                "$entry.indexer",
+                                "field-of-view"
+                            ],
+                            "default": 32
+                        },
+                        "tension": {
+                            "value": [
+                                "variables",
+                                "values",
+                                "waypoints",
+                                "$entry.indexer",
+                                "tension"
+                            ],
+                            "default": 0
+                        },
+                        "continuity": {
+                            "value": [
+                                "variables",
+                                "values",
+                                "waypoints",
+                                "$entry.indexer",
+                                "continuity"
+                            ],
+                            "default": 0
+                        },
+                        "bias": {
+                            "value": [
+                                "variables",
+                                "values",
+                                "waypoints",
+                                "$entry.indexer",
+                                "bias"
+                            ],
+                            "default": 0
+                        }
+                    }
+                }
+            ]
+        }
+    }
+}

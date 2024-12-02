@@ -1,0 +1,108 @@
+{
+    "name": "mission-npc-component",
+    "parameters": {
+        "component-id": {
+            "required": false,
+            "nullable": false,
+            "type": "id"
+        }
+    },
+    "variables": {
+        "values": {
+            "type": "object",
+            "object-properties": {
+                "component-id": {
+                    "required": false,
+                    "type": "id",
+                    "types": [
+                        "mission-npc-component"
+                    ],
+                    "aliases": [
+                        "id"
+                    ]
+                },
+                "mission-id": {
+                    "type": "id",
+                    "types": [
+                        "mission"
+                    ],
+                    "aliases": [
+                        "missionID",
+                        "mission"
+                    ]
+                },
+                "offers-mission": {
+                    "type": "boolean",
+                    "aliases": [
+                        "offersMission",
+                        "offers"
+                    ]
+                },
+                "accepts-mission": {
+                    "type": "boolean",
+                    "aliases": [
+                        "acceptsMission",
+                        "accepts"
+                    ]
+                }
+            }
+        }
+    },
+    "actions": {
+        "add": {
+            "prepare": [
+                {
+                    "type": "generate-id",
+                    "table": "MissionNPCComponent",
+                    "column": "id"
+                }
+            ],
+            "apply": [
+                {
+                    "type": "assign",
+                    "variable": "--component-id",
+                    "options": [
+                        [
+                            "variables",
+                            "values",
+                            "component-id"
+                        ],
+                        [
+                            "parameters",
+                            "component-id"
+                        ],
+                        [
+                            "id"
+                        ]
+                    ],
+                    "non-null": true
+                },
+                {
+                    "type": "insert",
+                    "table": "MissionNPCComponent",
+                    "columns": {
+                        "id": [
+                            "--component-id"
+                        ],
+                        "missionID": [
+                            "variables",
+                            "values",
+                            "mission-id"
+                        ],
+                        "offersMission": [
+                            "variables",
+                            "values",
+                            "offers-mission"
+                        ],
+                        "acceptsMission": [
+                            "variables",
+                            "values",
+                            "accepts-mission"
+                        ],
+                        "gate_version": null
+                    }
+                }
+            ]
+        }
+    }
+}

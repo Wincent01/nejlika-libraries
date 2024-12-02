@@ -1,0 +1,116 @@
+{
+    "name": "loot-table",
+    "parameters": {
+
+    },
+    "variables": {
+        "values": {
+            "type": "object",
+            "object-properties": {
+                "item": {
+                    "type": "id",
+                    "types": [
+                        "object"
+                    ],
+                    "aliases": [
+                        "itemid",
+                        "item-id"
+                    ]
+                },
+                "loot-table-index": {
+                    "required": false,
+                    "type": "id",
+                    "types": [
+                        "loot-table"
+                    ],
+                    "aliases": [
+                        "LootTableIndex",
+                        "loot-table"
+                    ]
+                },
+                "mission-drop": {
+                    "required": false,
+                    "type": "boolean",
+                    "aliases": [
+                        "MissionDrop"
+                    ]
+                },
+                "sort-priority": {
+                    "required": false,
+                    "type": "integer",
+                    "aliases": [
+                        "sortPriority",
+                        "priority"
+                    ]
+                }
+            }
+        }
+    },
+    "actions": {
+        "add": {
+            "prepare": [
+                {
+                    "type": "generate-id",
+                    "table": "LootTable",
+                    "column": "LootTableIndex"
+                },
+                {
+                    "type": "generate-id",
+                    "table": "LootTable",
+                    "column": "id",
+                    "variable": "--id"
+                }
+            ],
+            "apply": [
+                {
+                    "type": "assign",
+                    "variable": "--loot-table-index",
+                    "non-null": true,
+                    "options": [
+                        [
+                            "variables",
+                            "values",
+                            "loot-table-index"
+                        ],
+                        [
+                            "id"
+                        ]
+                    ]
+                },
+                {
+                    "type": "insert",
+                    "table": "LootTable",
+                    "columns": {
+                        "itemid": [
+                            "variables",
+                            "values",
+                            "item"
+                        ],
+                        "LootTableIndex": [
+                            "--loot-table-index"
+                        ],
+                        "id": [
+                            "--id"
+                        ],
+                        "MissionDrop": {
+                            "value": [
+                                "variables",
+                                "values",
+                                "mission-drop"
+                            ],
+                            "default": false
+                        },
+                        "sortPriority": {
+                            "value": [
+                                "variables",
+                                "values",
+                                "sort-priority"
+                            ],
+                            "default": 0
+                        }
+                    }
+                }
+            ]
+        }
+    }
+}

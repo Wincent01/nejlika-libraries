@@ -1,0 +1,292 @@
+{
+    "name": "base-combat-ai-component",
+    "parameters": {},
+    "variables": {
+        "values": {
+            "type": "object",
+            "object-properties": {
+                "behaviorType": {
+                    "required": false,
+                    "nullable": false,
+                    "type": "id",
+                    "hide-by-default": true,
+                    "description": "(?).",
+                    "default-hint": 1
+                },
+                "combatRoundLength": {
+                    "required": false,
+                    "nullable": false,
+                    "type": "number",
+                    "hide-by-default": true,
+                    "description": "(?).",
+                    "default-hint": 4
+                },
+                "combatRole": {
+                    "required": false,
+                    "nullable": false,
+                    "type": "id",
+                    "hide-by-default": true,
+                    "description": "(?).",
+                    "default-hint": 5
+                },
+                "minRoundLength": {
+                    "required": false,
+                    "nullable": false,
+                    "type": "number",
+                    "hide-by-default": true,
+                    "description": "(?).",
+                    "default-hint": 3
+                },
+                "maxRoundLength": {
+                    "required": false,
+                    "nullable": false,
+                    "type": "number",
+                    "hide-by-default": true,
+                    "description": " (?).",
+                    "default-hint": 5
+                },
+                "tetherSpeed": {
+                    "required": false,
+                    "nullable": false,
+                    "type": "number",
+                    "description": "Speed at which the AI returns to its tether point.",
+                    "hide-by-default": false,
+                    "default-hint": 4
+                },
+                "pursuitSpeed": {
+                    "required": false,
+                    "nullable": false,
+                    "type": "number",
+                    "description": "Speed at which the AI pursues targets.",
+                    "hide-by-default": false,
+                    "default-hint": 2
+                },
+                "combatStartDelay": {
+                    "required": false,
+                    "nullable": false,
+                    "type": "number",
+                    "hide-by-default": true,
+                    "description": "Delay before the AI starts combat (?).",
+                    "default-hint": 1.5
+                },
+                "softTetherRadius": {
+                    "required": false,
+                    "nullable": false,
+                    "type": "number",
+                    "description": "Radius for soft tethering, where AI can roam.",
+                    "hide-by-default": false,
+                    "default-hint": 25
+                },
+                "hardTetherRadius": {
+                    "required": false,
+                    "nullable": false,
+                    "type": "number",
+                    "description": "Radius for hard tethering, beyond which the AI must return to its starting point.",
+                    "hide-by-default": false,
+                    "default-hint": 101
+                },
+                "spawnTimer": {
+                    "required": false,
+                    "nullable": false,
+                    "type": "number",
+                    "hide-by-default": true,
+                    "description": "Time before the AI can spawn again.",
+                    "default-hint": 1
+                },
+                "tetherEffectID": {
+                    "required": false,
+                    "nullable": false,
+                    "type": "id",
+                    "types": [
+                        "effect"
+                    ],
+                    "hide-by-default": true,
+                    "description": "ID of the effect applied when the AI is tethered.",
+                    "default-hint": 6270
+                },
+                "ignoreMediator": {
+                    "required": false,
+                    "nullable": false,
+                    "type": "boolean",
+                    "hide-by-default": true,
+                    "description": "(?)",
+                    "default-hint": true
+                },
+                "aggroRadius": {
+                    "required": false,
+                    "nullable": false,
+                    "type": "number",
+                    "description": "Radius within which the AI becomes aggressive toward targets.",
+                    "hide-by-default": false,
+                    "default-hint": 25
+                },
+                "ignoreStatReset": {
+                    "required": false,
+                    "nullable": false,
+                    "type": "boolean",
+                    "hide-by-default": true,
+                    "description": "(?)",
+                    "default-hint": false
+                },
+                "ignoreParent": {
+                    "required": false,
+                    "nullable": false,
+                    "type": "boolean",
+                    "hide-by-default": true,
+                    "description": "(?)",
+                    "default-hint": false
+                }
+            }
+        }
+    },
+    "actions": {
+        "add": {
+            "prepare": [
+                {
+                    "type": "generate-id",
+                    "table": "BaseCombatAIComponent",
+                    "column": "id"
+                }
+            ],
+            "apply": [
+                {
+                    "type": "insert",
+                    "table": "BaseCombatAIComponent",
+                    "columns": {
+                        "id": [
+                            "id"
+                        ],
+                        "behaviorType": {
+                            "value": [
+                                "variables",
+                                "values",
+                                "behaviorType"
+                            ],
+                            "default": 1
+                        },
+                        "combatRoundLength": {
+                            "value": [
+                                "variables",
+                                "values",
+                                "combatRoundLength"
+                            ],
+                            "default": 4
+                        },
+                        "combatRole": {
+                            "value": [
+                                "variables",
+                                "values",
+                                "combatRole"
+                            ],
+                            "default": 5
+                        },
+                        "minRoundLength": {
+                            "value": [
+                                "variables",
+                                "values",
+                                "minRoundLength"
+                            ],
+                            "default": 3
+                        },
+                        "maxRoundLength": {
+                            "value": [
+                                "variables",
+                                "values",
+                                "maxRoundLength"
+                            ],
+                            "default": 5
+                        },
+                        "tetherSpeed": {
+                            "value": [
+                                "variables",
+                                "values",
+                                "tetherSpeed"
+                            ],
+                            "default": 4
+                        },
+                        "pursuitSpeed": {
+                            "value": [
+                                "variables",
+                                "values",
+                                "pursuitSpeed"
+                            ],
+                            "default": 2
+                        },
+                        "combatStartDelay": {
+                            "value": [
+                                "variables",
+                                "values",
+                                "combatStartDelay"
+                            ],
+                            "default": 1.5
+                        },
+                        "softTetherRadius": {
+                            "value": [
+                                "variables",
+                                "values",
+                                "softTetherRadius"
+                            ],
+                            "default": 25
+                        },
+                        "hardTetherRadius": {
+                            "value": [
+                                "variables",
+                                "values",
+                                "hardTetherRadius"
+                            ],
+                            "default": 101
+                        },
+                        "spawnTimer": {
+                            "value": [
+                                "variables",
+                                "values",
+                                "spawnTimer"
+                            ],
+                            "default": 1
+                        },
+                        "tetherEffectID": {
+                            "value": [
+                                "variables",
+                                "values",
+                                "tetherEffectID"
+                            ],
+                            "default": 6270
+                        },
+                        "ignoreMediator": {
+                            "value": [
+                                "variables",
+                                "values",
+                                "ignoreMediator"
+                            ],
+                            "default": true
+                        },
+                        "aggroRadius": {
+                            "value": [
+                                "variables",
+                                "values",
+                                "aggroRadius"
+                            ],
+                            "default": 25
+                        },
+                        "ignoreStatReset": {
+                            "value": [
+                                "variables",
+                                "values",
+                                "ignoreStatReset"
+                            ],
+                            "default": false
+                        },
+                        "ignoreParent": {
+                            "value": [
+                                "variables",
+                                "values",
+                                "ignoreParent"
+                            ],
+                            "default": false
+                        }
+                    }
+                }
+            ]
+        }
+    }
+}

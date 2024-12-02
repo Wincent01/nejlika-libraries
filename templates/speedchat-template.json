@@ -1,0 +1,161 @@
+{
+    "name": "speed-chat",
+    "parameters": {},
+    "variables": {
+        "values": {
+            "type": "object",
+            "object-properties": {
+                "icon": {
+                    "type": "resource",
+                    "arguments": {
+                        "prefix": "..\\..\\textures/../",
+                        "type": "dds"
+                    },
+                    "aliases": [
+                        "source",
+                        "IconPath",
+                        "image",
+                        "imageName"
+                    ],
+                    "nullable": true,
+                    "required": false,
+                    "description": "The icon to display for the speed chat",
+                    "default-hint": "textures/ui/achievements/general_social.dds",
+                    "hide-by-default": true
+                },
+                "emote": {
+                    "type": "id",
+                    "nullable": true,
+                    "required": false,
+                    "aliases": [
+                        "emoteId",
+                        "emote-id"
+                    ],
+                    "description": "The emote to play when the speed chat is used",
+                    "hide-by-default": false,
+                    "default-hint": null
+                },
+                "parent": {
+                    "type": "id",
+                    "types": [
+                        "speed-chat"
+                    ],
+                    "nullable": true,
+                    "required": false,
+                    "description": "The parent speed chat menu",
+                    "hide-by-default": false,
+                    "default-hint": null
+                },
+                "children": {
+                    "type": "array",
+                    "required": false,
+                    "nullable": false,
+                    "array-type": {
+                        "type": "id",
+                        "types": [
+                            "speed-chat"
+                        ]
+                    },
+                    "description": "The children of this speed chat menus (parent must be null; chilren must have this menu as parent)",
+                    "hide-by-default": false,
+                    "default-hint": "None"
+                }
+            },
+            "required": false,
+            "nullable": false
+        },
+        "locales": {
+            "type": "object",
+            "object-properties": {
+                "text": {
+                    "type": "locale",
+                    "required": false,
+                    "nullable": false,
+                    "aliases": [
+                        "message",
+                        "messageText",
+                        "message-text",
+                        "menuText"
+                    ],
+                    "description": "The title for the speed chat menu in the UI",
+                    "hide-by-default": false,
+                    "default-hint": null
+                }
+            },
+            "required": false,
+            "nullable": false
+        }
+    },
+    "actions": {
+        "add": {
+            "prepare": [
+                {
+                    "type": "generate-id",
+                    "table": "SpeedchatMenu",
+                    "column": "id"
+                }
+            ],
+            "apply": [
+                {
+                    "type": "insert",
+                    "table": "SpeedchatMenu",
+                    "columns": {
+                        "id": [
+                            "id"
+                        ],
+                        "locStatus": 2,
+                        "localize": true,
+                        "parentId": {
+                            "value": [
+                                "variables",
+                                "values",
+                                "parent"
+                            ],
+                            "default": null
+                        },
+                        "emoteId": {
+                            "value": [
+                                "variables",
+                                "values",
+                                "emote"
+                            ],
+                            "default": null
+                        },
+                        "imageName": {
+                            "value": [
+                                "variables",
+                                "values",
+                                "icon"
+                            ],
+                            "default": "..\\..\\textures\\ui\\Achievements/general_social.DDS"
+                        },
+                        "gate_version": null
+                    }
+                },
+                {
+                    "type": "locale",
+                    "value": [
+                        "variables",
+                        "locales",
+                        "text"
+                    ],
+                    "allow-none": true,
+                    "prefix": "SpeedchatMenu_",
+                    "key": [
+                        "id"
+                    ],
+                    "suffix": "_menuText"
+                },
+                {
+                    "type": "cascade",
+                    "value": [
+                        "variables",
+                        "values",
+                        "children"
+                    ],
+                    "allow-none": true
+                }
+            ]
+        }
+    }
+}

@@ -1,0 +1,200 @@
+{
+    "name": "minifig-component",
+    "parameters": {
+
+    },
+    "variables": {
+        "values": {
+            "type": "object",
+            "object-properties": {
+                "chest": {
+                    "required": false,
+                    "default-hint": 0,
+                    "nullable": false,
+                    "type": "id",
+                    "aliases": [
+                        "chest"
+                    ],
+                    "description": "Chest color."
+                },
+                "legs": {
+                    "required": false,
+                    "default-hint": 0,
+                    "nullable": false,
+                    "type": "id",
+                    "aliases": [
+                        "legs"
+                    ],
+                    "description": "Legs color."
+                },
+                "hairstyle": {
+                    "required": false,
+                    "default-hint": 0,
+                    "nullable": false,
+                    "type": "id",
+                    "aliases": [
+                        "hairstyle"
+                    ],
+                    "description": "Hairstyle."
+                },
+                "haircolor": {
+                    "required": false,
+                    "default-hint": 0,
+                    "nullable": false,
+                    "type": "id",
+                    "aliases": [
+                        "haircolor"
+                    ],
+                    "description": "Hair color."
+                },
+                "chestdecal": {
+                    "required": false,
+                    "default-hint": 0,
+                    "nullable": false,
+                    "type": "id",
+                    "aliases": [
+                        "chestdecal"
+                    ],
+                    "description": "Chest decal."
+                },
+                "headcolor": {
+                    "required": false,
+                    "default-hint": 0,
+                    "nullable": false,
+                    "type": "id",
+                    "aliases": [
+                        "headcolor"
+                    ],
+                    "description": "Head color."
+                },
+                "eyebrowstyle": {
+                    "required": false,
+                    "default-hint": 0,
+                    "nullable": false,
+                    "type": "id",
+                    "aliases": [
+                        "eyebrowstyle"
+                    ],
+                    "description": "Eyebrow style."
+                },
+                "eyesstyle": {
+                    "required": false,
+                    "default-hint": 0,
+                    "nullable": false,
+                    "type": "id",
+                    "aliases": [
+                        "eyesstyle"
+                    ],
+                    "description": "Eyes style."
+                },
+                "mouthstyle": {
+                    "required": false,
+                    "default-hint": 0,
+                    "nullable": false,
+                    "type": "id",
+                    "aliases": [
+                        "mouthstyle"
+                    ],
+                    "description": "Mouth style."
+                }
+            }
+        }
+    },
+    "actions": {
+        "add": {
+            "prepare": [
+                {
+                    "type": "generate-id",
+                    "table": "MinifigComponent",
+                    "column": "id"
+                }
+            ],
+            "apply": [
+                {
+                    "type": "insert",
+                    "table": "MinifigComponent",
+                    "columns": {
+                        "id": [
+                            "id"
+                        ],
+                        "head": 0,
+                        "chest": {
+                            "value": [
+                                "variables",
+                                "values",
+                                "chest"
+                            ],
+                            "default": 0
+                        },
+                        "legs": {
+                            "value": [
+                                "variables",
+                                "values",
+                                "legs"
+                            ],
+                            "default": 0
+                        },
+                        "hairstyle": {
+                            "value": [
+                                "variables",
+                                "values",
+                                "hairstyle"
+                            ],
+                            "default": 0
+                        },
+                        "haircolor": {
+                            "value": [
+                                "variables",
+                                "values",
+                                "haircolor"
+                            ],
+                            "default": 0
+                        },
+                        "chestdecal": {
+                            "value": [
+                                "variables",
+                                "values",
+                                "chestdecal"
+                            ],
+                            "default": 0
+                        },
+                        "headcolor": {
+                            "value": [
+                                "variables",
+                                "values",
+                                "headcolor"
+                            ],
+                            "default": 0
+                        },
+                        "lefthand": 0,
+                        "righthand": 0,
+                        "eyebrowstyle": {
+                            "value": [
+                                "variables",
+                                "values",
+                                "eyebrowstyle"
+                            ],
+                            "default": 0
+                        },
+                        "eyesstyle": {
+                            "value": [
+                                "variables",
+                                "values",
+                                "eyesstyle"
+                            ],
+                            "default": 0
+                        },
+                        "mouthstyle": {
+                            "value": [
+                                "variables",
+                                "values",
+                                "mouthstyle"
+                            ],
+                            "default": 0
+                        }
+                    }
+                }
+            ]
+        }
+    }
+}

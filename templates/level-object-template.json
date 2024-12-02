@@ -1,0 +1,240 @@
+{
+    "name": "level-object",
+    "parameters": {},
+    "variables": {
+        "values": {
+            "type": "object",
+            "object-properties": {
+                "zone": {
+                    "type": "id",
+                    "aliases": [
+                        "world"
+                    ]
+                },
+                "level-id": {
+                    "type": "id",
+                    "aliases": [
+                        "level"
+                    ]
+                },
+                "level-layer": {
+                    "type": "id",
+                    "aliases": [
+                        "layer"
+                    ]
+                },
+                "lot": {
+                    "type": "id",
+                    "types": [
+                        "object"
+                    ],
+                    "aliases": [
+                        "template",
+                        "template-id"
+                    ]
+                },
+                "position": {
+                    "type": "object",
+                    "object-properties": {
+                        "x": {
+                            "type": "number"
+                        },
+                        "y": {
+                            "type": "number"
+                        },
+                        "z": {
+                            "type": "number"
+                        }
+                    }
+                },
+                "rotation": {
+                    "type": "object",
+                    "object-properties": {
+                        "x": {
+                            "type": "number"
+                        },
+                        "y": {
+                            "type": "number"
+                        },
+                        "z": {
+                            "type": "number"
+                        },
+                        "w": {
+                            "type": "number"
+                        }
+                    }
+                },
+                "scale": {
+                    "type": "number"
+                },
+                "config": {
+                    "type": "object",
+                    "array-type": {
+                        "type": "object",
+                        "object-properties": {
+                            "type": {
+                                "type": "enum",
+                                "enum": {
+                                    "string": 0,
+                                    "integer": 1,
+                                    "float": 3,
+                                    "double": 4,
+                                    "unsigned-integer": 5,
+                                    "boolean": 7,
+                                    "long": 8,
+                                    "blob": 13,
+                                    "int": 1,
+                                    "uint": 5,
+                                    "bool": 7,
+                                    "bytes": 13
+                                },
+                                "aliases": [
+                                    "data-type"
+                                ]
+                            },
+                            "value": {
+                                "type": "id-any"
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "actions": {
+        "add": {
+            "prepare": [
+                {
+                    "type": "claim-world-id",
+                    "zone": [
+                        "variables",
+                        "values",
+                        "zone"
+                    ]
+                }
+            ],
+            "apply": [
+                {
+                    "type": "add-world-object",
+                    "zone": [
+                        "variables",
+                        "values",
+                        "zone"
+                    ],
+                    "level-id": [
+                        "variables",
+                        "values",
+                        "level-id"
+                    ],
+                    "level-layer": [
+                        "variables",
+                        "values",
+                        "level-layer"
+                    ],
+                    "lot": [
+                        "variables",
+                        "values",
+                        "lot"
+                    ],
+                    "x": [
+                        "variables",
+                        "values",
+                        "position",
+                        "x"
+                    ],
+                    "y": [
+                        "variables",
+                        "values",
+                        "position",
+                        "y"
+                    ],
+                    "z": [
+                        "variables",
+                        "values",
+                        "position",
+                        "z"
+                    ],
+                    "rx": [
+                        "variables",
+                        "values",
+                        "rotation",
+                        "x"
+                    ],
+                    "ry": [
+                        "variables",
+                        "values",
+                        "rotation",
+                        "y"
+                    ],
+                    "rz": [
+                        "variables",
+                        "values",
+                        "rotation",
+                        "z"
+                    ],
+                    "rw": [
+                        "variables",
+                        "values",
+                        "rotation",
+                        "w"
+                    ],
+                    "scale": [
+                        "variables",
+                        "values",
+                        "scale"
+                    ],
+                    "object-id": [
+                        "id"
+                    ]
+                },
+                {
+                    "type": "for-each",
+                    "value": [
+                        "variables",
+                        "values",
+                        "config"
+                    ],
+                    "iterator": "entry",
+                    "operation": {
+                        "type": "add-world-object-property",
+                        "zone": [
+                            "variables",
+                            "values",
+                            "zone"
+                        ],
+                        "level-id": [
+                            "variables",
+                            "values",
+                            "level-id"
+                        ],
+                        "level-layer": [
+                            "variables",
+                            "values",
+                            "level-layer"
+                        ],
+                        "object-id": [
+                            "id"
+                        ],
+                        "name": [
+                            "entry.key"
+                        ],
+                        "data-type": [
+                            "variables",
+                            "values",
+                            "config",
+                            "$entry.key",
+                            "type"
+                        ],
+                        "value": [
+                            "variables",
+                            "values",
+                            "config",
+                            "$entry.key",
+                            "value"
+                        ]
+                    }
+                }
+            ]
+        }
+    }
+}

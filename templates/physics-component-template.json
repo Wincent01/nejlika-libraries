@@ -1,0 +1,324 @@
+{
+    "name": "physics-component",
+    "parameters": {
+
+    },
+    "variables": {
+        "values": {
+            "type": "object",
+            "object-properties": {
+                "static": {
+                    "required": false,
+                    "nullable": false,
+                    "type": "boolean",
+                    "aliases": [
+                        "static"
+                    ],
+                    "description": "Whether the entity is static or not.",
+                    "default-hint": true,
+                    "hide-by-default": true
+                },
+                "physics-asset": {
+                    "required": false,
+                    "nullable": true,
+                    "type": "resource",
+                    "aliases": [
+                        "physics_asset"
+                    ],
+                    "arguments": {
+                        "prefix": "../",
+                        "type": "hkx"
+                    },
+                    "description": "The physics asset to use for this object.",
+                    "default-hint": null,
+                    "hide-by-default": false
+                },
+                "jump": {
+                    "required": false,
+                    "nullable": false,
+                    "type": "number",
+                    "aliases": [
+                        "jump"
+                    ],
+                    "description": "The jump height of the object, only applies to the player.",
+                    "default-hint": 0,
+                    "hide-by-default": true
+                },
+                "doublejump": {
+                    "required": false,
+                    "nullable": false,
+                    "type": "number",
+                    "aliases": [
+                        "doublejump"
+                    ],
+                    "description": "The double jump height of the object, only applies to the player.",
+                    "default-hint": 0,
+                    "hide-by-default": true
+                },
+                "speed": {
+                    "required": false,
+                    "nullable": true,
+                    "type": "number",
+                    "aliases": [
+                        "speed"
+                    ],
+                    "description": "The speed of the object, applies to entities that move.",
+                    "default-hint": null,
+                    "hide-by-default": true
+                },
+                "rot-speed": {
+                    "required": false,
+                    "nullable": true,
+                    "type": "number",
+                    "aliases": [
+                        "rotSpeed"
+                    ],
+                    "description": "The rotation speed of the object, applies to entities that rotate.",
+                    "default-hint": null,
+                    "hide-by-default": true
+                },
+                "player-height": {
+                    "required": false,
+                    "nullable": true,
+                    "type": "number",
+                    "aliases": [
+                        "playerHeight"
+                    ],
+                    "description": "The height of the player.",
+                    "default-hint": null,
+                    "hide-by-default": true
+                },
+                "player-radius": {
+                    "required": false,
+                    "nullable": true,
+                    "type": "number",
+                    "aliases": [
+                        "playerRadius"
+                    ],
+                    "description": "The radius of the player.",
+                    "default-hint": null,
+                    "hide-by-default": true
+                },
+                "pc-shape-type": {
+                    "required": false,
+                    "nullable": false,
+                    "type": "integer",
+                    "aliases": [
+                        "pcShapeType"
+                    ],
+                    "description": "The shape type of the physics component.",
+                    "default-hint": 2,
+                    "hide-by-default": true
+                },
+                "collision-group": {
+                    "required": false,
+                    "nullable": false,
+                    "type": "integer",
+                    "aliases": [
+                        "collisionGroup"
+                    ],
+                    "description": "The collision group of the physics component.",
+                    "default-hint": 5,
+                    "hide-by-default": true
+                },
+                "air-speed": {
+                    "required": false,
+                    "nullable": false,
+                    "type": "number",
+                    "aliases": [
+                        "airSpeed"
+                    ],
+                    "description": "The air speed of the object (?).",
+                    "default-hint": 5,
+                    "hide-by-default": true
+                },
+                "boundary-asset": {
+                    "required": false,
+                    "nullable": true,
+                    "type": "string",
+                    "aliases": [
+                        "boundaryAsset"
+                    ],
+                    "description": "The boundary asset to use for this object (?).",
+                    "default-hint": null,
+                    "hide-by-default": true
+                },
+                "jump-air-speed": {
+                    "required": false,
+                    "nullable": true,
+                    "type": "number",
+                    "aliases": [
+                        "jumpAirSpeed"
+                    ],
+                    "description": "The jump air speed of the object (?).",
+                    "default-hint": null,
+                    "hide-by-default": true
+                },
+                "friction": {
+                    "required": false,
+                    "nullable": true,
+                    "type": "number",
+                    "aliases": [
+                        "friction"
+                    ],
+                    "description": "The friction of the object.",
+                    "default-hint": null,
+                    "hide-by-default": true
+                },
+                "gravity-volume-asset": {
+                    "required": false,
+                    "nullable": true,
+                    "type": "string",
+                    "aliases": [
+                        "gravityVolumeAsset"
+                    ],
+                    "description": "The gravity volume asset to use for this object (?).",
+                    "default-hint": null,
+                    "hide-by-default": true
+                }
+            }
+        }
+    },
+    "actions": {
+        "add": {
+            "prepare": [
+                {
+                    "type": "generate-id",
+                    "table": "PhysicsComponent",
+                    "column": "id"
+                }
+            ],
+            "apply": [
+                {
+                    "type": "insert",
+                    "table": "PhysicsComponent",
+                    "columns": {
+                        "id": [
+                            "id"
+                        ],
+                        "static": {
+                            "value": [
+                                "variables",
+                                "values",
+                                "static"
+                            ],
+                            "default": true
+                        },
+                        "physics_asset": {
+                            "value": [
+                                "variables",
+                                "values",
+                                "physics-asset"
+                            ],
+                            "default": null
+                        },
+                        "jump": {
+                            "value": [
+                                "variables",
+                                "values",
+                                "jump"
+                            ],
+                            "default": 0
+                        },
+                        "doublejump": {
+                            "value": [
+                                "variables",
+                                "values",
+                                "doublejump"
+                            ],
+                            "default": 0
+                        },
+                        "speed": {
+                            "value": [
+                                "variables",
+                                "values",
+                                "speed"
+                            ],
+                            "default": null
+                        },
+                        "rotSpeed": {
+                            "value": [
+                                "variables",
+                                "values",
+                                "rot-speed"
+                            ],
+                            "default": null
+                        },
+                        "playerHeight": {
+                            "value": [
+                                "variables",
+                                "values",
+                                "player-height"
+                            ],
+                            "default": null
+                        },
+                        "playerRadius": {
+                            "value": [
+                                "variables",
+                                "values",
+                                "player-radius"
+                            ],
+                            "default": null
+                        },
+                        "pcShapeType": {
+                            "value": [
+                                "variables",
+                                "values",
+                                "pc-shape-type"
+                            ],
+                            "default": 2
+                        },
+                        "collisionGroup": {
+                            "value": [
+                                "variables",
+                                "values",
+                                "collision-group"
+                            ],
+                            "default": 5
+                        },
+                        "airSpeed": {
+                            "value": [
+                                "variables",
+                                "values",
+                                "air-speed"
+                            ],
+                            "default": 5
+                        },
+                        "boundaryAsset": {
+                            "value": [
+                                "variables",
+                                "values",
+                                "boundary-asset"
+                            ],
+                            "default": null
+                        },
+                        "jumpAirSpeed": {
+                            "value": [
+                                "variables",
+                                "values",
+                                "jump-air-speed"
+                            ],
+                            "default": null
+                        },
+                        "friction": {
+                            "value": [
+                                "variables",
+                                "values",
+                                "friction"
+                            ],
+                            "default": null
+                        },
+                        "gravityVolumeAsset": {
+                            "value": [
+                                "variables",
+                                "values",
+                                "gravity-volume-asset"
+                            ],
+                            "default": null
+                        }
+                    }
+                }
+            ]
+        }
+    }
+}

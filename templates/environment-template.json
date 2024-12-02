@@ -1,0 +1,67 @@
+{
+    "name": "environment",
+    "parameters": {},
+    "variables": {
+        "values": {
+            "type": "object",
+            "object-properties": {
+                "zone": {
+                    "type": "id",
+                    "aliases": [
+                        "world"
+                    ]
+                },
+                "level-id": {
+                    "type": "id",
+                    "aliases": [
+                        "level"
+                    ]
+                },
+                "level-layer": {
+                    "type": "integer",
+                    "aliases": [
+                        "layer"
+                    ]
+                },
+                "skybox": {
+                    "required": false,
+                    "nullable": true,
+                    "type": "resource",
+                    "arguments": {
+                        "prefix": "",
+                        "type": "nif"
+                    }
+                }
+            }
+        }
+    },
+    "actions": {
+        "add": {
+            "apply": [
+                {
+                    "type": "world-environment",
+                    "zone": [
+                        "variables",
+                        "values",
+                        "zone"
+                    ],
+                    "level-id": [
+                        "variables",
+                        "values",
+                        "level-id"
+                    ],
+                    "level-layer": [
+                        "variables",
+                        "values",
+                        "level-layer"
+                    ],
+                    "skybox": [
+                        "variables",
+                        "values",
+                        "skybox"
+                    ]
+                }
+            ]
+        }
+    }
+}

@@ -1,0 +1,76 @@
+{
+    "name": "minifig-decal-legs",
+    "parameters": {},
+    "variables": {
+        "values": {
+            "type": "object",
+            "object-properties": {
+                "path": {
+                    "type": "resource",
+                    "arguments": {
+                        "prefix": "/",
+                        "type": "gfx",
+                        "fake-extension": "swf"
+                    },
+                    "aliases": [
+                        "gfx",
+                        "swf",
+                        "High_path",
+                        "high_path"
+                    ],
+                    "description": "The path to the gfx path."
+                },
+                "image": {
+                    "type": "resource",
+                    "arguments": {
+                        "prefix": "",
+                        "type": "dds",
+                        "preserve-filename": true
+                    },
+                    "aliases": [
+                        "dds",
+                        "image-file",
+                        "fileName"
+                    ],
+                    "description": "Associated image file, this should be the same as the value defined in the gfx in the DefineExternalImage tag under fileName."
+                }
+            }
+        }
+    },
+    "actions": {
+        "add": {
+            "prepare": [
+                {
+                    "type": "generate-id",
+                    "table": "MinifigDecals_Legs",
+                    "column": "ID"
+                }
+            ],
+            "apply": [
+                {
+                    "type": "cascade",
+                    "value": [
+                        "variables",
+                        "values",
+                        "image"
+                    ],
+                    "allow-none": false
+                },
+                {
+                    "type": "insert",
+                    "table": "MinifigDecals_Legs",
+                    "columns": {
+                        "ID": [
+                            "id"
+                        ],
+                        "High_path": [
+                            "variables",
+                            "values",
+                            "path"
+                        ]
+                    }
+                }
+            ]
+        }
+    }
+}

@@ -1,0 +1,261 @@
+{
+    "name": "spawner-path",
+    "parameters": {},
+    "variables": {
+        "values": {
+            "type": "object",
+            "object-properties": {
+                "zone": {
+                    "type": "id",
+                    "aliases": [
+                        "world"
+                    ]
+                },
+                "name": {
+                    "type": "string"
+                },
+                "lot": {
+                    "type": "id",
+                    "types": [
+                        "object"
+                    ],
+                    "aliases": [
+                        "template",
+                        "template-id"
+                    ]
+                },
+                "max-to-spawn": {
+                    "type": "integer",
+                    "required": false,
+                    "default-hint": -1,
+                    "description": "The maximum number of objects to spawn at once. -1 means no limit.",
+                    "hide-by-default": true
+                },
+                "respawn-time": {
+                    "type": "number",
+                    "required": true,
+                    "description": "The time in seconds to wait before respawning objects."
+                },
+                "number-to-maintain": {
+                    "type": "integer",
+                    "required": true,
+                    "description": "The number of objects to maintain in the world at all times."
+                },
+                "active-on-load": {
+                    "type": "boolean",
+                    "required": false,
+                    "default-hint": true,
+                    "description": "Whether to activate the spawner on world load.",
+                    "hide-by-default": true
+                },
+                "waypoints": {
+                    "type": "array",
+                    "array-type": {
+                        "type": "object",
+                        "object-properties": {
+                            "position": {
+                                "type": "object",
+                                "object-properties": {
+                                    "x": {
+                                        "type": "number"
+                                    },
+                                    "y": {
+                                        "type": "number"
+                                    },
+                                    "z": {
+                                        "type": "number"
+                                    }
+                                }
+                            },
+                            "rotation": {
+                                "type": "object",
+                                "object-properties": {
+                                    "x": {
+                                        "type": "number",
+                                        "required": false,
+                                        "default-hint": 0
+                                    },
+                                    "y": {
+                                        "type": "number",
+                                        "required": false,
+                                        "default-hint": 0
+                                    },
+                                    "z": {
+                                        "type": "number",
+                                        "required": false,
+                                        "default-hint": 0
+                                    },
+                                    "w": {
+                                        "type": "number",
+                                        "required": false,
+                                        "default-hint": 1
+                                    }
+                                },
+                                "required": false,
+                                "default-hint": {
+                                    "x": 0,
+                                    "y": 0,
+                                    "z": 0,
+                                    "w": 1
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "actions": {
+        "add": {
+            "prepare": [
+                {
+                    "type": "claim-world-id",
+                    "zone": [
+                        "variables",
+                        "values",
+                        "zone"
+                    ]
+                }
+            ],
+            "apply": [
+                {
+                    "type": "add-world-spawn-path",
+                    "zone": [
+                        "variables",
+                        "values",
+                        "zone"
+                    ],
+                    "path": [
+                        "variables",
+                        "values",
+                        "name"
+                    ],
+                    "lot": [
+                        "variables",
+                        "values",
+                        "lot"
+                    ],
+                    "object-id": [
+                        "id"
+                    ],
+                    "max-spawn": {
+                        "value": [
+                            "variables",
+                            "values",
+                            "max-to-spawn"
+                        ],
+                        "default": -1
+                    },
+                    "respawn-time": [
+                        "variables",
+                        "values",
+                        "respawn-time"
+                    ],
+                    "to-maintain": [
+                        "variables",
+                        "values",
+                        "number-to-maintain"
+                    ],
+                    "activate-on-load": {
+                        "value": [
+                            "variables",
+                            "values",
+                            "active-on-load"
+                        ],
+                        "default": false
+                    }
+                },
+                {
+                    "type": "for-each",
+                    "value": [
+                        "variables",
+                        "values",
+                        "waypoints"
+                    ],
+                    "iterator": "entry",
+                    "operation": {
+                        "type": "add-world-spawn-waypoint",
+                        "zone": [
+                            "variables",
+                            "values",
+                            "zone"
+                        ],
+                        "path": [
+                            "variables",
+                            "values",
+                            "name"
+                        ],
+                        "x": [
+                            "variables",
+                            "values",
+                            "waypoints",
+                            "$entry.indexer",
+                            "position",
+                            "x"
+                        ],
+                        "y": [
+                            "variables",
+                            "values",
+                            "waypoints",
+                            "$entry.indexer",
+                            "position",
+                            "y"
+                        ],
+                        "z": [
+                            "variables",
+                            "values",
+                            "waypoints",
+                            "$entry.indexer",
+                            "position",
+                            "z"
+                        ],
+                        "rx": {
+                            "value": [
+                                "variables",
+                                "values",
+                                "waypoints",
+                                "$entry.indexer",
+                                "rotation",
+                                "x"
+                            ],
+                            "default": 0
+                        },
+                        "ry": {
+                            "value": [
+                                "variables",
+                                "values",
+                                "waypoints",
+                                "$entry.indexer",
+                                "rotation",
+                                "y"
+                            ],
+                            "default": 0
+                        },
+                        "rz": {
+                            "value": [
+                                "variables",
+                                "values",
+                                "waypoints",
+                                "$entry.indexer",
+                                "rotation",
+                                "z"
+                            ],
+                            "default": 0
+                        },
+                        "rw": {
+                            "value": [
+                                "variables",
+                                "values",
+                                "waypoints",
+                                "$entry.indexer",
+                                "rotation",
+                                "w"
+                            ],
+                            "default": 1
+                        }
+                    }
+                }
+            ]
+        }
+    }
+}

@@ -1,0 +1,187 @@
+{
+    "name": "precondition",
+    "parameters": {
+
+    },
+    "variables": {
+        "values": {
+            "type": "object",
+            "object-properties": {
+                "type": {
+                    "type": "enum",
+                    "enum": {
+                        "ItemEquipped": 0,
+                        "ItemNotEquipped": 1,
+                        "HasItem": 2,
+                        "DoesNotHaveItem": 3,
+                        "HasAchievement": 4,
+                        "MissionAvailable": 5,
+                        "OnMission": 6,
+                        "MissionComplete": 7,
+                        "PetDeployed": 8,
+                        "HasFlag": 9,
+                        "WithinShape": 10,
+                        "InBuild": 11,
+                        "TeamCheck": 12,
+                        "IsPetTaming": 13,
+                        "HasFaction": 14,
+                        "DoesNotHaveFaction": 15,
+                        "HasRacingLicence": 16,
+                        "DoesNotHaveRacingLicence": 17,
+                        "LegoClubMember": 18,
+                        "NoInteraction": 19,
+                        "HasLevel": 22
+                    },
+                    "aliases": [
+                        "type"
+                    ]
+                },
+                "target-lot": {
+                    "required": false,
+                    "nullable": true,
+                    "type": "id",
+                    "aliases": [
+                        "targetLOT",
+                        "lot",
+                        "target"
+                    ]
+                },
+                "target-group": {
+                    "required": false,
+                    "nullable": true,
+                    "type": "array",
+                    "array-type": {
+                        "type": "id"
+                    },
+                    "aliases": [
+                        "targetGroup",
+                        "groups",
+                        "lots"
+                    ]
+                },
+                "target-count": {
+                    "required": false,
+                    "nullable": true,
+                    "type": "integer",
+                    "aliases": [
+                        "targetCount",
+                        "count"
+                    ]
+                },
+                "icon-id": {
+                    "required": false,
+                    "nullable": true,
+                    "type": "id",
+                    "types": [
+                        "icon"
+                    ],
+                    "aliases": [
+                        "iconID",
+                        "icon"
+                    ]
+                }
+            }
+        },
+        "locales": {
+            "required": false,
+            "nullable": false,
+            "type": "object",
+            "object-properties": {
+                "failure-reason": {
+                    "required": false,
+                    "nullable": false,
+                    "type": "locale",
+                    "aliases": [
+                        "FailureReason",
+                        "title",
+                        "text",
+                        "name"
+                    ]
+                }
+            }
+        }
+    },
+    "actions": {
+        "add": {
+            "prepare": [
+                {
+                    "type": "generate-id",
+                    "table": "Preconditions",
+                    "column": "id"
+                }
+            ],
+            "apply": [
+                {
+                    "type": "insert",
+                    "table": "Preconditions",
+                    "columns": {
+                        "id": [
+                            "id"
+                        ],
+                        "type": [
+                            "variables",
+                            "values",
+                            "type"
+                        ],
+                        "targetLOT": {
+                            "value": [
+                                "variables",
+                                "values",
+                                "target-lot"
+                            ],
+                            "default": null,
+                            "extra": {
+                                "type": "text"
+                            }
+                        },
+                        "targetGroup": {
+                            "value": [
+                                "variables",
+                                "values",
+                                "target-group"
+                            ],
+                            "default": null,
+                            "extra": {
+                                "separator": ","
+                            }
+                        },
+                        "targetCount": {
+                            "value": [
+                                "variables",
+                                "values",
+                                "target-count"
+                            ],
+                            "default": null
+                        },
+                        "iconID": {
+                            "value": [
+                                "variables",
+                                "values",
+                                "icon-id"
+                            ],
+                            "default": null
+                        },
+                        "localize": true,
+                        "validContexts": 253,
+                        "locStatus": 2,
+                        "gate_version": null
+                    }
+                },
+                {
+                    "type": "locale",
+                    "value": [
+                        "variables",
+                        "locales",
+                        "failure-reason"
+                    ],
+                    "allow-none": true,
+                    "prefix": "Preconditions_",
+                    "key": [
+                        "id"
+                    ],
+                    "suffix": "_FailureReason"
+                }
+            ]
+        }
+    }
+}

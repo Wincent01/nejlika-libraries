@@ -1,0 +1,89 @@
+{
+    "name": "inventory-component",
+    "parameters": {
+
+    },
+    "variables": {
+        "values": {
+            "type": "object",
+            "object-properties": {
+                "items": {
+                    "type": "array",
+                    "array-type": {
+                        "type": "object",
+                        "object-properties": {
+                            "itemid": {
+                                "type": "id",
+                                "types": [
+                                    "object"
+                                ],
+                                "aliases": [
+                                    "item"
+                                ]
+                            },
+                            "count": {
+                                "type": "integer"
+                            },
+                            "equip": {
+                                "type": "boolean"
+                            }
+                        }
+                    
+                    }
+                }
+            }
+        }
+    },
+    "actions": {
+        "add": {
+            "prepare": [
+                {
+                    "type": "generate-id",
+                    "table": "InventoryComponent",
+                    "column": "id"
+                }
+            ],
+            "apply": [
+                {
+                    "type": "for-each",
+                    "value": [
+                        "variables",
+                        "values",
+                        "items"
+                    ],
+                    "iterator": "entry",
+                    "operation": {
+                        "type": "insert",
+                        "table": "InventoryComponent",
+                        "columns": {
+                            "id": [
+                                "id"
+                            ],
+                            "itemid": [
+                                "variables",
+                                "values",
+                                "items",
+                                "$entry.indexer",
+                                "itemid"
+                            ],
+                            "count": [
+                                "variables",
+                                "values",
+                                "items",
+                                "$entry.indexer",
+                                "count"
+                            ],
+                            "equip": [
+                                "variables",
+                                "values",
+                                "items",
+                                "$entry.indexer",
+                                "equip"
+                            ]
+                        }
+                    }
+                }
+            ]
+        }
+    }
+}

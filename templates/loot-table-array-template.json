@@ -1,0 +1,119 @@
+{
+    "name": "loot-table-array",
+    "parameters": {
+
+    },
+    "variables": {
+        "values": {
+            "type": "object",
+            "object-properties": {
+                "loot": {
+                    "type": "array",
+                    "array-type": {
+                        "type": "object",
+                        "object-properties": {
+                            "item": {
+                                "type": "id",
+                                "types": [
+                                    "object"
+                                ],
+                                "aliases": [
+                                    "itemid",
+                                    "item-id"
+                                ]
+                            },
+                            "mission-drop": {
+                                "required": false,
+                                "type": "boolean",
+                                "aliases": [
+                                    "MissionDrop"
+                                ]
+                            },
+                            "sort-priority": {
+                                "required": false,
+                                "type": "integer",
+                                "aliases": [
+                                    "sortPriority",
+                                    "priority"
+                                ]
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "actions": {
+        "add": {
+            "prepare": [
+                {
+                    "type": "generate-id",
+                    "table": "LootTable",
+                    "column": "LootTableIndex"
+                }
+            ],
+            "apply": [
+                {
+                    "type": "for-each",
+                    "value": [
+                        "variables",
+                        "values",
+                        "loot"
+                    ],
+                    "iterator": "entry",
+                    "operation": {
+                        "type": "and",
+                        "operations": [
+                            {
+                                "type": "generate-id",
+                                "table": "LootTable",
+                                "column": "id",
+                                "variable": "--id",
+                                "sync": false
+                            },
+                            {
+                                "type": "insert",
+                                "table": "LootTable",
+                                "columns": {
+                                    "itemid": [
+                                        "variables",
+                                        "values",
+                                        "loot",
+                                        "$entry.indexer",
+                                        "item"
+                                    ],
+                                    "LootTableIndex": [
+                                        "id"
+                                    ],
+                                    "id": [
+                                        "--id"
+                                    ],
+                                    "MissionDrop": {
+                                        "value": [
+                                            "variables",
+                                            "values",
+                                            "loot",
+                                            "$entry.indexer",
+                                            "mission-drop"
+                                        ],
+                                        "default": false
+                                    },
+                                    "sortPriority": {
+                                        "value": [
+                                            "variables",
+                                            "values",
+                                            "loot",
+                                            "$entry.indexer",
+                                            "sort-priority"
+                                        ],
+                                        "default": 0
+                                    }
+                                }
+                            }
+                        ]
+                    }
+                }
+            ]
+        }
+    }
+}

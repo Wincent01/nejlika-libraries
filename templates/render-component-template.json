@@ -1,0 +1,527 @@
+{
+    "name": "render-component",
+    "parameters": {
+
+    },
+    "variables": {
+        "values": {
+            "type": "object",
+            "object-properties": {
+                "render-asset": {
+                    "required": false,
+                    "nullable": true,
+                    "type": "resource",
+                    "arguments": {
+                        "prefix": "",
+                        "type": "*"
+                    },
+                    "aliases": [
+                        "render_asset"
+                    ],
+                    "description": "The asset to render when this component is attached to a object.",
+                    "hide-by-default": false,
+                    "default-hint": null
+                },
+                "icon-asset": {
+                    "required": false,
+                    "nullable": true,
+                    "type": "resource",
+                    "arguments": {
+                        "prefix": "..\\..\\textures/../",
+                        "type": "dds"
+                    },
+                    "aliases": [
+                        "icon_asset"
+                    ],
+                    "description": "The icon to display in the UI.",
+                    "hide-by-default": false,
+                    "default-hint": null
+                },
+                "icon-id": {
+                    "required": false,
+                    "nullable": true,
+                    "type": "id",
+                    "types": [
+                        "icon"
+                    ],
+                    "aliases": [
+                        "IconID",
+                        "icon"
+                    ],
+                    "description": "The icon to display in the UI, by reference.",
+                    "hide-by-default": true,
+                    "default-hint": null
+                },
+                "shader-id": {
+                    "required": false,
+                    "nullable": true,
+                    "type": "id",
+                    "aliases": [
+                        "shader_id"
+                    ],
+                    "description": "The shader to use for rendering this component.",
+                    "hide-by-default": true,
+                    "default-hint": 1
+                },
+                "effects": {
+                    "required": false,
+                    "nullable": false,
+                    "type": "array",
+                    "array-type": {
+                        "type": "id",
+                        "types": [
+                            "effect"
+                        ]
+                    },
+                    "description": "The effects to apply to this component.",
+                    "hide-by-default": true,
+                    "default-hint": "None"
+                },
+                "animation-groups": {
+                    "required": false,
+                    "nullable": true,
+                    "type": "array",
+                    "array-type": {
+                        "type": "id"
+                    },
+                    "aliases": [
+                        "animationGroupIDs",
+                        "animation-group-ids"
+                    ],
+                    "description": "The animation groups that determine which animations this object can perform.",
+                    "hide-by-default": true,
+                    "default-hint": null
+                },
+                "fade": {
+                    "required": false,
+                    "nullable": true,
+                    "type": "boolean",
+                    "aliases": [
+                        "fade"
+                    ],
+                    "description": "Whether the object fades in when it is created.",
+                    "hide-by-default": true,
+                    "default-hint": true
+                },
+                "use-drop-shadow": {
+                    "required": false,
+                    "nullable": true,
+                    "type": "boolean",
+                    "aliases": [
+                        "usedropshadow"
+                    ],
+                    "description": "Whether the object has a drop shadow.",
+                    "hide-by-default": true,
+                    "default-hint": false
+                },
+                "preload-animations": {
+                    "required": false,
+                    "nullable": true,
+                    "type": "boolean",
+                    "aliases": [
+                        "preloadAnimations"
+                    ],
+                    "description": "Whether the animations should be preloaded.",
+                    "hide-by-default": true,
+                    "default-hint": false
+                },
+                "fade-in-time": {
+                    "required": false,
+                    "nullable": true,
+                    "type": "number",
+                    "aliases": [
+                        "fadeInTime"
+                    ],
+                    "description": "The time it takes for the object to fade in.",
+                    "hide-by-default": true,
+                    "default-hint": 1
+                },
+                "max-shadow-distance": {
+                    "required": false,
+                    "nullable": true,
+                    "type": "number",
+                    "aliases": [
+                        "maxShadowDistance"
+                    ],
+                    "description": "The maximum distance from the object that the shadow will be rendered.",
+                    "hide-by-default": true,
+                    "default-hint": 0
+                },
+                "ignore-camera-collision": {
+                    "required": false,
+                    "nullable": true,
+                    "type": "boolean",
+                    "aliases": [
+                        "ignoreCameraCollision"
+                    ],
+                    "description": "Whether the camera should ignore collisions with this object.",
+                    "hide-by-default": true,
+                    "default-hint": false
+                },
+                "render-component-lod-1": {
+                    "required": false,
+                    "nullable": true,
+                    "type": "id",
+                    "types": [
+                        "render-component"
+                    ],
+                    "aliases": [
+                        "renderComponentLOD1"
+                    ],
+                    "description": "The render component to use for LOD 1.",
+                    "hide-by-default": true,
+                    "default-hint": null
+                },
+                "render-component-lod-2": {
+                    "required": false,
+                    "nullable": true,
+                    "type": "id",
+                    "types": [
+                        "render-component"
+                    ],
+                    "aliases": [
+                        "renderComponentLOD2"
+                    ],
+                    "description": "The render component to use for LOD 2.",
+                    "hide-by-default": true,
+                    "default-hint": null
+                },
+                "gradual-snap": {
+                    "required": false,
+                    "nullable": true,
+                    "type": "boolean",
+                    "aliases": [
+                        "gradualSnap"
+                    ],
+                    "description": "(?)",
+                    "hide-by-default": true,
+                    "default-hint": false
+                },
+                "animation-flag": {
+                    "required": false,
+                    "nullable": true,
+                    "type": "integer",
+                    "aliases": [
+                        "animationFlag"
+                    ],
+                    "description": "The animation flag (?).",
+                    "hide-by-default": true,
+                    "default-hint": null
+                },
+                "audio-meta-event-set": {
+                    "required": false,
+                    "nullable": true,
+                    "type": "string",
+                    "aliases": [
+                        "AudioMetaEventSet"
+                    ],
+                    "description": "The audio meta event set (?).",
+                    "hide-by-default": true,
+                    "default-hint": null
+                },
+                "billboard-height": {
+                    "required": false,
+                    "nullable": true,
+                    "type": "number",
+                    "aliases": [
+                        "billboardHeight"
+                    ],
+                    "description": "The height of the name billboard.",
+                    "hide-by-default": true,
+                    "default-hint": null
+                },
+                "chat-bubble-offset": {
+                    "required": false,
+                    "nullable": true,
+                    "type": "number",
+                    "aliases": [
+                        "chatBubbleOffset"
+                    ],
+                    "description": "The offset of the chat bubble, only applies objects that should chat, like NPCs.",
+                    "hide-by-default": true,
+                    "default-hint": null
+                },
+                "static-billboard": {
+                    "required": false,
+                    "nullable": true,
+                    "type": "boolean",
+                    "aliases": [
+                        "staticBillboard"
+                    ],
+                    "description": "Whether the billboard is static.",
+                    "hide-by-default": true,
+                    "default-hint": false
+                },
+                "lxfml-folder": {
+                    "required": false,
+                    "nullable": true,
+                    "type": "string",
+                    "aliases": [
+                        "LXFMLFolder"
+                    ],
+                    "description": "The folder containing the LXFML file for this object, for objects that are brick-built and can be destroyed or quickbuilt.",
+                    "hide-by-default": true,
+                    "default-hint": null
+                },
+                "attach-indicators-to-node": {
+                    "required": false,
+                    "nullable": true,
+                    "type": "boolean",
+                    "aliases": [
+                        "attachIndicatorsToNode"
+                    ],
+                    "description": "(?)",
+                    "hide-by-default": true,
+                    "default-hint": null
+                }
+            }
+        }
+    },
+    "actions": {
+        "add": {
+            "prepare": [
+                {
+                    "type": "generate-id",
+                    "table": "RenderComponent",
+                    "column": "id"
+                }
+            ],
+            "apply": [
+                {
+                    "type": "insert",
+                    "table": "RenderComponent",
+                    "columns": {
+                        "id": [
+                            "id"
+                        ],
+                        "render_asset": {
+                            "value": [
+                                "variables",
+                                "values",
+                                "render-asset"
+                            ],
+                            "default": null
+                        },
+                        "icon_asset": {
+                            "value": [
+                                "variables",
+                                "values",
+                                "icon-asset"
+                            ],
+                            "default": null
+                        },
+                        "IconID": {
+                            "value": [
+                                "variables",
+                                "values",
+                                "icon-id"
+                            ],
+                            "default": null
+                        },
+                        "shader_id": {
+                            "value": [
+                                "variables",
+                                "values",
+                                "shader-id"
+                            ],
+                            "default": 1
+                        },
+                        "effect1": {
+                            "value": [
+                                "variables",
+                                "values",
+                                "effects",
+                                "[0]"
+                            ],
+                            "default": null
+                        },
+                        "effect2": {
+                            "value": [
+                                "variables",
+                                "values",
+                                "effects",
+                                "[1]"
+                            ],
+                            "default": null
+                        },
+                        "effect3": {
+                            "value": [
+                                "variables",
+                                "values",
+                                "effects",
+                                "[2]"
+                            ],
+                            "default": null
+                        },
+                        "effect4": {
+                            "value": [
+                                "variables",
+                                "values",
+                                "effects",
+                                "[3]"
+                            ],
+                            "default": null
+                        },
+                        "effect5": {
+                            "value": [
+                                "variables",
+                                "values",
+                                "effects",
+                                "[4]"
+                            ],
+                            "default": null
+                        },
+                        "effect6": {
+                            "value": [
+                                "variables",
+                                "values",
+                                "effects",
+                                "[5]"
+                            ],
+                            "default": null
+                        },
+                        "animationGroupIDs": {
+                            "value": [
+                                "variables",
+                                "values",
+                                "animation-groups"
+                            ],
+                            "default": null,
+                            "extra": {
+                                "seperator": ","
+                            }
+                        },
+                        "fade": {
+                            "value": [
+                                "variables",
+                                "values",
+                                "fade"
+                            ],
+                            "default": true
+                        },
+                        "usedropshadow": {
+                            "value": [
+                                "variables",
+                                "values",
+                                "use-drop-shadow"
+                            ],
+                            "default": false
+                        },
+                        "preloadAnimations": {
+                            "value": [
+                                "variables",
+                                "values",
+                                "preload-animations"
+                            ],
+                            "default": false
+                        },
+                        "fadeInTime": {
+                            "value": [
+                                "variables",
+                                "values",
+                                "fade-in-time"
+                            ],
+                            "default": 1
+                        },
+                        "maxShadowDistance": {
+                            "value": [
+                                "variables",
+                                "values",
+                                "max-shadow-distance"
+                            ],
+                            "default": 0
+                        },
+                        "ignoreCameraCollision": {
+                            "value": [
+                                "variables",
+                                "values",
+                                "ignore-camera-collision"
+                            ],
+                            "default": false
+                        },
+                        "renderComponentLOD1": {
+                            "value": [
+                                "variables",
+                                "values",
+                                "render-component-lod-1"
+                            ],
+                            "default": null
+                        },
+                        "renderComponentLOD2": {
+                            "value": [
+                                "variables",
+                                "values",
+                                "render-component-lod-2"
+                            ],
+                            "default": null
+                        },
+                        "gradualSnap": {
+                            "value": [
+                                "variables",
+                                "values",
+                                "gradual-snap"
+                            ],
+                            "default": false
+                        },
+                        "animationFlag": {
+                            "value": [
+                                "variables",
+                                "values",
+                                "animation-flag"
+                            ],
+                            "default": null
+                        },
+                        "AudioMetaEventSet": {
+                            "value": [
+                                "variables",
+                                "values",
+                                "audio-meta-event-set"
+                            ],
+                            "default": null
+                        },
+                        "billboardHeight": {
+                            "value": [
+                                "variables",
+                                "values",
+                                "billboard-height"
+                            ],
+                            "default": null
+                        },
+                        "chatBubbleOffset": {
+                            "value": [
+                                "variables",
+                                "values",
+                                "chat-bubble-offset"
+                            ],
+                            "default": null
+                        },
+                        "staticBillboard": {
+                            "value": [
+                                "variables",
+                                "values",
+                                "static-billboard"
+                            ],
+                            "default": false
+                        },
+                        "LXFMLFolder": {
+                            "value": [
+                                "variables",
+                                "values",
+                                "lxfml-folder"
+                            ],
+                            "default": null
+                        },
+                        "attachIndicatorsToNode": {
+                            "value": [
+                                "variables",
+                                "values",
+                                "attach-indicators-to-node"
+                            ],
+                            "default": null
+                        }
+                    }
+                }
+            ]
+        }
+    }
+}
