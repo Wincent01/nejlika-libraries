@@ -16,7 +16,7 @@ file(
 
 add_library(bcrypt SHARED ${SOURCES_LIBBCRYPT})
 
-target_include_directories(bcrypt PUBLIC ${CMAKE_SOURCE_DIR}/libbcrypt/include/bcrypt)
+target_include_directories(bcrypt PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/libbcrypt/include/bcrypt)
 
 add_subdirectory(common)
 add_subdirectory(core)

@@ -7,7 +7,7 @@ set(CMAKE_CXX_STANDARD 20)
 project(geometry)
 
 # Locate all .cpp files in the generated subdirectory
-file(GLOB GENERATED_SOURCES "${CMAKE_SOURCE_DIR}/geometry/generated/*.cpp")
+file(GLOB GENERATED_SOURCES "${CMAKE_CURRENT_SOURCE_DIR}/generated/*.cpp")
 
 # Add an executable target
 add_library(geometry SHARED
