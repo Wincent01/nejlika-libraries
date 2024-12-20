@@ -65,8 +65,6 @@ public:
 
     const std::vector<char>& GetBuffer() const;
 
-    std::vector<char> GetCompressedBuffer();
-
 private:
     size_t m_WriteHead;
     

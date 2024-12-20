@@ -53,6 +53,11 @@ TerrainChunk::TerrainChunk(nejlika::Reader& io, int32_t version)
         vertexUsage = io.Read<uint16_t>();
     }
 
+    if (m_MeshVertexUsage.empty())
+    {
+        return;
+    }
+
     m_MeshVertexSize.resize(16);
     
     for (auto& vertexSize : m_MeshVertexSize)
@@ -129,6 +134,11 @@ void TerrainChunk::Save(nejlika::Writer& io, int32_t version) const
     for (const auto& vertexUsage : m_MeshVertexUsage)
     {
         io.Write(vertexUsage);
+    }
+
+    if (m_MeshVertexUsage.empty())
+    {
+        return;
     }
 
     if (m_MeshVertexSize.size() != 16)

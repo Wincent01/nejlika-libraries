@@ -155,15 +155,26 @@ void Header::Read(nejlika::Reader& reader, uint32_t version, uint32_t user, uint
 
 void Header::Write(nejlika::Writer& writer, uint32_t version, uint32_t user, uint32_t arg) const
 {
-    writer.Write(m_HeaderString);
+    for (uint32_t i = 0; i < m_HeaderString.size(); i++)
+    {
+        writer.Write(m_HeaderString[i]);
+    }
+    writer.Write<char>(0x0A);
 
     if (version <= VERSION_NUMBER(0, 0, 3, 1))
     {
         for (uint32_t i = 0; i < m_Copyright.size(); i++)
         {
-            writer.Write(m_Copyright[i]);
+            for (uint32_t j = 0; j < m_Copyright[i].size(); j++)
+            {
+                writer.Write(m_Copyright[i][j]);
+            }
+            writer.Write<char>(0x0A);
         }
     }
+
+    version = m_Version;
+    user = m_UserVersion;
 
     if (version >= VERSION_NUMBER(3, 3, 0, 13))
     {

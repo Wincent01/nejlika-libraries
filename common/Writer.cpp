@@ -77,19 +77,3 @@ const std::vector<char>& nejlika::Writer::GetBuffer() const
 {
     return m_Buffer;
 }
-
-std::vector<char> nejlika::Writer::GetCompressedBuffer()
-{
-    std::vector<char> compressedBuffer(m_BufferSize);
-
-    uLongf compressedSize = m_BufferSize;
-
-    if (compress(reinterpret_cast<Bytef*>(compressedBuffer.data()), &compressedSize, reinterpret_cast<Bytef*>(m_Buffer.data()), m_BufferSize) != Z_OK)
-    {
-        throw std::runtime_error("Failed to compress buffer");
-    }
-
-    compressedBuffer.resize(compressedSize);
-
-    return compressedBuffer;
-}

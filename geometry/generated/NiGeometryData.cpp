@@ -179,7 +179,7 @@ void NiGeometryData::Write(nejlika::Writer& writer, uint32_t version, uint32_t u
         writer.Write(m_NumVertices);
     }
 
-    if (false && (version < VERSION_NUMBER(20, 2, 0, 7)) || (user< 11))
+    if (false && ((version < VERSION_NUMBER(20, 2, 0, 7)) || (user< 11)))
     {
         writer.Write(m_NumVertices);
     }

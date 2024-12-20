@@ -31,6 +31,14 @@ private:
     uint32_t m_Index;
 
 public:
+    Pointer() : m_Index(0xFFFFFFFF)
+    {
+    }
+
+    Pointer(uint32_t index) : m_Index(index)
+    {
+    }
+
     void Read(nejlika::Reader& reader, uint32_t version, uint32_t user, uint32_t arg)
     {
         m_Index = reader.Read<uint32_t>();
