@@ -123,6 +123,14 @@ public:
      * @return True if the name has conflicts, false otherwise.
      */
     bool HasNameConflicts(const std::string& name, const size_t& id);
+    
+    /**
+     * @brief Check if a name of a mod has conflicts with any other mod in the mod pack.
+     * 
+     * @param name The name to check.
+     * @return True if the name has conflicts, false otherwise.
+     */
+    bool HasNameConflicts(const std::string& name);
 
     /**
      * @brief Checks if this mod pack includes a mod.

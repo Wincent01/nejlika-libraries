@@ -187,6 +187,25 @@ ModPack &nejlika::Mods::AddModPack(nejlika::Context& ctx, const Manifest &manife
     return *m_ModPacks.back();
 }
 
+void nejlika::Mods::RemoveModPack(const std::string& name)
+{
+    for (auto it = m_ModPacks.begin(); it != m_ModPacks.end(); ++it)
+    {
+        if ((*it)->GetManifest().GetName() == name)
+        {
+            m_ModPacks.erase(it);
+
+            return;
+        }
+    }
+
+    std::stringstream ss;
+
+    ss << "Mod pack \"" << name << "\" not found.";
+
+    throw std::runtime_error(ss.str());
+}
+
 ModResources &nejlika::Mods::GetResources(const std::shared_ptr<AbstractMod> &mod)
 {
     return GetModPack(mod).GetResources();

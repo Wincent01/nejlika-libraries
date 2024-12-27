@@ -288,11 +288,32 @@ bool nejlika::ModPack::HasNameConflicts(const std::string& name, const size_t& i
 
     for (const auto& mod : m_Mods)
     {
-        if (mod->GetUniqueRuntimeId() == id)
+        const auto uid = mod->GetUniqueRuntimeId();
+
+        if (uid != 0 && uid == id)
         {
             continue;
         }
         
+        if (mod->CanIdentifyWith(name))
+        {
+            m_Mutex.unlock();
+
+            return true;
+        }
+    }
+
+    m_Mutex.unlock();
+
+    return false;
+}
+
+bool nejlika::ModPack::HasNameConflicts(const std::string& name)
+{
+    m_Mutex.lock();
+
+    for (const auto& mod : m_Mods)
+    {
         if (mod->CanIdentifyWith(name))
         {
             m_Mutex.unlock();

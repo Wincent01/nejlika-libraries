@@ -9,6 +9,9 @@ project(gltf)
 # Add an executable target
 add_library(gltf SHARED
     "Converter.cpp"
+    "TerrainConverter.cpp"
+    "ConverterHelper.cpp"
+    "gltf.cpp"
 )
 target_include_directories(gltf PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
 

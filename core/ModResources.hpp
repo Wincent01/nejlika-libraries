@@ -96,6 +96,21 @@ public:
     void CreateSubdirectory(const std::filesystem::path& path);
 
     /**
+     * @brief Check if there are any resources is a subdirectory (or root) of the resource directory.
+     * 
+     * @param subdirectory The subdirectory to search in.
+     */
+    bool HasResourcesInSubdirectory(const std::filesystem::path& subdirectory) const;
+
+    /**
+     * @brief Delete a subdirectory in the resource directory.
+     * 
+     * @param path The path to the subdirectory.
+     * @throw If the subdirectory could not be deleted.
+     */
+    void DeleteSubdirectory(const std::filesystem::path& path);
+
+    /**
      * @brief Check if a resource file exists.
      * 
      * @param path The path to the resource file.
@@ -119,7 +134,11 @@ public:
      * 
      * @note Non-recursive.
      */
-    std::unordered_set<std::filesystem::path, nejlika::filepath_hash> GetResourcesInSubdirectory(const std::filesystem::path& subdirectory, bool includeSubdirectories = false) const;
+    std::unordered_set<std::filesystem::path, nejlika::filepath_hash> GetResourcesInSubdirectory(
+        const std::filesystem::path& subdirectory,
+        bool includeSubdirectories = false,
+        bool recursive = false
+    ) const;
 
     /**
      * @brief Get the directory name of the resource directory.
@@ -154,7 +173,12 @@ public:
      * 
      * @note Non-recursive.
      */
-    static std::unordered_set<std::filesystem::path, nejlika::filepath_hash> GetResourcesInSubdirectoryCore(nejlika::Context& ctx, const std::filesystem::path& subdirectory, bool includeSubdirectories = false);
+    static std::unordered_set<std::filesystem::path, nejlika::filepath_hash> GetResourcesInSubdirectoryCore(
+        nejlika::Context& ctx,
+        const std::filesystem::path& subdirectory,
+        bool includeSubdirectories = false,
+        bool recursive = false
+    );
 
     /**
      * @brief Check if a resource is a core resource.

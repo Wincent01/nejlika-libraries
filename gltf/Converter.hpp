@@ -22,10 +22,7 @@
 #include "NiTriStripsData.hpp"
 #include "NiNode.hpp"
 
-#define TINYGLTF_IMPLEMENTATION
-#define STB_IMAGE_IMPLEMENTATION
-#define STB_IMAGE_WRITE_IMPLEMENTATION
-#include "tiny_gltf.h"
+#include "gltf.h"
 
 namespace nejlika::geometry {
 

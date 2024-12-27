@@ -135,6 +135,14 @@ public:
     ModPack& AddModPack(nejlika::Context& ctx, const Manifest& manifest);
 
     /**
+     * @brief Remove a mod pack.
+     * 
+     * @param name The name of the mod pack to remove.
+     * @throw If the mod pack is not found.
+     */
+    void RemoveModPack(const std::string& name);
+
+    /**
      * @brief Get the resources for a mod pack by a mod it contains.
      * 
      * @param mod The mod to get the resources for.

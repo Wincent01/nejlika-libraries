@@ -135,6 +135,37 @@ void nejlika::ModResources::CreateSubdirectory(const std::filesystem::path &path
     std::filesystem::create_directories(m_Path / GetResourcePathWithoutDirectoryName(path));
 }
 
+bool nejlika::ModResources::HasResourcesInSubdirectory(const std::filesystem::path &subdirectory) const
+{
+    const auto directory = subdirectory.empty() ? m_DirectoryName : GetResourcePathWithDirectoryName(subdirectory);
+
+    for (const auto &path : m_Resources)
+    {
+        const auto& parentPath = path.parent_path();
+
+        if (parentPath == directory)
+        {
+            return true;
+        }
+    }
+
+    return false;
+}
+
+void nejlika::ModResources::DeleteSubdirectory(const std::filesystem::path &path)
+{
+    if (HasResourcesInSubdirectory(path))
+    {
+        std::stringstream ss;
+
+        ss << "Subdirectory \"" << path << "\" is not empty.";
+
+        throw std::runtime_error(ss.str());
+    }
+    
+    std::filesystem::remove_all(m_Path / GetResourcePathWithoutDirectoryName(path));
+}
+
 bool nejlika::ModResources::HasResource(const std::filesystem::path &path) const
 {
     return m_Resources.find(path) != m_Resources.end() || m_Resources.find(m_DirectoryName / path) != m_Resources.end();
@@ -145,7 +176,11 @@ const std::unordered_set<std::filesystem::path, nejlika::filepath_hash>& nejlika
     return m_Resources;
 }
 
-std::unordered_set<std::filesystem::path, nejlika::filepath_hash> nejlika::ModResources::GetResourcesInSubdirectory(const std::filesystem::path &subdirectory, bool includeSubdirectories) const
+std::unordered_set<std::filesystem::path, nejlika::filepath_hash> nejlika::ModResources::GetResourcesInSubdirectory(
+    const std::filesystem::path &subdirectory,
+    bool includeSubdirectories,
+    bool recursive
+) const
 {
     const auto directory = subdirectory.empty() ? m_DirectoryName : GetResourcePathWithDirectoryName(subdirectory);
 
@@ -165,7 +200,24 @@ std::unordered_set<std::filesystem::path, nejlika::filepath_hash> nejlika::ModRe
     {
         const auto p = m_Path / GetResourcePathWithoutDirectoryName(subdirectory);
 
-        for (const auto &entry : std::filesystem::directory_iterator(p))
+        std::vector<std::filesystem::directory_entry> iterator;
+
+        if (recursive)
+        {
+            for (const auto &entry : std::filesystem::recursive_directory_iterator(p))
+            {
+                iterator.emplace_back(entry.path());
+            }
+        }
+        else
+        {
+            for (const auto &entry : std::filesystem::directory_iterator(p))
+            {
+                iterator.emplace_back(entry.path());
+            }
+        }
+
+        for (const auto &entry : iterator)
         {
             if (!entry.is_directory())
             {
@@ -185,13 +237,35 @@ std::unordered_set<std::filesystem::path, nejlika::filepath_hash> nejlika::ModRe
     return result;
 }
 
-std::unordered_set<std::filesystem::path, nejlika::filepath_hash> nejlika::ModResources::GetResourcesInSubdirectoryCore(nejlika::Context& ctx, const std::filesystem::path &subdirectory, bool includeSubdirectories)
+std::unordered_set<std::filesystem::path, nejlika::filepath_hash> nejlika::ModResources::GetResourcesInSubdirectoryCore(
+    nejlika::Context& ctx,
+    const std::filesystem::path &subdirectory,
+    bool includeSubdirectories,
+    bool recursive
+)
 {
     std::unordered_set<std::filesystem::path, nejlika::filepath_hash> result;
 
     const auto p = ctx.configuration->GetClient() / "res" / subdirectory;
 
-    for (const auto &entry : std::filesystem::directory_iterator(p))
+    std::vector<std::filesystem::directory_entry> iterator;
+
+    if (recursive)
+    {
+        for (const auto &entry : std::filesystem::recursive_directory_iterator(p))
+        {
+            iterator.emplace_back(entry.path());
+        }
+    }
+    else
+    {
+        for (const auto &entry : std::filesystem::directory_iterator(p))
+        {
+            iterator.emplace_back(entry.path());
+        }
+    }
+
+    for (const auto &entry : iterator)
     {
         if (entry.is_directory())
         {
@@ -203,7 +277,7 @@ std::unordered_set<std::filesystem::path, nejlika::filepath_hash> nejlika::ModRe
 
     if (includeSubdirectories)
     {
-        for (const auto &entry : std::filesystem::directory_iterator(p))
+        for (const auto &entry : iterator)
         {
             if (!entry.is_directory())
             {
