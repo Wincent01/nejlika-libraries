@@ -83,8 +83,16 @@ public:
      * @brief Get all type templates.
      * 
      * @return All type templates.
+     * @note If multiple collections have the same template name, the last one added will be returned.
      */
     std::unordered_map<name, std::shared_ptr<TypeTemplate>> GetTemplates() const;
+
+    /**
+     * @brief Get all the collections of type templates.
+     * 
+     * @return All the collections of type templates.
+     */
+    const std::vector<std::unique_ptr<TypeTemplateCollection>>& GetCollections() const;
 
 private:
     TypeTemplateApplier m_Applier;

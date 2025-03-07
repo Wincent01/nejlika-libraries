@@ -84,3 +84,8 @@ std::unordered_map<name, std::shared_ptr<TypeTemplate>> nejlika::TypeTemplateInt
 
     return templates;
 }
+
+const std::vector<std::unique_ptr<TypeTemplateCollection>>& nejlika::TypeTemplateInterface::GetCollections() const
+{
+    return m_Collection;
+}

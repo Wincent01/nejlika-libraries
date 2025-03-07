@@ -310,7 +310,7 @@ void nejlika::geometry::Converter::ExportGLTF(std::stringstream& writer)
     // Fist, create a byte stream
     tinygltf::TinyGLTF gltf;
     
-    bool result = gltf.WriteGltfSceneToStream(&model, writer, true, false);
+    bool result = gltf.WriteGltfSceneToStream(&model, writer, true, true);
 
     if (!result)
     {
