@@ -1,0 +1,202 @@
+{
+    "name": "zone",
+    "parameters": {},
+    "variables": {
+        "values": {
+            "type": "object",
+            "object-properties": {
+                "script-id": {
+                    "type": "id",
+                    "aliases": [
+                        "script"
+                    ],
+                    "required": false,
+                    "nullable": false,
+                    "default-hint": -1,
+                    "description": "Zone script",
+                    "hide-by-default": true
+                },
+                "ghost-distance-min": {
+                    "type": "number",
+                    "aliases": [
+                        "ghostDistanceMin"
+                    ],
+                    "required": false,
+                    "nullable": false,
+                    "default-hint": 150,
+                    "description": "Ghosting distance when the game is set to low graphics quality.",
+                    "hide-by-default": true
+                },
+                "ghost-distance-max": {
+                    "type": "number",
+                    "aliases": [
+                        "ghostDistanceMax"
+                    ],
+                    "required": false,
+                    "nullable": false,
+                    "default-hint": 250,
+                    "description": "Ghosting distance when the game is set to high graphics quality.",
+                    "hide-by-default": true
+                },
+                "population-soft-cap": {
+                    "type": "number",
+                    "aliases": [
+                        "populationSoftCap"
+                    ],
+                    "required": false,
+                    "nullable": false,
+                    "default-hint": 80,
+                    "description": "The soft cap for the population of the zone.",
+                    "hide-by-default": true
+                },
+                "population-hard-cap": {
+                    "type": "number",
+                    "aliases": [
+                        "populationHardCap"
+                    ],
+                    "required": false,
+                    "nullable": false,
+                    "default-hint": 120,
+                    "description": "The hard cap for the population of the zone.",
+                    "hide-by-default": true
+                },
+                "mixer-program": {
+                    "type": "string",
+                    "aliases": [
+                        "mixer"
+                    ],
+                    "required": false,
+                    "nullable": true,
+                    "default-hint": null,
+                    "description": "The name of the mixer program to use for this zone.",
+                    "hide-by-default": true
+                },
+                "pets-allowed": {
+                    "type": "boolean",
+                    "aliases": [
+                        "petsAllowed"
+                    ],
+                    "required": false,
+                    "nullable": false,
+                    "default-hint": true,
+                    "description": "Whether pets are allowed in this zone.",
+                    "hide-by-default": true
+                },
+                "player-lose-coins-on-death": {
+                    "type": "boolean",
+                    "aliases": [
+                        "playerLoseCoinsOnDeath",
+                        "coinsOnDeath"
+                    ],
+                    "required": false,
+                    "nullable": false,
+                    "default-hint": true,
+                    "description": "Whether players lose coins on death in this zone.",
+                    "hide-by-default": true
+                },
+                "mounts-allowed": {
+                    "type": "boolean",
+                    "aliases": [
+                        "mountsAllowed"
+                    ],
+                    "required": false,
+                    "nullable": false,
+                    "default-hint": true,
+                    "description": "Whether mounts are allowed in this zone.",
+                    "hide-by-default": true
+                }
+            }
+        }
+    },
+    "actions": {
+        "add": {
+            "prepare": [
+                {
+                    "type": "generate-id",
+                    "table": "zoneTable",
+                    "column": "zoneID"
+                }
+            ],
+            "apply": [
+                {
+                    "type": "world-info",
+                    "zone": [
+                        "id"
+                    ],
+                    "script-id": {
+                        "value": [
+                            "variables",
+                            "values",
+                            "script-id"
+                        ],
+                        "default": -1
+                    },
+                    "ghost-distance-min": {
+                        "value": [
+                            "variables",
+                            "values",
+                            "ghost-distance-min"
+                        ],
+                        "default": 150
+                    },
+                    "ghost-distance-max": {
+                        "value": [
+                            "variables",
+                            "values",
+                            "ghost-distance-max"
+                        ],
+                        "default": 250
+                    },
+                    "population-soft-cap": {
+                        "value": [
+                            "variables",
+                            "values",
+                            "population-soft-cap"
+                        ],
+                        "default": 80
+                    },
+                    "population-hard-cap": {
+                        "value": [
+                            "variables",
+                            "values",
+                            "population-hard-cap"
+                        ],
+                        "default": 120
+                    },
+                    "mixer-program": {
+                        "value": [
+                            "variables",
+                            "values",
+                            "mixer-program"
+                        ],
+                        "default": null
+                    },
+                    "pets-allowed": {
+                        "value": [
+                            "variables",
+                            "values",
+                            "pets-allowed"
+                        ],
+                        "default": true
+                    },
+                    "player-lose-coins-on-death": {
+                        "value": [
+                            "variables",
+                            "values",
+                            "player-lose-coins-on-death"
+                        ],
+                        "default": true
+                    },
+                    "mounts-allowed": {
+                        "value": [
+                            "variables",
+                            "values",
+                            "mounts-allowed"
+                        ],
+                        "default": true
+                    }
+                }
+            ]
+        }
+    }
+}

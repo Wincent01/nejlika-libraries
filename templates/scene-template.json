@@ -1,0 +1,89 @@
+{
+    "name": "scene",
+    "parameters": {},
+    "variables": {
+        "values": {
+            "type": "object",
+            "object-properties": {
+                "zone": {
+                    "type": "id",
+                    "aliases": [
+                        "zone-id",
+                        "world",
+                        "world-id"
+                    ],
+                    "required": true,
+                    "nullable": false,
+                    "description": "The zone to which this scene belongs."
+                },
+                "layer": {
+                    "type": "id",
+                    "aliases": [
+                        "layer-id",
+                        "level-layer",
+                        "scene-layer"
+                    ],
+                    "required": false,
+                    "nullable": false,
+                    "default-hint": 0,
+                    "hide-by-default": true,
+                    "description": "The layer to which this scene belongs."
+                },
+                "name": {
+                    "type": "string",
+                    "aliases": [
+                        "scene-name"
+                    ],
+                    "required": false,
+                    "nullable": false,
+                    "default-hint": "",
+                    "hide-by-default": true,
+                    "description": "The name of the scene."
+                }
+            }
+        }
+    },
+    "actions": {
+        "add": {
+            "prepare": [
+                {
+                    "type": "claim-scene-id",
+                    "zone": [
+                        "variables",
+                        "values",
+                        "zone"
+                    ]
+                }
+            ],
+            "apply": [
+                {
+                    "type": "add-scene",
+                    "zone": [
+                        "variables",
+                        "values",
+                        "zone"
+                    ],
+                    "level-id": [
+                        "id"
+                    ],
+                    "level-layer": {
+                        "value": [
+                            "variables",
+                            "values",
+                            "layer"
+                        ],
+                        "default": 0
+                    },
+                    "scene-name": {
+                        "value": [
+                            "variables",
+                            "values",
+                            "name"
+                        ],
+                        "default": ""
+                    }
+                }
+            ]
+        }
+    }
+}

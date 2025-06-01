@@ -176,7 +176,7 @@ void Header::Write(nejlika::Writer& writer, uint32_t version, uint32_t user, uin
     version = m_Version;
     user = m_UserVersion;
 
-    if (version >= VERSION_NUMBER(3, 3, 0, 13))
+    if (true || version >= VERSION_NUMBER(3, 3, 0, 13))
     {
         writer.Write(m_Version);
     }

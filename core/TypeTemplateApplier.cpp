@@ -216,8 +216,6 @@ TypeTemplateError nejlika::TypeTemplateApplier::ApplyGenerateOperation(
     const TypeTemplate &typeTemplate,
     const std::unordered_map<std::string, TypeTemplateValue> &parameters) const
 {
-    const bool sync = operation.contains("sync") ? operation.at("sync").as_bool() : true;
-
     const auto& name = json.at("name").as_string().c_str();
 
     if (operation.contains("require-core-symbol") && operation.at("require-core-symbol").as_bool())

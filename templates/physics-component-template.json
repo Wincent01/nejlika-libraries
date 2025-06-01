@@ -107,7 +107,7 @@
                         "pcShapeType"
                     ],
                     "description": "The shape type of the physics component.",
-                    "default-hint": 2,
+                    "default-hint": 0,
                     "hide-by-default": true
                 },
                 "collision-group": {
@@ -118,7 +118,7 @@
                         "collisionGroup"
                     ],
                     "description": "The collision group of the physics component.",
-                    "default-hint": 5,
+                    "default-hint": 1,
                     "hide-by-default": true
                 },
                 "air-speed": {
@@ -266,7 +266,7 @@
                                 "values",
                                 "pc-shape-type"
                             ],
-                            "default": 2
+                            "default": 0
                         },
                         "collisionGroup": {
                             "value": [
@@ -274,7 +274,7 @@
                                 "values",
                                 "collision-group"
                             ],
-                            "default": 5
+                            "default": 1
                         },
                         "airSpeed": {
                             "value": [

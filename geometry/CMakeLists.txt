@@ -12,6 +12,7 @@ file(GLOB GENERATED_SOURCES "${CMAKE_CURRENT_SOURCE_DIR}/generated/*.cpp")
 # Add an executable target
 add_library(geometry SHARED
     "Factory.cpp"
+    "NifWrapper.cpp"
     ${GENERATED_SOURCES}
 )
 

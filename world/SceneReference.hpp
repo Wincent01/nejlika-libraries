@@ -13,6 +13,8 @@ namespace nejlika::world
 class SceneReference
 {
 public:
+    SceneReference() = default;
+
     SceneReference(nejlika::Reader& io, version version);
 
     void Save(nejlika::Writer& io, version version) const;
@@ -32,6 +34,18 @@ public:
     const color& GetColor() const;
 
     void SetSceneFilename(const std::string& sceneFilename);
+
+    void SetSceneID(uint32_t sceneID);
+
+    void SetLayerID(uint32_t layerID);
+
+    void SetSceneName(const std::string& sceneName);
+
+    void SetUnknown1(const vector3& unknown1);
+
+    void SetUnknown2(float unknown2);
+
+    void SetColor(const color& color);
 
     ~SceneReference();
 

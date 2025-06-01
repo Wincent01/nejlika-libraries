@@ -173,6 +173,76 @@ const vector4 &nejlika::world::LightingInformation::GetStartRotation() const
     return m_StartRotation;
 }
 
+void nejlika::world::LightingInformation::SetBlendTime(float blendTime)
+{
+    m_BlendTime = blendTime;
+}
+
+void nejlika::world::LightingInformation::SetAmbient(const vector3 &ambient)
+{
+    m_Ambient = ambient;
+}
+
+void nejlika::world::LightingInformation::SetSpecular(const vector3 &specular)
+{
+    m_Specular = specular;
+}
+
+void nejlika::world::LightingInformation::SetUpperHemi(const vector3 &upperHemi)
+{
+    m_UpperHemi = upperHemi;
+}
+
+void nejlika::world::LightingInformation::SetPosition(const vector3 &position)
+{
+    m_Position = position;
+}
+
+void nejlika::world::LightingInformation::SetMinDrawDistances(const SceneDrawDistances &minDrawDistances)
+{
+    m_MinDrawDistances = minDrawDistances;
+}
+
+void nejlika::world::LightingInformation::SetMaxDrawDistances(const SceneDrawDistances &maxDrawDistances)
+{
+    m_MaxDrawDistances = maxDrawDistances;
+}
+
+void nejlika::world::LightingInformation::SetCullData(const std::vector<CullData> &cullData)
+{
+    m_CullData = cullData;
+}
+
+void nejlika::world::LightingInformation::SetFogNear(float fogNear)
+{
+    m_FogNear = fogNear;
+}
+
+void nejlika::world::LightingInformation::SetFogFar(float fogFar)
+{
+    m_FogFar = fogFar;
+}
+
+void nejlika::world::LightingInformation::SetFogColor(const vector3 &fogColor)
+{
+    m_FogColor = fogColor;
+}
+
+void nejlika::world::LightingInformation::SetDirectionalLightColor(const vector3 &directionalLightColor)
+{
+    m_DirectionalLightColor = directionalLightColor;
+}
+
+void nejlika::world::LightingInformation::SetStartPosition(const vector3 &startPosition)
+{
+    m_StartPosition = startPosition;
+}
+
+void nejlika::world::LightingInformation::SetStartRotation(const vector4 &startRotation)
+{
+    m_StartRotation = startRotation;
+}
+
 nejlika::world::LightingInformation::~LightingInformation()
 {
 }

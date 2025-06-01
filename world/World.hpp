@@ -39,6 +39,33 @@ public:
 
     uint64_t ClaimObjectId();
 
+    void SetScriptID(int32_t scriptId);
+    int32_t GetScriptID() const;
+
+    void SetGhostDistanceMin(float distance);
+    float GetGhostDistanceMin() const;
+
+    void SetGhostDistanceMax(float distance);
+    float GetGhostDistanceMax() const;
+
+    void SetPopulationSoftCap(int32_t cap);
+    int32_t GetPopulationSoftCap() const;
+
+    void SetPopulationHardCap(int32_t cap);
+    int32_t GetPopulationHardCap() const;
+
+    void SetMixerProgram(const std::string& program);
+    const std::string& GetMixerProgram() const;
+
+    void SetPetsAllowed(bool allowed);
+    bool ArePetsAllowed() const;
+
+    void SetPlayersLoseCoinsOnDeath(bool loseCoins);
+    bool DoPlayersLoseCoinsOnDeath() const;
+
+    void SetMountsAllowed(bool allowed);
+    bool AreMountsAllowed() const;
+
 private:
     Zone m_Zone;
 

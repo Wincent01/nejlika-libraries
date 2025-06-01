@@ -7,6 +7,7 @@
 #include "Lookup.hpp"
 #include "Configuration.hpp"
 #include "Reader.hpp"
+#include "Terrain.hpp"
 
 #include <fstream>
 #include <future>
@@ -212,6 +213,19 @@ void World::Save(nejlika::Context& ctx, const nejlika::name& name)
 
     bool hasCopiedRaw = false;
 
+    if (m_OriginalPath.empty())
+    {
+        // Copy /var/www/client/res/maps/01_live_maps/space_ship/nd_space_ship.raw
+        const auto originalPath = ctx.configuration->GetClient() / "res/maps/01_live_maps/space_ship/nd_space_ship.raw";
+        const auto newPath = root / "zone.raw";
+        std::filesystem::copy(originalPath, path / newPath, std::filesystem::copy_options::overwrite_existing);
+        ctx.artifacts->RegisterGeneratedFile(ctx, newPath);
+        hasCopiedRaw = true;
+
+        std::cerr << "Original path is empty. Skipping copying of files." << std::endl;
+        return;
+    }
+
     // Copy all ".raw", ".lutriggers", ".evc", and ".ast" files from the original path to the new path.
     for (const auto& entry : std::filesystem::directory_iterator(m_OriginalPath))
     {
@@ -372,4 +386,94 @@ uint64_t nejlika::world::World::ClaimObjectId()
     m_ObjectIds.insert(m_LowestObjectId);
     
     return m_LowestObjectId;
+}
+
+void World::SetScriptID(int32_t scriptID)
+{
+    m_ScriptID = scriptID;
+}
+
+int32_t World::GetScriptID() const
+{
+    return m_ScriptID;
+}
+
+void World::SetGhostDistanceMin(float distance)
+{
+    m_GhostDistanceMin = distance;
+}
+
+float World::GetGhostDistanceMin() const
+{
+    return m_GhostDistanceMin;
+}
+
+void World::SetGhostDistanceMax(float distance)
+{
+    m_GhostDistanceMax = distance;
+}
+
+float World::GetGhostDistanceMax() const
+{
+    return m_GhostDistanceMax;
+}
+
+void World::SetPopulationSoftCap(int32_t cap)
+{
+    m_PopulationSoftCap = cap;
+}
+
+int32_t World::GetPopulationSoftCap() const
+{
+    return m_PopulationSoftCap;
+}
+
+void World::SetPopulationHardCap(int32_t cap)
+{
+    m_PopulationHardCap = cap;
+}
+
+int32_t World::GetPopulationHardCap() const
+{
+    return m_PopulationHardCap;
+}
+
+void World::SetMixerProgram(const std::string& program)
+{
+    m_MixerProgram = program;
+}
+
+const std::string& World::GetMixerProgram() const
+{
+    return m_MixerProgram;
+}
+
+void World::SetPetsAllowed(bool allowed)
+{
+    m_PetsAllowed = allowed;
+}
+
+bool World::ArePetsAllowed() const
+{
+    return m_PetsAllowed;
+}
+
+void World::SetPlayersLoseCoinsOnDeath(bool loseCoins)
+{
+    m_PlayersLoseCoinsOnDeath = loseCoins;
+}
+
+bool World::DoPlayersLoseCoinsOnDeath() const
+{
+    return m_PlayersLoseCoinsOnDeath;
+}
+
+void World::SetMountsAllowed(bool allowed)
+{
+    m_MountsAllowed = allowed;
+}
+
+bool World::AreMountsAllowed() const
+{
+    return m_MountsAllowed;
 }

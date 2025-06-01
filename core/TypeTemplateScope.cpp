@@ -709,27 +709,14 @@ boost::json::value nejlika::TypeTemplateScope::ProcessResource(
         parameters.emplace(key, FindValue(value, options));
     }
 
-    // Assert that the "prefix" and "type" parameters exist
-    if (!parameters.contains("prefix"))
-    {
-        throw std::runtime_error("Resource parameter missing 'prefix' parameter");
-    }
+    // Set default values for "prefix" and "type" if they are not provided
+    const std::string prefix = parameters.contains("prefix") && parameters.at("prefix").GetValue().is_string()
+                                   ? parameters.at("prefix").GetValue().as_string().c_str()
+                                   : "";
 
-    if (!parameters.contains("type"))
-    {
-        throw std::runtime_error("Resource parameter missing 'type' parameter");
-    }
-
-    // Assert that the "prefix" and "type" parameters are strings
-    if (!parameters.at("prefix").GetValue().is_string())
-    {
-        throw std::runtime_error("Resource parameter 'prefix' is not a string");
-    }
-
-    if (!parameters.at("type").GetValue().is_string())
-    {
-        throw std::runtime_error("Resource parameter 'type' is not a string");
-    }
+    const std::string type = parameters.contains("type") && parameters.at("type").GetValue().is_string()
+                                 ? parameters.at("type").GetValue().as_string().c_str()
+                                 : "*";
 
     if (!value.is_string())
     {
@@ -737,9 +724,6 @@ boost::json::value nejlika::TypeTemplateScope::ProcessResource(
     }
 
     const std::filesystem::path resource = value.as_string().c_str();
-
-    const std::string prefix = parameters.at("prefix").GetValue().as_string().c_str();
-    const std::string &type = parameters.at("type").GetValue().as_string().c_str();
 
     const auto &root = GetRoot();
 
@@ -848,11 +832,20 @@ boost::json::value nejlika::TypeTemplateScope::ProcessResource(
     const auto &modRelative = source.lexically_relative(ctx.configuration->GetModsDirectory());
 
     bool preserveFilename = parameters.contains("preserve-filename") && parameters.at("preserve-filename").GetValue().as_bool();
+    
+    const auto& addedResourcesSource = ctx.configuration->GetAddedResourcesDirectory();
 
     // Generate a random name
     const auto &destination = preserveFilename ?
           ctx.artifacts->GenerateFilename(ctx, source.filename().string())
-        : ctx.artifacts->GenerateRandomFilename(ctx, extension);
+        : (addedResourcesSource / package.GetName() / sourcePath).replace_extension(extension);
+        //ctx.artifacts->GenerateRandomFilename(ctx, extension);
+
+    // Create the directory if it doesn't exist
+    if (!std::filesystem::exists(destination.parent_path()))
+    {
+        std::filesystem::create_directories(destination.parent_path());
+    }
 
     ctx.artifacts->Symlink(ctx, modRelative, destination);
 

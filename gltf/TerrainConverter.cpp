@@ -168,12 +168,27 @@ boost::json::object nejlika::geometry::TerrainConverter::ExportChunkMaterialDeta
         maxVal = std::max(maxVal, height);
     }
 
-    const auto heightMapPath = ConverterHelper::GenerateRandomPath(path, ".png");
-
-    ConverterHelper::MapToPNG(heightmap.GetHeightMap(), width, height, minVal, maxVal, systemPath / heightMapPath);
-
     boost::json::object heightMap;
-    heightMap["path"] = (uriPath / heightMapPath).string();
+
+    if (std::abs(minVal - maxVal) < 0.001f)
+    {
+        heightMap["flat"] = true;
+    }
+    else
+    {
+        size_t heightMapHash = ComputeMapHash(heightmap.GetHeightMap(), width, height);
+    
+        const auto heightMapPath = path / (std::to_string(heightMapHash) + ".png"); //ConverterHelper::GenerateRandomPath(path, ".png");
+    
+        if (!std::filesystem::exists(systemPath / heightMapPath))
+        {
+            ConverterHelper::MapToPNG(heightmap.GetHeightMap(), width, height, minVal, maxVal, systemPath / heightMapPath);
+        }
+    
+        heightMap["flat"] = false;
+        heightMap["path"] = (uriPath / heightMapPath).string();    
+    }
+
     heightMap["min"] = minVal;
     heightMap["max"] = maxVal;
     heightMap["width"] = width;
@@ -190,11 +205,16 @@ boost::json::object nejlika::geometry::TerrainConverter::ExportChunkMaterialDeta
 
     boost::json::object texturing;
 
-    const auto textureMapPath = ConverterHelper::GenerateRandomPath(path, ".png");
-
     const auto textureMap = chunk.GetTextureMap();
 
-    ConverterHelper::ColorMapToPNG(textureMap.GetColorMap(), textureMap.GetColorMapResolution(), textureMap.GetColorMapResolution(), systemPath / textureMapPath);
+    size_t textureMapHash = ComputeMapHash(textureMap.GetColorMap(), textureMap.GetColorMapResolution(), textureMap.GetColorMapResolution());
+
+    const auto textureMapPath = path / (std::to_string(textureMapHash) + ".png"); //ConverterHelper::GenerateRandomPath(path, ".png");
+
+    if (!std::filesystem::exists(systemPath / textureMapPath))
+    {
+        ConverterHelper::ColorMapToPNG(textureMap.GetColorMap(), textureMap.GetColorMapResolution(), textureMap.GetColorMapResolution(), systemPath / textureMapPath);
+    }
 
     texturing["path"] = (uriPath / textureMapPath).string();
 
@@ -213,11 +233,16 @@ boost::json::object nejlika::geometry::TerrainConverter::ExportChunkMaterialDeta
 
     boost::json::object colorTints;
 
-    const auto colorMapPath = ConverterHelper::GenerateRandomPath(path, ".png");
-
     const auto colorMap = chunk.GetColorMap();
 
-    ConverterHelper::ColorMapToPNG(colorMap.GetColorMap(), colorMap.GetColorMapResolution(), colorMap.GetColorMapResolution(), systemPath / colorMapPath);
+    size_t colorMapHash = ComputeMapHash(colorMap.GetColorMap(), colorMap.GetColorMapResolution(), colorMap.GetColorMapResolution());
+
+    const auto colorMapPath = path / (std::to_string(colorMapHash) + ".png"); //ConverterHelper::GenerateRandomPath(path, ".png");
+
+    if (!std::filesystem::exists(systemPath / colorMapPath))
+    {
+        ConverterHelper::ColorMapToPNG(colorMap.GetColorMap(), colorMap.GetColorMapResolution(), colorMap.GetColorMapResolution(), systemPath / colorMapPath);
+    }
 
     colorTints["path"] = (uriPath / colorMapPath).string();
 
@@ -225,11 +250,16 @@ boost::json::object nejlika::geometry::TerrainConverter::ExportChunkMaterialDeta
 
     boost::json::object blendMap;
 
-    const auto blendMapPath = ConverterHelper::GenerateRandomPath(path, ".png");
-
     const auto blendMapData = chunk.GetBlendMap();
 
-    ConverterHelper::ConvertDDSToPNG(blendMapData.GetData(), systemPath / blendMapPath);
+    size_t blendMapHash = ComputeMapHash(blendMapData.GetData(), 0, 0);
+
+    const auto blendMapPath = path / (std::to_string(blendMapHash) + ".png"); //ConverterHelper::GenerateRandomPath(path, ".png");
+
+    if (!std::filesystem::exists(systemPath / blendMapPath))
+    {
+        ConverterHelper::ConvertDDSToPNG(blendMapData.GetData(), systemPath / blendMapPath);
+    }
 
     blendMap["path"] = (uriPath / blendMapPath).string();
 
@@ -237,15 +267,42 @@ boost::json::object nejlika::geometry::TerrainConverter::ExportChunkMaterialDeta
 
     boost::json::object lightMap;
 
-    const auto lightMapPath = ConverterHelper::GenerateRandomPath(path, ".png");
-
     const auto lightMapData = chunk.GetLightMap();
 
-    ConverterHelper::ConvertDDSToPNG(lightMapData.GetData(), systemPath / lightMapPath);
+    size_t lightMapHash = ComputeMapHash(lightMapData.GetData(), 0, 0);
+
+    const auto lightMapPath = path / (std::to_string(lightMapHash) + ".png"); //ConverterHelper::GenerateRandomPath(path, ".png");
+
+    if (!std::filesystem::exists(systemPath / lightMapPath))
+    {
+        ConverterHelper::ConvertDDSToPNG(lightMapData.GetData(), systemPath / lightMapPath);
+    }
 
     lightMap["path"] = (uriPath / lightMapPath).string();
 
     chunkDetails["lightmap"] = lightMap;
+
+    const auto sceneMap = chunk.GetSceneData();
+
+    int32_t sqrtSceneMapSize = static_cast<int32_t>(std::sqrt(sceneMap.size()));
+
+    size_t sceneMapHash = ComputeMapHash(sceneMap, sqrtSceneMapSize, sqrtSceneMapSize);
+
+    const auto sceneMapPath = path / (std::to_string(sceneMapHash) + ".png"); //ConverterHelper::GenerateRandomPath(path, ".png");
+
+    if (!std::filesystem::exists(systemPath / sceneMapPath))
+    {
+        ConverterHelper::MapToPNG(sceneMap, sqrtSceneMapSize, sqrtSceneMapSize, systemPath / sceneMapPath);
+    }
+
+    boost::json::object sceneData;
+
+    sceneData["path"] = (uriPath / sceneMapPath).string();
+
+    sceneData["width"] = sqrtSceneMapSize;
+    sceneData["height"] = sqrtSceneMapSize;
+
+    chunkDetails["scenemap"] = sceneData;
 
     return chunkDetails;
 }

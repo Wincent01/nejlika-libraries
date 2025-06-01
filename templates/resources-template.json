@@ -1,0 +1,35 @@
+{
+    "name": "resources",
+    "parameters": {},
+    "variables": {
+        "resources": {
+            "type": "array",
+            "array-type": {
+                "type": "resource",
+                "arguments": {
+                    "prefix": "",
+                    "type": "*"
+                }
+            },
+            "aliases": [
+                "values"
+            ]
+        }
+    },
+    "actions": {
+        "add": {
+            "prepare": [
+            ],
+            "apply": [
+                {
+                    "type": "cascade",
+                    "value": [
+                        "variables",
+                        "resources"
+                    ],
+                    "allow-none": true
+                }
+            ]
+        }
+    }
+}

@@ -2,6 +2,15 @@
 
 using namespace nejlika::world;
 
+nejlika::world::CullData::CullData(uint32_t groupId, float maxDistance, float minDistance)
+{
+    m_GroupId = groupId;
+
+    m_MaxDistance = maxDistance;
+
+    m_MinDistance = minDistance;
+}
+
 nejlika::world::CullData::CullData(nejlika::Reader &io)
 {
     m_GroupId = io.Read<uint32_t>();

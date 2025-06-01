@@ -360,6 +360,46 @@ struct vector4
     }
 };
 
+namespace std
+{
+    // Hash for vector3, vector4, color, and color4
+    template <>
+    struct hash<vector3>
+    {
+        size_t operator()(const vector3& v) const
+        {
+            return hash<float>()(v.x) ^ hash<float>()(v.y) ^ hash<float>()(v.z);
+        }
+    };
+
+    template <>
+    struct hash<vector4>
+    {
+        size_t operator()(const vector4& v) const
+        {
+            return hash<float>()(v.w) ^ hash<float>()(v.x) ^ hash<float>()(v.y) ^ hash<float>()(v.z);
+        }
+    };
+
+    template <>
+    struct hash<color>
+    {
+        size_t operator()(const color& c) const
+        {
+            return hash<uint8_t>()(c.r) ^ hash<uint8_t>()(c.g) ^ hash<uint8_t>()(c.b);
+        }
+    };
+
+    template <>
+    struct hash<color4>
+    {
+        size_t operator()(const color4& c) const
+        {
+            return hash<uint8_t>()(c.r) ^ hash<uint8_t>()(c.g) ^ hash<uint8_t>()(c.b) ^ hash<uint8_t>()(c.a);
+        }
+    };
+}
+
 struct transform
 {
     vector3 position;

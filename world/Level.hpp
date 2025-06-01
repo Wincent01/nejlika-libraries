@@ -57,6 +57,22 @@ public:
 
     version GetVersion() const;
 
+    void SetVersion(version version);
+
+    void SetEnvironmentInformation(EnvironmentInformation& environmentInformation);
+
+    void SetObjects(LevelObjects& objects);
+
+    void SetParticleInformation(ParticleInformation& particleInformation);
+
+    void SetOldInfo(OldLevelInfo& oldInfo);
+
+    void SetHasEnvironmentInformation(bool hasEnvironmentInformation);
+
+    void SetHasObjects(bool hasObjects);
+
+    void SetHasParticleInformation(bool hasParticleInformation);
+
     ~Level();
 
     /**

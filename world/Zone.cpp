@@ -182,6 +182,66 @@ nejlika::world::PathInformation &nejlika::world::Zone::GetPathInformation()
     return m_PathInformation;
 }
 
+void nejlika::world::Zone::SetVersion(version version)
+{
+    m_Version = version;
+}
+
+void nejlika::world::Zone::SetFileRevision(uint32_t fileRevision)
+{
+    m_FileRevision = fileRevision;
+}
+
+void nejlika::world::Zone::SetZoneID(uint32_t zoneID)
+{
+    m_ZoneID = zoneID;
+}
+
+void nejlika::world::Zone::SetPlayerStartPos(const vector3 &playerStartPos)
+{
+    m_PlayerStartPos = playerStartPos;
+}
+
+void nejlika::world::Zone::SetPlayerStartRot(const vector4 &playerStartRot)
+{
+    m_PlayerStartRot = playerStartRot;
+}
+
+void nejlika::world::Zone::SetScenes(const std::vector<nejlika::world::SceneReference> &scenes)
+{
+    m_Scenes = scenes;
+}
+
+void nejlika::world::Zone::SetBoundaryLines(const std::vector<nejlika::world::BoundaryLine> &boundaryLines)
+{
+    m_BoundaryLines = boundaryLines;
+}
+
+void nejlika::world::Zone::SetTerrainFilename(const std::string &terrainFilename)
+{
+    m_TerrainFilename = terrainFilename;
+}
+
+void nejlika::world::Zone::SetTerrainName(const std::string &zoneName)
+{
+    m_ZoneName = zoneName;
+}
+
+void nejlika::world::Zone::SetTerrainDescription(const std::string &zoneDescription)
+{
+    m_ZoneDescription = zoneDescription;
+}
+
+void nejlika::world::Zone::SetTransitionInformation(const nejlika::world::TransitionInformation &transitionInformation)
+{
+    m_TransitionInformation = transitionInformation;
+}
+
+void nejlika::world::Zone::SetPathInformation(const nejlika::world::PathInformation &pathInformation)
+{
+    m_PathInformation = pathInformation;
+}
+
 nejlika::world::Zone::~Zone()
 {
 }

@@ -18,6 +18,8 @@ class CullData
 public:
     CullData() = default;
 
+    CullData(uint32_t groupId, float maxDistance, float minDistance);
+
     CullData(nejlika::Reader& io);
 
     void Save(nejlika::Writer& io) const;

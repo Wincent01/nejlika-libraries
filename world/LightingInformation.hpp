@@ -53,6 +53,34 @@ public:
 
     const vector4& GetStartRotation() const;
 
+    void SetBlendTime(float blendTime);
+
+    void SetAmbient(const vector3& ambient);
+
+    void SetSpecular(const vector3& specular);
+
+    void SetUpperHemi(const vector3& upperHemi);
+
+    void SetPosition(const vector3& position);
+
+    void SetMinDrawDistances(const SceneDrawDistances& minDrawDistances);
+
+    void SetMaxDrawDistances(const SceneDrawDistances& maxDrawDistances);
+
+    void SetCullData(const std::vector<CullData>& cullData);
+
+    void SetFogNear(float fogNear);
+
+    void SetFogFar(float fogFar);
+
+    void SetFogColor(const vector3& fogColor);
+
+    void SetDirectionalLightColor(const vector3& directionalLightColor);
+
+    void SetStartPosition(const vector3& startPosition);
+
+    void SetStartRotation(const vector4& startRotation);
+
     ~LightingInformation();
 
 private:

@@ -1,0 +1,537 @@
+{
+    "name": "lighting",
+    "parameters": {},
+    "variables": {
+        "values": {
+            "type": "object",
+            "object-properties": {
+                "zone": {
+                    "type": "id",
+                    "aliases": [
+                        "zone-id",
+                        "world",
+                        "world-id"
+                    ],
+                    "required": true,
+                    "nullable": false,
+                    "description": "The zone to which this lighting should apply."
+                },
+                "level": {
+                    "type": "id",
+                    "aliases": [
+                        "level-id",
+                        "level"
+                    ],
+                    "required": true,
+                    "nullable": false,
+                    "description": "The level to which this lighting should apply."
+                },
+                "layer": {
+                    "type": "id",
+                    "aliases": [
+                        "layer-id",
+                        "level-layer",
+                        "scene-layer"
+                    ],
+                    "required": false,
+                    "nullable": false,
+                    "default-hint": 0,
+                    "hide-by-default": true,
+                    "description": "The layer to which this lighting should apply."
+                },
+                "blend-time": {
+                    "type": "number",
+                    "aliases": [
+                        "blendTime"
+                    ],
+                    "required": false,
+                    "nullable": false,
+                    "default-hint": 10,
+                    "description": "The time it takes to blend between scene lighting.",
+                    "hide-by-default": true
+                },
+                "ambiant": {
+                    "type": "object",
+                    "object-properties": {
+                        "r": {
+                            "type": "number"
+                        },
+                        "g": {
+                            "type": "number"
+                        },
+                        "b": {
+                            "type": "number"
+                        }
+                    },
+                    "aliases": [
+                        "ambient-color",
+                        "ambient-light",
+                        "ambient-lighting"
+                    ],
+                    "required": false,
+                    "nullable": false,
+                    "default-hint": {
+                        "r": 0.419607848,
+                        "g": 0.619607866,
+                        "b": 0.749019623
+                    },
+                    "description": "The ambient color of the scene lighting.",
+                    "hide-by-default": false
+                },
+                "specular": {
+                    "type": "object",
+                    "object-properties": {
+                        "r": {
+                            "type": "number"
+                        },
+                        "g": {
+                            "type": "number"
+                        },
+                        "b": {
+                            "type": "number"
+                        }
+                    },
+                    "aliases": [
+                        "specular-color",
+                        "specular-light",
+                        "specular-lighting"
+                    ],
+                    "required": false,
+                    "nullable": false,
+                    "default-hint": {
+                        "r": 1,
+                        "g": 1,
+                        "b": 1
+                    },
+                    "description": "The specular color of the scene lighting.",
+                    "hide-by-default": false
+                },
+                "upper-hemisphere": {
+                    "type": "object",
+                    "object-properties": {
+                        "r": {
+                            "type": "number"
+                        },
+                        "g": {
+                            "type": "number"
+                        },
+                        "b": {
+                            "type": "number"
+                        }
+                    },
+                    "aliases": [
+                        "upper-hemisphere-color",
+                        "upper-hemisphere-light",
+                        "upper-hemisphere-lighting",
+                        "upper-hemi",
+                        "hemi"
+                    ],
+                    "required": false,
+                    "nullable": false,
+                    "default-hint": {
+                        "r": 1,
+                        "g": 1,
+                        "b": 1
+                    },
+                    "description": "The upper hemisphere color of the scene lighting.",
+                    "hide-by-default": false
+                },
+                "position": {
+                    "type": "object",
+                    "object-properties": {
+                        "x": {
+                            "type": "number"
+                        },
+                        "y": {
+                            "type": "number"
+                        },
+                        "z": {
+                            "type": "number"
+                        }
+                    },
+                    "aliases": [
+                        "light-position",
+                        "lightPos"
+                    ],
+                    "required": false,
+                    "nullable": false,
+                    "default-hint": {
+                        "x": -0.479999989,
+                        "y": -0.860000014,
+                        "z": -0.189999998
+                    },
+                    "description": "The position of the light.",
+                    "hide-by-default": true
+                },
+                "fog-near": {
+                    "type": "number",
+                    "aliases": [
+                        "fog-near-distance",
+                        "fog-near"
+                    ],
+                    "required": false,
+                    "nullable": false,
+                    "default-hint": 100,
+                    "description": "The near distance of the fog.",
+                    "hide-by-default": true
+                },
+                "fog-far": {
+                    "type": "number",
+                    "aliases": [
+                        "fog-far-distance",
+                        "fog-far"
+                    ],
+                    "required": false,
+                    "nullable": false,
+                    "default-hint": 700,
+                    "description": "The far distance of the fog.",
+                    "hide-by-default": true
+                },
+                "post-fog-solid": {
+                    "type": "number",
+                    "aliases": [
+                        "post-fog-solid-distance",
+                        "post-fog-solid"
+                    ],
+                    "required": false,
+                    "nullable": false,
+                    "default-hint": 100,
+                    "description": "The distance at which the fog becomes solid.",
+                    "hide-by-default": true
+                },
+                "post-fog-fade": {
+                    "type": "number",
+                    "aliases": [
+                        "post-fog-distance",
+                        "post-fog"
+                    ],
+                    "required": false,
+                    "nullable": false,
+                    "default-hint": 100,
+                    "description": "The distance at which the fog fades."
+                },
+                "static-object-distance": {
+                    "type": "number",
+                    "aliases": [
+                        "static-object-distance"
+                    ],
+                    "required": false,
+                    "nullable": false,
+                    "default-hint": 0,
+                    "description": "The distance at which static objects are rendered.",
+                    "hide-by-default": true
+                },
+                "dynamic-object-distance": {
+                    "type": "number",
+                    "aliases": [
+                        "dynamic-object-distance"
+                    ],
+                    "required": false,
+                    "nullable": false,
+                    "default-hint": 0,
+                    "description": "The distance at which dynamic objects are rendered.",
+                    "hide-by-default": true
+                },
+                "fog-color": {
+                    "type": "object",
+                    "object-properties": {
+                        "r": {
+                            "type": "number"
+                        },
+                        "g": {
+                            "type": "number"
+                        },
+                        "b": {
+                            "type": "number"
+                        }
+                    },
+                    "aliases": [
+                        "fog-color",
+                        "fogColor"
+                    ],
+                    "required": false,
+                    "nullable": false,
+                    "default-hint": {
+                        "r": 0.784313738,
+                        "g": 0.749019623,
+                        "b": 0.694117665
+                    },
+                    "description": "The color of the fog.",
+                    "hide-by-default": true
+                },
+                "directional-light-color": {
+                    "type": "object",
+                    "object-properties": {
+                        "r": {
+                            "type": "number"
+                        },
+                        "g": {
+                            "type": "number"
+                        },
+                        "b": {
+                            "type": "number"
+                        }
+                    },
+                    "aliases": [
+                        "directional-light-color",
+                        "directional-light"
+                    ],
+                    "required": false,
+                    "nullable": false,
+                    "default-hint": {
+                        "r": 1,
+                        "g": 1,
+                        "b": 1
+                    },
+                    "description": "The color of the directional light.",
+                    "hide-by-default": true
+                }
+            }
+        }
+    },
+    "actions": {
+        "add": {
+            "apply": [
+                {
+                    "type": "world-lighting",
+                    "zone": [
+                        "variables",
+                        "values",
+                        "zone"
+                    ],
+                    "level-id": [
+                        "variables",
+                        "values",
+                        "level"
+                    ],
+                    "level-layer": {
+                        "value": [
+                            "variables",
+                            "values",
+                            "layer"
+                        ],
+                        "default": 0
+                    },
+                    "blend-time": {
+                        "value": [
+                            "variables",
+                            "values",
+                            "blend-time"
+                        ],
+                        "default": 10
+                    },
+                    "ambient-color-r": {
+                        "value": [
+                            "variables",
+                            "values",
+                            "ambiant",
+                            "r"
+                        ],
+                        "default": 0.5
+                    },
+                    "ambient-color-g": {
+                        "value": [
+                            "variables",
+                            "values",
+                            "ambiant",
+                            "g"
+                        ],
+                        "default": 0.5
+                    },
+                    "ambient-color-b": {
+                        "value": [
+                            "variables",
+                            "values",
+                            "ambiant",
+                            "b"
+                        ],
+                        "default": 0.5
+                    },
+                    "specular-color-r": {
+                        "value": [
+                            "variables",
+                            "values",
+                            "specular",
+                            "r"
+                        ],
+                        "default": 1
+                    },
+                    "specular-color-g": {
+                        "value": [
+                            "variables",
+                            "values",
+                            "specular",
+                            "g"
+                        ],
+                        "default": 1
+                    },
+                    "specular-color-b": {
+                        "value": [
+                            "variables",
+                            "values",
+                            "specular",
+                            "b"
+                        ],
+                        "default": 1
+                    },
+                    "upper-hemi-color-r": {
+                        "value": [
+                            "variables",
+                            "values",
+                            "upper-hemisphere",
+                            "r"
+                        ],
+                        "default": 1
+                    },
+                    "upper-hemi-color-g": {
+                        "value": [
+                            "variables",
+                            "values",
+                            "upper-hemisphere",
+                            "g"
+                        ],
+                        "default": 1
+                    },
+                    "upper-hemi-color-b": {
+                        "value": [
+                            "variables",
+                            "values",
+                            "upper-hemisphere",
+                            "b"
+                        ],
+                        "default": 1
+                    },
+                    "position-x": {
+                        "value": [
+                            "variables",
+                            "values",
+                            "position",
+                            "x"
+                        ],
+                        "default": -0.9
+                    },
+                    "position-y": {
+                        "value": [
+                            "variables",
+                            "values",
+                            "position",
+                            "y"
+                        ],
+                        "default": -0.47
+                    },
+                    "position-z": {
+                        "value": [
+                            "variables",
+                            "values",
+                            "position",
+                            "z"
+                        ],
+                        "default": 0.88
+                    },
+                    "fog-near": {
+                        "value": [
+                            "variables",
+                            "values",
+                            "fog-near"
+                        ],
+                        "default": 100
+                    },
+                    "fog-far": {
+                        "value": [
+                            "variables",
+                            "values",
+                            "fog-far"
+                        ],
+                        "default": 700
+                    },
+                    "post-fog-solid": {
+                        "value": [
+                            "variables",
+                            "values",
+                            "post-fog-solid"
+                        ],
+                        "default": 160
+                    },
+                    "post-fog-fade": {
+                        "value": [
+                            "variables",
+                            "values",
+                            "post-fog"
+                        ],
+                        "default": 200
+                    },
+                    "static-object-distance": {
+                        "value": [
+                            "variables",
+                            "values",
+                            "static-object-distance"
+                        ],
+                        "default": 8000
+                    },
+                    "dynamic-object-distance": {
+                        "value": [
+                            "variables",
+                            "values",
+                            "dynamic-object-distance"
+                        ],
+                        "default": 8000
+                    },
+                    "fog-color-r": {
+                        "value": [
+                            "variables",
+                            "values",
+                            "fog-color",
+                            "r"
+                        ],
+                        "default": 0.5
+                    },
+                    "fog-color-g": {
+                        "value": [
+                            "variables",
+                            "values",
+                            "fog-color",
+                            "g"
+                        ],
+                        "default": 0.5
+                    },
+                    "fog-color-b": {
+                        "value": [
+                            "variables",
+                            "values",
+                            "fog-color",
+                            "b"
+                        ],
+                        "default": 0.5
+                    },
+                    "directional-light-color-r": {
+                        "value": [
+                            "variables",
+                            "values",
+                            "directional-light-color",
+                            "r"
+                        ],
+                        "default": 1
+                    },
+                    "directional-light-color-g": {
+                        "value": [
+                            "variables",
+                            "values",
+                            "directional-light-color",
+                            "g"
+                        ],
+                        "default": 1
+                    },
+                    "directional-light-color-b": {
+                        "value": [
+                            "variables",
+                            "values",
+                            "directional-light-color",
+                            "b"
+                        ],
+                        "default": 1
+                    }
+                }
+            ]
+        }
+    }
+}

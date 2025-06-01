@@ -18,6 +18,8 @@ class SceneDrawDistances
 public:
     SceneDrawDistances() = default;
 
+    SceneDrawDistances(float fogNear, float fogFar, float postFogSolid, float postFogFade, float staticObjectDistance, float dynamicObjectDistance);
+
     SceneDrawDistances(nejlika::Reader& io);
 
     void Save(nejlika::Writer& io) const;

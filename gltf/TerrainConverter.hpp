@@ -6,6 +6,7 @@
 #include <set>
 #include <map>
 #include <filesystem>
+#include <optional>
 
 #include <glm/glm.hpp>
 #include <boost/json.hpp>
@@ -44,6 +45,22 @@ private:
     int32_t ExportChunk(const nejlika::world::TerrainChunk& chunk, tinygltf::Model& model, nejlika::Writer& buffer);
 
     nejlika::world::Terrain m_Terrain;
+
+    std::unordered_map<size_t, std::string> m_MapFilesCache;
+
+    template <typename T>
+    size_t ComputeMapHash(const std::vector<T>& map, size_t width, size_t height)
+    {
+        // Include the width and height in the hash
+        size_t hash = std::hash<size_t>{}(width) ^ std::hash<size_t>{}(height);
+
+        for (const auto& value : map)
+        {
+            hash ^= std::hash<T>{}(value) + 0x9e3779b9 + (hash << 6) + (hash >> 2);
+        }
+
+        return hash;
+    }
 };
 
 }

@@ -40,6 +40,12 @@ public:
 
     WritePointer& GetParticleInformationPointer();
 
+    void SetHeaderVersion(uint32_t headerVersion);
+
+    void SetVersion(uint32_t version);
+    
+    void SetRevision(uint32_t revision);
+
     ~LevelInfo();
 
 private:

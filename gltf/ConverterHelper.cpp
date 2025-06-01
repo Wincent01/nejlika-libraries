@@ -487,6 +487,28 @@ bool nejlika::geometry::ConverterHelper::MapToPNG(const std::vector<float> &heig
     return true;
 }
 
+bool nejlika::geometry::ConverterHelper::MapToPNG(const std::vector<uint8_t> &data, int width, int height, const std::filesystem::path &path)
+{
+    if (width * height != data.size()) {
+        throw std::runtime_error("Data size does not match dimensions.");
+    }
+
+    // Ensure the output directory exists
+    try {
+        std::filesystem::create_directories(path.parent_path());
+    } catch (const std::exception& e) {
+        throw std::runtime_error("Failed to create output directory: " + std::string(e.what()));
+    }
+
+    // Write PNG to file
+    int success = stbi_write_png(path.string().c_str(), width, height, 1, data.data(), width);
+    if (!success) {
+        throw std::runtime_error("Failed to write PNG to file at: " + path.string());
+    }
+
+    return true;
+}
+
 bool nejlika::geometry::ConverterHelper::ColorMapToPNG(const std::vector<color4> &colorMap, int width, int height, const std::filesystem::path &path)
 {
     if (width * height != colorMap.size()) {

@@ -50,6 +50,30 @@ public:
 
     PathInformation& GetPathInformation();
 
+    void SetVersion(version version);
+
+    void SetFileRevision(uint32_t fileRevision);
+
+    void SetZoneID(uint32_t zoneID);
+
+    void SetPlayerStartPos(const vector3& playerStartPos);
+
+    void SetPlayerStartRot(const vector4& playerStartRot);
+
+    void SetScenes(const std::vector<SceneReference>& scenes);
+
+    void SetBoundaryLines(const std::vector<BoundaryLine>& boundaryLines);
+
+    void SetTerrainFilename(const std::string& terrainFilename);
+
+    void SetTerrainName(const std::string& zoneName);
+
+    void SetTerrainDescription(const std::string& zoneDescription);
+
+    void SetTransitionInformation(const TransitionInformation& transitionInformation);
+
+    void SetPathInformation(const PathInformation& pathInformation);
+
     ~Zone();
 
 private:

@@ -86,6 +86,12 @@ public:
         const std::filesystem::path& path
     );
 
+    static bool MapToPNG(
+        const std::vector<uint8_t>& data,
+        int width, int height,
+        const std::filesystem::path& path
+    );
+
     static bool ColorMapToPNG(
         const std::vector<color4>& colorMap,
         int width, int height,

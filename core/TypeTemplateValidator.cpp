@@ -717,26 +717,26 @@ TypeTemplateError nejlika::TypeTemplateValidator::ValidateLocale(const boost::js
 
 TypeTemplateError nejlika::TypeTemplateValidator::ValidateResource(const std::shared_ptr<TypeTemplateScope> &parent, const std::shared_ptr<TypeTemplateParameter> &parameter, const std::unordered_map<std::string, TypeTemplateValue> &parameters, const boost::json::value &value) const
 {
-    // Assert that the "prefix" and "type" parameters exist
-    if (!parameters.contains("prefix"))
+    // Set default values for "prefix" and "type" if they are not provided
+    std::string prefix = "";
+    std::string type = "*";
+
+    if (parameters.contains("prefix"))
     {
-        throw std::runtime_error("Resource parameter missing 'prefix' parameter");
+        if (!parameters.at("prefix").GetValue().is_string())
+        {
+            throw std::runtime_error("Resource parameter 'prefix' is not a string");
+        }
+        prefix = parameters.at("prefix").GetValue().as_string().c_str();
     }
 
-    if (!parameters.contains("type"))
+    if (parameters.contains("type"))
     {
-        throw std::runtime_error("Resource parameter missing 'type' parameter");
-    }
-
-    // Assert that the "prefix" and "type" parameters are strings
-    if (!parameters.at("prefix").GetValue().is_string())
-    {
-        throw std::runtime_error("Resource parameter 'prefix' is not a string");
-    }
-
-    if (!parameters.at("type").GetValue().is_string())
-    {
-        throw std::runtime_error("Resource parameter 'type' is not a string");
+        if (!parameters.at("type").GetValue().is_string())
+        {
+            throw std::runtime_error("Resource parameter 'type' is not a string");
+        }
+        type = parameters.at("type").GetValue().as_string().c_str();
     }
 
     // Check that the value is a string
@@ -746,9 +746,6 @@ TypeTemplateError nejlika::TypeTemplateValidator::ValidateResource(const std::sh
     }
 
     const std::filesystem::path resource = value.as_string().c_str();
-
-    const std::string prefix = parameters.at("prefix").GetValue().as_string().c_str();
-    const std::string type = parameters.at("type").GetValue().as_string().c_str();
 
     const auto &root = parent->GetRoot();
 

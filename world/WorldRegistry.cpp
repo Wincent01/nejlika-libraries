@@ -43,6 +43,138 @@ void nejlika::world::WorldRegistry::Initalize(Context& ctx)
         return TypeTemplateError::Success;
     });
 
+    ctx.templates->GetApplier().RegisterExtentionFunction("world-info", [](
+        const std::shared_ptr<TypeTemplateContext>& context,
+        const boost::json::object& operation,
+        const boost::json::object& json,
+        const TypeTemplate& typeTemplate,
+        const std::unordered_map<std::string, TypeTemplateValue>& parameters
+    ) -> TypeTemplateError
+    {
+        auto* worldRegistry = context->GetContext().Extention<WorldRegistry>();
+
+        const auto zone = context->FindValue(operation.at("zone"), TypeTemplateQueryOptions::Full);
+        const auto scriptId = context->FindValue(operation.at("script-id"), TypeTemplateQueryOptions::Full);
+        const auto ghostDistanceMin = context->FindValue(operation.at("ghost-distance-min"), TypeTemplateQueryOptions::Full);
+        const auto ghostDistanceMax = context->FindValue(operation.at("ghost-distance-max"), TypeTemplateQueryOptions::Full);
+        const auto populationSoftCap = context->FindValue(operation.at("population-soft-cap"), TypeTemplateQueryOptions::Full);
+        const auto populationHardCap = context->FindValue(operation.at("population-hard-cap"), TypeTemplateQueryOptions::Full);
+        const auto mixerProgram = context->FindValue(operation.at("mixer-program"), TypeTemplateQueryOptions::Full);
+        const auto petsAllowed = context->FindValue(operation.at("pets-allowed"), TypeTemplateQueryOptions::Full);
+        const auto playerLoseCoinsOnDeath = context->FindValue(operation.at("player-lose-coins-on-death"), TypeTemplateQueryOptions::Full);
+        const auto mountsAllowed = context->FindValue(operation.at("mounts-allowed"), TypeTemplateQueryOptions::Full);
+        
+        auto& world = worldRegistry->GetWorld(context->GetContext(), std::to_string(zone.as_int64()));
+        world.SetScriptID(scriptId.to_number<int32_t>());
+        world.SetGhostDistanceMin(ghostDistanceMin.to_number<float>());
+        world.SetGhostDistanceMax(ghostDistanceMax.to_number<float>());
+        world.SetPopulationSoftCap(populationSoftCap.to_number<int32_t>());
+        world.SetPopulationHardCap(populationHardCap.to_number<int32_t>());
+        world.SetMixerProgram(mixerProgram.is_null() ? "" : mixerProgram.as_string().c_str());
+        world.SetPetsAllowed(petsAllowed.as_bool());
+        world.SetPlayersLoseCoinsOnDeath(playerLoseCoinsOnDeath.as_bool());
+        world.SetMountsAllowed(mountsAllowed.as_bool());
+
+        auto& worldZone = world.GetZone();
+        worldZone.SetVersion(41);
+        worldZone.SetZoneID(zone.to_number<int32_t>());
+
+        return TypeTemplateError::Success;
+    });
+
+    ctx.templates->GetApplier().RegisterExtentionFunction("claim-scene-id", [](
+        const std::shared_ptr<TypeTemplateContext>& context,
+        const boost::json::object& operation,
+        const boost::json::object& json,
+        const TypeTemplate& typeTemplate,
+        const std::unordered_map<std::string, TypeTemplateValue>& parameters
+    ) -> TypeTemplateError
+    {
+        const bool sync = operation.contains("sync") ? operation.at("sync").as_bool() : true;
+    
+        id id;
+
+        const auto& name = json.at("name").as_string().c_str();
+
+        if (sync && context->GetContext().templates->GetApplier().TryResolveName(context->GetContext(), json, id))
+        {
+            context->GetContext().lookup->Register(name, id);
+
+            if (json.contains("aliases")) {
+                const auto& aliases = json.at("aliases");
+
+                if (aliases.is_array())
+                {
+                    for (const auto& alias : aliases.as_array())
+                    {
+                        context->GetContext().lookup->Register(alias.as_string().c_str(), id);
+                    }
+                }
+            }
+
+            context->SetVariable("id", id);
+            return TypeTemplateError::Success;
+        }
+
+        auto* worldRegistry = context->GetContext().Extention<WorldRegistry>();
+
+        const auto zone = context->FindValue(operation.at("zone"), TypeTemplateQueryOptions::Full);
+        
+        auto& world = worldRegistry->GetWorld(context->GetContext(), std::to_string(zone.as_int64()));
+
+        int32_t maxId = -1;
+
+        for (const auto& scene : world.GetZone().GetScenes())
+        {
+            if (scene.GetSceneID() > maxId)
+            {
+                maxId = scene.GetSceneID();
+            }
+        }
+
+        context->SetVariable("id", maxId + 1);
+
+        if (sync)
+        {
+            context->GetContext().lookup->Register(name, maxId + 1);
+        }
+
+        return TypeTemplateError::Success;
+    });
+
+    ctx.templates->GetApplier().RegisterExtentionFunction("add-scene", [](
+        const std::shared_ptr<TypeTemplateContext>& context,
+        const boost::json::object& operation,
+        const boost::json::object& json,
+        const TypeTemplate& typeTemplate,
+        const std::unordered_map<std::string, TypeTemplateValue>& parameters
+    ) -> TypeTemplateError
+    {
+        auto* worldRegistry = context->GetContext().Extention<WorldRegistry>();
+
+        const auto zone = context->FindValue(operation.at("zone"), TypeTemplateQueryOptions::Full);
+        const auto sceneId = context->FindValue(operation.at("level-id"), TypeTemplateQueryOptions::Full);
+        const auto sceneLayer = context->FindValue(operation.at("level-layer"), TypeTemplateQueryOptions::Full);
+        const auto sceneName = context->FindValue(operation.at("scene-name"), TypeTemplateQueryOptions::Full);
+
+        auto& world = worldRegistry->GetWorld(context->GetContext(), std::to_string(zone.as_int64()));
+
+        SceneReference sceneReference;
+        sceneReference.SetSceneID(sceneId.to_number<int32_t>());
+        sceneReference.SetLayerID(sceneLayer.to_number<int32_t>());
+        sceneReference.SetSceneName(sceneName.as_string().c_str());
+        
+        world.GetZone().GetScenes().push_back(sceneReference);
+
+        auto& scene = world.AddLevel(sceneId.to_number<int32_t>(), sceneLayer.to_number<int32_t>());
+
+        scene.SetVersion(48);
+        scene.SetHasObjects(true);
+        scene.SetHasEnvironmentInformation(true);
+
+        return TypeTemplateError::Success;
+    });
+
     ctx.templates->GetApplier().RegisterExtentionFunction("add-world-object", [](
         const std::shared_ptr<TypeTemplateContext>& context,
         const boost::json::object& operation,
@@ -261,6 +393,99 @@ void nejlika::world::WorldRegistry::Initalize(Context& ctx)
         {
             environment.GetSkydomeInformation().SetFilename(skybox.as_string().c_str());
         }
+
+        return TypeTemplateError::Success;
+    });
+
+    ctx.templates->GetApplier().RegisterExtentionFunction("world-lighting", [](
+        const std::shared_ptr<TypeTemplateContext>& context,
+        const boost::json::object& operation,
+        const boost::json::object& json,
+        const TypeTemplate& typeTemplate,
+        const std::unordered_map<std::string, TypeTemplateValue>& parameters
+    ) -> TypeTemplateError
+    {
+        auto* worldRegistry = context->GetContext().Extention<WorldRegistry>();
+
+        const auto zone = context->FindValue(operation.at("zone"), TypeTemplateQueryOptions::Full);
+        const auto levelId = context->FindValue(operation.at("level-id"), TypeTemplateQueryOptions::Full);
+        const auto levelLayer = context->FindValue(operation.at("level-layer"), TypeTemplateQueryOptions::Full);
+
+        auto& world = worldRegistry->GetWorld(context->GetContext(), std::to_string(zone.as_int64()));
+        auto& level = world.GetLevel(levelId.as_int64(), levelLayer.as_int64());
+
+        const auto blendTime = context->FindValue(operation.at("blend-time"), TypeTemplateQueryOptions::Full);
+        const auto ambientColorR = context->FindValue(operation.at("ambient-color-r"), TypeTemplateQueryOptions::Full);
+        const auto ambientColorG = context->FindValue(operation.at("ambient-color-g"), TypeTemplateQueryOptions::Full);
+        const auto ambientColorB = context->FindValue(operation.at("ambient-color-b"), TypeTemplateQueryOptions::Full);
+        const auto specularColorR = context->FindValue(operation.at("specular-color-r"), TypeTemplateQueryOptions::Full);
+        const auto specularColorG = context->FindValue(operation.at("specular-color-g"), TypeTemplateQueryOptions::Full);
+        const auto specularColorB = context->FindValue(operation.at("specular-color-b"), TypeTemplateQueryOptions::Full);
+        const auto upperHemiColorR = context->FindValue(operation.at("upper-hemi-color-r"), TypeTemplateQueryOptions::Full);
+        const auto upperHemiColorG = context->FindValue(operation.at("upper-hemi-color-g"), TypeTemplateQueryOptions::Full);
+        const auto upperHemiColorB = context->FindValue(operation.at("upper-hemi-color-b"), TypeTemplateQueryOptions::Full);
+        const auto positionX = context->FindValue(operation.at("position-x"), TypeTemplateQueryOptions::Full);
+        const auto positionY = context->FindValue(operation.at("position-y"), TypeTemplateQueryOptions::Full);
+        const auto positionZ = context->FindValue(operation.at("position-z"), TypeTemplateQueryOptions::Full);
+        const auto fogNear = context->FindValue(operation.at("fog-near"), TypeTemplateQueryOptions::Full);
+        const auto fogFar = context->FindValue(operation.at("fog-far"), TypeTemplateQueryOptions::Full);
+        const auto postFogSolid = context->FindValue(operation.at("post-fog-solid"), TypeTemplateQueryOptions::Full);
+        const auto postFogFade = context->FindValue(operation.at("post-fog-fade"), TypeTemplateQueryOptions::Full);
+        const auto staticObjectDistance = context->FindValue(operation.at("static-object-distance"), TypeTemplateQueryOptions::Full);
+        const auto dynamicObjectDistance = context->FindValue(operation.at("dynamic-object-distance"), TypeTemplateQueryOptions::Full);
+        const auto fogColorR = context->FindValue(operation.at("fog-color-r"), TypeTemplateQueryOptions::Full);
+        const auto fogColorG = context->FindValue(operation.at("fog-color-g"), TypeTemplateQueryOptions::Full);
+        const auto fogColorB = context->FindValue(operation.at("fog-color-b"), TypeTemplateQueryOptions::Full);
+        const auto directionalLightColorR = context->FindValue(operation.at("directional-light-color-r"), TypeTemplateQueryOptions::Full);
+        const auto directionalLightColorG = context->FindValue(operation.at("directional-light-color-g"), TypeTemplateQueryOptions::Full);
+        const auto directionalLightColorB = context->FindValue(operation.at("directional-light-color-b"), TypeTemplateQueryOptions::Full);
+
+        auto& lighting = level.GetEnvironmentInformation().GetLightingInformation();
+        lighting.SetBlendTime(blendTime.to_number<float>());
+        lighting.SetAmbient({ (float) ambientColorR.to_number<float>(), (float) ambientColorG.to_number<float>(), (float) ambientColorB.to_number<float>() });
+        lighting.SetSpecular({ (float) specularColorR.to_number<float>(), (float) specularColorG.to_number<float>(), (float) specularColorB.to_number<float>() });
+        lighting.SetUpperHemi({ (float) upperHemiColorR.to_number<float>(), (float) upperHemiColorG.to_number<float>(), (float) upperHemiColorB.to_number<float>() });
+        lighting.SetPosition({ (float) positionX.to_number<float>(), (float) positionY.to_number<float>(), (float) positionZ.to_number<float>() });
+        
+        SceneDrawDistances sceneDrawDistances(
+            fogNear.to_number<float>(),
+            fogFar.to_number<float>(),
+            postFogSolid.to_number<float>(),
+            postFogFade.to_number<float>(),
+            staticObjectDistance.to_number<float>(),
+            dynamicObjectDistance.to_number<float>()
+        );
+
+        lighting.SetMinDrawDistances(sceneDrawDistances);
+        lighting.SetMaxDrawDistances(sceneDrawDistances);
+
+        lighting.SetFogColor({ (float) fogColorR.to_number<float>(), (float) fogColorG.to_number<float>(), (float) fogColorB.to_number<float>() });
+        lighting.SetDirectionalLightColor({ (float) directionalLightColorR.to_number<float>(), (float) directionalLightColorG.to_number<float>(), (float) directionalLightColorB.to_number<float>() });
+
+        /*
+        1	100	150
+        2	150	200
+        3	200	250
+        4	250	300
+        5	40	40
+        6	40	40
+        7	400	600
+        8	60	100
+        9	50	100
+        10	300	400
+        */
+        lighting.SetCullData({
+            { 1, 100, 150 },
+            { 2, 150, 200 },
+            { 3, 200, 250 },
+            { 4, 250, 300 },
+            { 5, 40, 40 },
+            { 6, 40, 40 },
+            { 7, 400, 600 },
+            { 8, 60, 100 },
+            { 9, 50, 100 },
+            { 10, 300, 400 }
+        });
 
         return TypeTemplateError::Success;
     });
@@ -663,7 +888,15 @@ World& nejlika::world::WorldRegistry::GetWorld(Context& ctx, const nejlika::name
     if (m_Worlds.find(name) == m_Worlds.end())
     {
         World world;
-        world.Load(ctx, name);
+
+        try
+        {
+            world.Load(ctx, name);
+        }
+        catch (const std::exception& e)
+        {
+            world = World();
+        }
 
         m_Worlds[name] = world;
     }

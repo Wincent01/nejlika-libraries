@@ -2,6 +2,16 @@
 
 using namespace nejlika::world;
 
+nejlika::world::SceneDrawDistances::SceneDrawDistances(float fogNear, float fogFar, float postFogSolid, float postFogFade, float staticObjectDistance, float dynamicObjectDistance)
+{
+    m_FogNear = fogNear;
+    m_FogFar = fogFar;
+    m_PostFogSolid = postFogSolid;
+    m_PostFogFade = postFogFade;
+    m_StaticObjectDistance = staticObjectDistance;
+    m_DynamicObjectDistance = dynamicObjectDistance;
+}
+
 nejlika::world::SceneDrawDistances::SceneDrawDistances(nejlika::Reader &io)
 {
     m_FogNear = io.Read<float>();

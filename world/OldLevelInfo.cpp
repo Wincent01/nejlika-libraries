@@ -281,6 +281,16 @@ const std::vector<vector3> &nejlika::world::OldLevelInfo::GetUnknownVectorArray1
     return m_UnknownVectorArray1;
 }
 
+void nejlika::world::OldLevelInfo::SetVersion(uint16_t version)
+{
+    m_Version = version;
+}
+
+void nejlika::world::OldLevelInfo::SetRevision(uint32_t revision)
+{
+    m_Revision = revision;
+}
+
 nejlika::world::OldLevelInfo::~OldLevelInfo()
 {
 }

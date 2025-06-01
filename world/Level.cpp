@@ -310,6 +310,59 @@ version nejlika::world::Level::GetVersion() const
     return IsOld() ? m_OldInfo.GetVersion() : m_Info.GetVersion();
 }
 
+void nejlika::world::Level::SetVersion(version version)
+{
+    if (IsOld())
+    {
+        m_OldInfo.SetVersion(version);
+    }
+    else
+    {
+        m_Info.SetVersion(version);
+    }
+}
+
+void nejlika::world::Level::SetEnvironmentInformation(EnvironmentInformation &environmentInformation)
+{
+    m_EnvironmentInformation = environmentInformation;
+
+    m_HasEnvironmentInformation = true;
+}
+
+void nejlika::world::Level::SetObjects(LevelObjects &objects)
+{
+    m_Objects = objects;
+
+    m_HasObjects = true;
+}
+
+void nejlika::world::Level::SetParticleInformation(ParticleInformation &particleInformation)
+{
+    m_ParticleInformation = particleInformation;
+
+    m_HasParticleInformation = true;
+}
+
+void nejlika::world::Level::SetOldInfo(OldLevelInfo &oldInfo)
+{
+    m_OldInfo = oldInfo;
+}
+
+void nejlika::world::Level::SetHasEnvironmentInformation(bool hasEnvironmentInformation)
+{
+    m_HasEnvironmentInformation = hasEnvironmentInformation;
+}
+
+void nejlika::world::Level::SetHasObjects(bool hasObjects)
+{
+    m_HasObjects = hasObjects;
+}
+
+void nejlika::world::Level::SetHasParticleInformation(bool hasParticleInformation)
+{
+    m_HasParticleInformation = hasParticleInformation;
+}
+
 nejlika::world::Level::~Level()
 {
 }

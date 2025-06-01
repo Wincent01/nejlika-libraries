@@ -51,6 +51,10 @@ public:
 
     const std::vector<vector3>& GetUnknownVectorArray1() const;
 
+    void SetVersion(uint16_t version);
+
+    void SetRevision(uint32_t revision);
+
     ~OldLevelInfo();
 
 private:

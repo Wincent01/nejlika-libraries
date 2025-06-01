@@ -69,6 +69,21 @@ WritePointer &nejlika::world::LevelInfo::GetParticleInformationPointer()
     return m_ParticleInformationPointer;
 }
 
+void nejlika::world::LevelInfo::SetHeaderVersion(uint32_t headerVersion)
+{
+    m_HeaderVersion = headerVersion;
+}
+
+void nejlika::world::LevelInfo::SetVersion(uint32_t version)
+{
+    m_Version = version;
+}
+
+void nejlika::world::LevelInfo::SetRevision(uint32_t revision)
+{
+    m_Revision = revision;
+}
+
 nejlika::world::LevelInfo::~LevelInfo()
 {
 }

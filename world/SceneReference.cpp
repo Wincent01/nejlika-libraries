@@ -93,6 +93,36 @@ void nejlika::world::SceneReference::SetSceneFilename(const std::string &sceneFi
     m_SceneFilename = sceneFilename;
 }
 
+void nejlika::world::SceneReference::SetSceneID(uint32_t sceneID)
+{
+    m_SceneID = sceneID;
+}
+
+void nejlika::world::SceneReference::SetLayerID(uint32_t layerID)
+{
+    m_LayerID = layerID;
+}
+
+void nejlika::world::SceneReference::SetSceneName(const std::string &sceneName)
+{
+    m_SceneName = sceneName;
+}
+
+void nejlika::world::SceneReference::SetUnknown1(const vector3 &unknown1)
+{
+    m_Unknown1 = unknown1;
+}
+
+void nejlika::world::SceneReference::SetUnknown2(float unknown2)
+{
+    m_Unknown2 = unknown2;
+}
+
+void nejlika::world::SceneReference::SetColor(const color &color)
+{
+    m_Color = color;
+}
+
 nejlika::world::SceneReference::~SceneReference()
 {
 }
