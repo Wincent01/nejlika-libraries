@@ -44,6 +44,9 @@ protected:
     HalfSpaceBV m_HalfSpace;
 
 public:
+    BoundingVolume() = default;
+    BoundingVolume(const BoundingVolume& other) = default;
+
     const BoundVolumeType& GetCollisionType() const { return m_CollisionType; }
     BoundVolumeType& GetCollisionType() { return m_CollisionType; }
     void SetCollisionType(const BoundVolumeType& value) { m_CollisionType = value; }

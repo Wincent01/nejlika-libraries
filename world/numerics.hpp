@@ -3,6 +3,8 @@
 #include <string>
 #include <cstdint>
 #include <cmath>
+#include <locale>
+#include <codecvt>
 
 using version = uint32_t;
 using str16 = std::u16string;
@@ -450,11 +452,62 @@ struct objectid {
 };
 
 inline std::string u16string_to_string(const std::u16string& u16str) {
+    // Use std::wstring_convert only if available, otherwise use std::wstring_convert replacement
+    // Since std::wstring_convert is deprecated, use std::wstring_convert only if necessary
+    // Here is a replacement using std::wstring_convert for compatibility, but guarded for C++17+
+#if __cplusplus < 201703L
     std::wstring_convert<std::codecvt_utf8_utf16<char16_t>, char16_t> convert;
     return convert.to_bytes(u16str);
+#else
+    // Manual conversion for C++17 and later
+    std::string result;
+    result.reserve(u16str.size() * 3); // UTF-8 may use up to 3 bytes per char16_t
+    for (char16_t ch : u16str) {
+        if (ch <= 0x7F) {
+            result.push_back(static_cast<char>(ch));
+        } else if (ch <= 0x7FF) {
+            result.push_back(static_cast<char>(0xC0 | ((ch >> 6) & 0x1F)));
+            result.push_back(static_cast<char>(0x80 | (ch & 0x3F)));
+        } else {
+            result.push_back(static_cast<char>(0xE0 | ((ch >> 12) & 0x0F)));
+            result.push_back(static_cast<char>(0x80 | ((ch >> 6) & 0x3F)));
+            result.push_back(static_cast<char>(0x80 | (ch & 0x3F)));
+        }
+    }
+    return result;
+#endif
 }
 
 inline std::u16string string_to_u16string(const std::string& str) {
+#if __cplusplus < 201703L
     std::wstring_convert<std::codecvt_utf8_utf16<char16_t>, char16_t> convert;
     return convert.from_bytes(str);
+#else
+    // Manual conversion for C++17 and later
+    std::u16string result;
+    size_t i = 0;
+    while (i < str.size()) {
+        uint8_t c = static_cast<uint8_t>(str[i]);
+        if (c < 0x80) {
+            result.push_back(static_cast<char16_t>(c));
+            ++i;
+        } else if ((c & 0xE0) == 0xC0) {
+            if (i + 1 >= str.size()) break;
+            char16_t ch = ((c & 0x1F) << 6) | (static_cast<uint8_t>(str[i + 1]) & 0x3F);
+            result.push_back(ch);
+            i += 2;
+        } else if ((c & 0xF0) == 0xE0) {
+            if (i + 2 >= str.size()) break;
+            char16_t ch = ((c & 0x0F) << 12) |
+                          ((static_cast<uint8_t>(str[i + 1]) & 0x3F) << 6) |
+                          (static_cast<uint8_t>(str[i + 2]) & 0x3F);
+            result.push_back(ch);
+            i += 3;
+        } else {
+            // Invalid UTF-8, skip
+            ++i;
+        }
+    }
+    return result;
+#endif
 }

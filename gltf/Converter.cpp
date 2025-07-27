@@ -3,6 +3,7 @@
 #include <iostream>
 #include <sstream>
 #include <limits>
+#include <algorithm>
 
 #include "NiNode.hpp"
 #include "NiTriShape.hpp"
@@ -25,6 +26,7 @@
 
 #include "Kfm.hpp"
 
+#define GLM_ENABLE_EXPERIMENTAL
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/quaternion.hpp>
@@ -1416,7 +1418,7 @@ int32_t nejlika::geometry::Converter::ExportNiTriShape(const NiTriShape *shape, 
                     //glm::mat4 bindMatrix = ComputeGlobalTransform(node);
 
                     // Compute the inverse bind matrix
-                    glm::mat4 inverseBindMatrix = bindMatrix; glm::inverse(bindMatrix);
+                    glm::mat4 inverseBindMatrix = bindMatrix; //glm::inverse(bindMatrix);
 
                     // Store in column-major order
                     for (int col = 0; col < 4; ++col)

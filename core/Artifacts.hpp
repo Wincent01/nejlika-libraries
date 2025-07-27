@@ -34,21 +34,21 @@ public:
      * 
      * @return The path to the artifacts directory.
      */
-    const std::filesystem::path& GetPath() const;
+    const std::filesystem::path& GetPath() const override;
 
     /**
      * @brief Get the list of artifacts. Fetches from the artifacts directory.
      * 
      * @return The list of artifacts. Paths are relative to the artifacts directory.
      */
-    std::vector<std::filesystem::path> GetArtifacts() const;
+    std::vector<std::filesystem::path> GetArtifacts() const override;
 
     /**
      * @brief Adds an artifact.
      * 
      * @param path The path to the artifact. Relative to the client's directory.
      */
-    void AddArtifact(nejlika::Context& ctx, const std::filesystem::path& path);
+    void AddArtifact(nejlika::Context& ctx, const std::filesystem::path& path) override;
 
     /**
      * @brief Symlink a file from a mod to the game's resources.
@@ -59,23 +59,23 @@ public:
      * @param gamePath The path to the game's resource.
      * @throw If the mod's resource does not exist.
      */
-    void Symlink(nejlika::Context& ctx, const std::filesystem::path& modPath, const std::filesystem::path& gamePath);
+    void Symlink(nejlika::Context& ctx, const std::filesystem::path& modPath, const std::filesystem::path& gamePath) override;
     
     /**
      * @brief Register a generated file.
      * 
      * @param path The path to the generated file, relative to the client's directory.
      */
-    void RegisterGeneratedFile(nejlika::Context& ctx, const std::filesystem::path& path);
+    void RegisterGeneratedFile(nejlika::Context& ctx, const std::filesystem::path& path) override;
 
-    bool CanGenerateFiles() const;
+    bool CanGenerateFiles() const override;
 
     /**
      * @brief Save the artifacts JSON file.
      */
-    void Save() const;
+    void Save() const override;
 
-    std::filesystem::path GenerateFilename(nejlika::Context& ctx, const std::string& filename) const;
+    std::filesystem::path GenerateFilename(nejlika::Context& ctx, const std::string& filename) const override;
 
     /**
      * @brief Generate a random filename for a added resource file with a given extension.
@@ -83,14 +83,14 @@ public:
      * @param extension The extension of the file.
      * @return The generated filename, relative to the client's directory.
      */
-    std::filesystem::path GenerateRandomFilename(nejlika::Context& ctx, const std::string& extension) const;
+    std::filesystem::path GenerateRandomFilename(nejlika::Context& ctx, const std::string& extension) const override;
 
     /**
      * @brief Generate a random directory name.
      * 
      * @return The generated directory name, relative to the client's directory.
      */
-    std::filesystem::path GenerateRandomDirectory(nejlika::Context& ctx) const;
+    std::filesystem::path GenerateRandomDirectory(nejlika::Context& ctx) const override;
 
     /**
      * @brief Get a path prefixed with the added resources directory.
@@ -98,7 +98,7 @@ public:
      * @param path The path to prefix.
      * @return The prefixed path.
      */
-    std::filesystem::path GetAddedResourcePath(nejlika::Context& ctx, const std::filesystem::path& path) const;
+    std::filesystem::path GetAddedResourcePath(nejlika::Context& ctx, const std::filesystem::path& path) const override;
 
     /**
      * @brief Restore the artifacts.
@@ -108,9 +108,9 @@ public:
      * @return Any artifacts which have been restored, not including hanging artifacts.
      * @throw If the artifacts directory is corrupted.
      */
-    std::unordered_set<std::filesystem::path, nejlika::filepath_hash> Restore(nejlika::Context& ctx);
+    std::unordered_set<std::filesystem::path, nejlika::filepath_hash> Restore(nejlika::Context& ctx) override;
 
-    std::filesystem::path ResolveSymlink(const std::filesystem::path& path) const;
+    std::filesystem::path ResolveSymlink(const std::filesystem::path& path) const override;
 
     /**
      * @brief Serializes the object into a JSON object.
