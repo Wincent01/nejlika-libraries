@@ -235,6 +235,8 @@ TypeTemplateError nejlika::TypeTemplateApplier::ApplyGenerateOperation(
     // Get table, column, and variable from operation
     const std::string table = operation.at("table").as_string().c_str();
     const std::string column = operation.at("column").as_string().c_str();
+    
+    const bool sync = operation.contains("sync") ? operation.at("sync").as_bool() : true;
 
     id id;
 
