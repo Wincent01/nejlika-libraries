@@ -244,6 +244,56 @@ void nejlika::ModPack::RemoveMod(const std::shared_ptr<AbstractMod>& mod)
     }
 }
 
+void nejlika::ModPack::UpdateMod(const std::shared_ptr<AbstractMod> &mod, const std::shared_ptr<AbstractMod> &updated)
+{
+    m_Mutex.lock();
+
+    // Check if the mod is in the pack
+    auto it = std::find(m_Mods.begin(), m_Mods.end(), mod);
+
+    if (it == m_Mods.end())
+    {
+        m_Mutex.unlock();
+        
+        throw std::runtime_error("Mod not found in pack.");
+    }
+
+    // Check if any other mod has the same name
+    for (const auto& other : m_Mods)
+    {
+        if (other->CanIdentifyWith(updated->GetName()) && other != mod)
+        {
+            std::stringstream ss;
+
+            ss << "Mod with name \"" << updated->GetName() << "\" already exists.";
+
+            m_Mutex.unlock();
+            
+            throw std::runtime_error(ss.str());
+        }
+
+        for (const auto& alias : updated->GetAliases())
+        {
+            if (other->CanIdentifyWith(alias) && other != mod)
+            {
+                std::stringstream ss;
+
+                ss << "Mod with alias \"" << alias << "\" already exists.";
+
+                m_Mutex.unlock();
+                
+                throw std::runtime_error(ss.str());
+            }
+        }
+    }
+
+    updated->SetUniqueRuntimeId(mod->GetUniqueRuntimeId());
+
+    *it = updated;
+
+    m_Mutex.unlock();
+}
+
 std::shared_ptr<AbstractMod> nejlika::ModPack::FindMod(const std::string &name, const std::string &type)
 {
     m_Mutex.lock();

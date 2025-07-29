@@ -99,6 +99,14 @@ public:
     void RemoveMod(const std::shared_ptr<AbstractMod>& mod);
 
     /**
+     * @brief Update a mod in the mod pack.
+     * 
+     * @param mod The reference to the original mod.
+     * @param updated The updated mod.
+     */
+    void UpdateMod(const std::shared_ptr<AbstractMod>& mod, const std::shared_ptr<AbstractMod>& updated);
+
+    /**
      * @brief Find a mod by a name and optionally a type.
      * 
      * @param name The name of the mod to find.

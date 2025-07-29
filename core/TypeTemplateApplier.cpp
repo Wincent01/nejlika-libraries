@@ -65,7 +65,7 @@ TypeTemplateError nejlika::TypeTemplateApplier::Apply(
     const auto dependencies = typeTemplate.GetDependencies(context->GetContext().templates, json);
 
     context->GetContext().lookup->AwaitValues(dependencies, [
-        this, &actionTemplate, &context, &json, &typeTemplate, &parameters, onFinished
+        this, &actionTemplate, context, &json, &typeTemplate, &parameters, onFinished
     ]() {
         const auto& applyOperations = actionTemplate->GetApplyOperations();
 

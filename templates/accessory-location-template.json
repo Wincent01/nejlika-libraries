@@ -1,0 +1,133 @@
+{
+    "name": "accessory-location",
+    "parameters": {
+
+    },
+    "variables": {
+        "values": {
+            "type": "object",
+            "object-properties": {
+                "description": {
+                    "required": false,
+                    "nullable": false,
+                    "type": "string",
+                    "description": "Internal description.",
+                    "default-hint": "",
+                    "hide-by-default": true
+                },
+                "position": {
+                    "type": "object",
+                    "object-properties": {
+                        "x": {
+                            "type": "number"
+                        },
+                        "y": {
+                            "type": "number"
+                        },
+                        "z": {
+                            "type": "number"
+                        }
+                    }
+                },
+                "rotation": {
+                    "type": "object",
+                    "object-properties": {
+                        "x": {
+                            "type": "number"
+                        },
+                        "y": {
+                            "type": "number"
+                        },
+                        "z": {
+                            "type": "number"
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "actions": {
+        "add": {
+            "prepare": [
+                {
+                    "type": "generate-id",
+                    "table": "AccessoryDefaultLoc",
+                    "column": "GroupID"
+                }
+            ],
+            "apply": [
+                {
+                    "type": "insert",
+                    "table": "AccessoryDefaultLoc",
+                    "columns": {
+                        "GroupID": [
+                            "id"
+                        ],
+                        "Description": {
+                            "value": [
+                                "variables",
+                                "values",
+                                "description"
+                            ],
+                            "default": ""
+                        },
+                        "Pos_X": {
+                            "value": [
+                                "variables",
+                                "values",
+                                "position",
+                                "x"
+                            ],
+                            "default": 0
+                        },
+                        "Pos_Y": {
+                            "value": [
+                                "variables",
+                                "values",
+                                "position",
+                                "y"
+                            ],
+                            "default": 0
+                        },
+                        "Pos_Z": {
+                            "value": [
+                                "variables",
+                                "values",
+                                "position",
+                                "z"
+                            ],
+                            "default": 0
+                        },
+                        "Rot_X": {
+                            "value": [
+                                "variables",
+                                "values",
+                                "rotation",
+                                "x"
+                            ],
+                            "default": 0
+                        },
+                        "Rot_Y": {
+                            "value": [
+                                "variables",
+                                "values",
+                                "rotation",
+                                "y"
+                            ],
+                            "default": 0
+                        },
+                        "Rot_Z": {
+                            "value": [
+                                "variables",
+                                "values",
+                                "rotation",
+                                "z"
+                            ],
+                            "default": 0
+                        }
+                    }
+                }
+            ]
+        }
+    }
+}
