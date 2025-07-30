@@ -170,6 +170,23 @@ boost::json::object nejlika::geometry::TerrainConverter::ExportChunkMaterialDeta
 
     boost::json::object heightMap;
 
+    boost::json::array heightMapData;
+
+    const auto& heights = heightmap.GetHeightMap();
+    for (size_t y = 0; y < height; ++y)
+    {
+        boost::json::array row;
+        for (size_t x = 0; x < width; ++x)
+        {
+            float h = heights[y + x * width];
+            row.push_back(std::round(h * 1000.0f) / 1000.0f);
+        }
+        heightMapData.push_back(row);
+    }
+
+    heightMap["data"] = heightMapData;
+
+    /*
     if (std::abs(minVal - maxVal) < 0.001f)
     {
         heightMap["flat"] = true;
@@ -187,7 +204,7 @@ boost::json::object nejlika::geometry::TerrainConverter::ExportChunkMaterialDeta
     
         heightMap["flat"] = false;
         heightMap["path"] = (uriPath / heightMapPath).string();    
-    }
+    }*/
 
     heightMap["min"] = minVal;
     heightMap["max"] = maxVal;
