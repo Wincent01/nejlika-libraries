@@ -285,6 +285,31 @@ ParticleInformation &nejlika::world::Level::GetParticleInformation()
     return m_ParticleInformation;
 }
 
+const OldLevelInfo &nejlika::world::Level::GetOldInfo() const
+{
+    return m_OldInfo;
+}
+
+const LevelInfo &nejlika::world::Level::GetInfo() const
+{
+    return m_Info;
+}
+
+const EnvironmentInformation &nejlika::world::Level::GetEnvironmentInformation() const
+{
+    return m_EnvironmentInformation;
+}
+
+const LevelObjects &nejlika::world::Level::GetObjects() const
+{
+    return m_Objects;
+}
+
+const ParticleInformation &nejlika::world::Level::GetParticleInformation() const
+{
+    return m_ParticleInformation;
+}
+
 bool nejlika::world::Level::IsOld() const
 {
     return m_OldInfo.GetVersion() != 0;

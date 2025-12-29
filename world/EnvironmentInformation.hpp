@@ -16,27 +16,33 @@
 namespace nejlika::world
 {
 
-class EnvironmentInformation
-{
-public:
-    EnvironmentInformation() = default;
+    class EnvironmentInformation
+    {
+    public:
+        EnvironmentInformation() = default;
 
-    EnvironmentInformation(nejlika::Reader& io, version version);
+        EnvironmentInformation(nejlika::Reader &io, version version);
 
-    void Save(nejlika::Writer& io, version version) const;
+        void Save(nejlika::Writer &io, version version) const;
 
-    LightingInformation& GetLightingInformation();
+        LightingInformation &GetLightingInformation();
 
-    SkydomeInformation& GetSkydomeInformation();
+        SkydomeInformation &GetSkydomeInformation();
 
-    EditorSettings& GetEditorSettings();
+        EditorSettings &GetEditorSettings();
 
-    ~EnvironmentInformation();
+        const LightingInformation &GetLightingInformation() const;
 
-private:
-    LightingInformation m_LightingInformation;
-    SkydomeInformation m_SkydomeInformation;
-    EditorSettings m_EditorSettings;
-};
+        const SkydomeInformation &GetSkydomeInformation() const;
+
+        const EditorSettings &GetEditorSettings() const;
+
+        ~EnvironmentInformation();
+
+    private:
+        LightingInformation m_LightingInformation;
+        SkydomeInformation m_SkydomeInformation;
+        EditorSettings m_EditorSettings;
+    };
 
 }

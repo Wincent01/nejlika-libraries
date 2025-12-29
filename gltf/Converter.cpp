@@ -36,13 +36,13 @@
 
 using namespace nejlika::geometry;
 
-void nejlika::geometry::Converter::LoadKfm(nejlika::Reader &reader, const std::string &path)
+bool nejlika::geometry::Converter::LoadKfm(nejlika::Reader &reader, const std::string &path)
 {
     nejlika::geometry::Kfm kfm;
 
     kfm.Read(reader, 0, 0, 0);
 
-    const auto& nifVec = kfm.GetNIFFileName().GetValue();
+    const auto &nifVec = kfm.GetNIFFileName().GetValue();
 
     if (nifVec.empty())
     {
@@ -63,9 +63,9 @@ void nejlika::geometry::Converter::LoadKfm(nejlika::Reader &reader, const std::s
     LoadNif(nifReader, nifFullPath.string());
 
     // Load the KF files
-    for (const auto& kf : kfm.GetAnimations())
+    for (const auto &kf : kfm.GetAnimations())
     {
-        const auto& kfVec = kf.GetKFFileName().GetValue();
+        const auto &kfVec = kf.GetKFFileName().GetValue();
 
         if (kfVec.empty())
         {
@@ -82,24 +82,29 @@ void nejlika::geometry::Converter::LoadKfm(nejlika::Reader &reader, const std::s
 
         nejlika::Reader kfReader(kfFullPath.string());
 
-        LoadKf(kfReader, kfFullPath.string());
+        if (!LoadKf(kfReader, kfFullPath.string()))
+        {
+            std::cout << "Failed to load KF file: " << kfFullPath.string() << std::endl;
+        }
     }
+
+    return true;
 }
 
-void nejlika::geometry::Converter::LoadNif(nejlika::Reader &reader, const std::string &path)
+bool nejlika::geometry::Converter::LoadNif(nejlika::Reader &reader, const std::string &path)
 {
     m_NifPath = path;
 
     m_Header.Read(reader, 0, 0, 0);
 
-    //std::cout << header.GetHeaderString() << std::endl;
+    // std::cout << header.GetHeaderString() << std::endl;
 
-    const auto& version = m_Header.GetVersion();
-    const auto& blockTypes = m_Header.GetBlockTypes();
-    const auto& userVersion = m_Header.GetUserVersion();
-    const auto& blockTypeIndex = m_Header.GetBlockTypeIndex();
-    const auto& numBlocks = m_Header.GetNumBlocks();
-    const auto& blockSizes = m_Header.GetBlockSize();
+    const auto &version = m_Header.GetVersion();
+    const auto &blockTypes = m_Header.GetBlockTypes();
+    const auto &userVersion = m_Header.GetUserVersion();
+    const auto &blockTypeIndex = m_Header.GetBlockTypeIndex();
+    const auto &numBlocks = m_Header.GetNumBlocks();
+    const auto &blockSizes = m_Header.GetBlockSize();
 
     m_Blocks.clear();
     m_BlockNames.clear();
@@ -119,9 +124,9 @@ void nejlika::geometry::Converter::LoadNif(nejlika::Reader &reader, const std::s
             continue;
         }
 
-        const auto& blockType = blockTypes[blockTypePos];
+        const auto &blockType = blockTypes[blockTypePos];
         std::string blockName(blockType.GetValue().begin(), blockType.GetValue().end());
-        auto* block = nejlika::geometry::Factory::Create(blockName);
+        auto *block = nejlika::geometry::Factory::Create(blockName);
 
         if (!block)
         {
@@ -133,7 +138,8 @@ void nejlika::geometry::Converter::LoadNif(nejlika::Reader &reader, const std::s
         }
 
         size_t startHead = reader.GetReadHead();
-        try {
+        try
+        {
             block->Read(reader, version, userVersion, 0);
             size_t endHead = reader.GetReadHead();
 
@@ -146,32 +152,40 @@ void nejlika::geometry::Converter::LoadNif(nejlika::Reader &reader, const std::s
             m_Blocks.push_back(block);
             m_BlockNames[block] = blockName;
         }
-        catch (const std::exception& e)
+        catch (const std::exception &e)
         {
             std::cout << "Failed to read block: " << blockName << " " << e.what() << std::endl;
             delete block;
         }
         reader.SetReadHead(startHead + blockSizes[i]);
     }
+
+    return true;
 }
 
-void nejlika::geometry::Converter::LoadKf(nejlika::Reader &reader, const std::string &path)
+bool nejlika::geometry::Converter::LoadKf(nejlika::Reader &reader, const std::string &path)
 {
     Header header;
 
     header.Read(reader, 0, 0, 0);
 
-    //std::cout << header.GetHeaderString() << std::endl;
+    // std::cout << header.GetHeaderString() << std::endl;
 
-    const auto& version = header.GetVersion();
-    const auto& blockTypes = header.GetBlockTypes();
-    const auto& userVersion = header.GetUserVersion();
-    const auto& blockTypeIndex = header.GetBlockTypeIndex();
-    const auto& numBlocks = header.GetNumBlocks();
-    const auto& blockSizes = header.GetBlockSize();
-    
-    std::vector<nejlika::geometry::Construct*> blocks;
-    std::unordered_map<nejlika::geometry::Construct*, std::string> blockNames;
+    const auto &version = header.GetVersion();
+    const auto &blockTypes = header.GetBlockTypes();
+    const auto &userVersion = header.GetUserVersion();
+    const auto &blockTypeIndex = header.GetBlockTypeIndex();
+    const auto &numBlocks = header.GetNumBlocks();
+    const auto &blockSizes = header.GetBlockSize();
+
+    if (numBlocks != blockSizes.size() || numBlocks != blockTypeIndex.size())
+    {
+        std::cout << "KF file block count mismatch" << std::endl;
+        return false;
+    }
+
+    std::vector<nejlika::geometry::Construct *> blocks;
+    std::unordered_map<nejlika::geometry::Construct *, std::string> blockNames;
 
     blocks.reserve(numBlocks);
     blockNames.reserve(numBlocks);
@@ -188,9 +202,9 @@ void nejlika::geometry::Converter::LoadKf(nejlika::Reader &reader, const std::st
             continue;
         }
 
-        const auto& blockType = blockTypes[blockTypePos];
+        const auto &blockType = blockTypes[blockTypePos];
         std::string blockName(blockType.GetValue().begin(), blockType.GetValue().end());
-        auto* block = nejlika::geometry::Factory::Create(blockName);
+        auto *block = nejlika::geometry::Factory::Create(blockName);
 
         if (!block)
         {
@@ -202,7 +216,8 @@ void nejlika::geometry::Converter::LoadKf(nejlika::Reader &reader, const std::st
         }
 
         size_t startHead = reader.GetReadHead();
-        try {
+        try
+        {
             block->Read(reader, version, userVersion, 0);
             size_t endHead = reader.GetReadHead();
 
@@ -215,7 +230,7 @@ void nejlika::geometry::Converter::LoadKf(nejlika::Reader &reader, const std::st
             blocks.push_back(block);
             blockNames[block] = blockName;
         }
-        catch (const std::exception& e)
+        catch (const std::exception &e)
         {
             std::cout << "Failed to read block: " << blockName << " " << e.what() << std::endl;
             delete block;
@@ -225,9 +240,10 @@ void nejlika::geometry::Converter::LoadKf(nejlika::Reader &reader, const std::st
 
     m_AnimationMap[path] = std::make_pair(header, blocks);
 
+    return true;
 }
 
-void nejlika::geometry::Converter::ExportGLTF(std::stringstream& writer)
+void nejlika::geometry::Converter::ExportGLTF(std::stringstream &writer)
 {
     tinygltf::Model model;
 
@@ -245,12 +261,12 @@ void nejlika::geometry::Converter::ExportGLTF(std::stringstream& writer)
     model.nodes.reserve(m_Blocks.size() + 1);
     model.nodes.push_back(root);
 
-    std::unordered_set<NiAVObject*> sceneNodeCandidates;
-    std::unordered_set<NiAVObject*> nonSceneNodes;
+    std::unordered_set<NiAVObject *> sceneNodeCandidates;
+    std::unordered_set<NiAVObject *> nonSceneNodes;
 
-    for (auto* block : m_Blocks)
+    for (auto *block : m_Blocks)
     {
-        auto* node = dynamic_cast<NiAVObject*>(block);
+        auto *node = dynamic_cast<NiAVObject *>(block);
 
         if (!node)
         {
@@ -261,16 +277,16 @@ void nejlika::geometry::Converter::ExportGLTF(std::stringstream& writer)
 
         sceneNodeCandidates.insert(node);
 
-        if (NiNode* niNode = dynamic_cast<NiNode*>(block))
+        if (NiNode *niNode = dynamic_cast<NiNode *>(block))
         {
-            for (const auto& child : niNode->GetChildren())
+            for (const auto &child : niNode->GetChildren())
             {
                 nonSceneNodes.insert(child.Query(m_Blocks));
             }
         }
     }
 
-    for (auto* node : sceneNodeCandidates)
+    for (auto *node : sceneNodeCandidates)
     {
         if (nonSceneNodes.find(node) == nonSceneNodes.end())
         {
@@ -279,17 +295,17 @@ void nejlika::geometry::Converter::ExportGLTF(std::stringstream& writer)
     }
 
     // Create the heirarchy
-    for (auto* block : sceneNodeCandidates)
+    for (auto *block : sceneNodeCandidates)
     {
-        NiNode* node = dynamic_cast<NiNode*>(block);
+        NiNode *node = dynamic_cast<NiNode *>(block);
 
         if (!node)
         {
             continue;
         }
 
-        const std::string& type = m_BlockNames[node];
-        
+        const std::string &type = m_BlockNames[node];
+
         ExportGLTFHeirarchy(node, type, model, buffer, 0, 0, false);
     }
 
@@ -299,7 +315,7 @@ void nejlika::geometry::Converter::ExportGLTF(std::stringstream& writer)
     scene.nodes.push_back(rootNodeIndex);
     model.scenes.push_back(scene);
 
-    for (const auto& [path, blocks] : m_AnimationMap)
+    for (const auto &[path, blocks] : m_AnimationMap)
     {
         ExportAnimation(path, blocks.first, blocks.second, model, buffer);
     }
@@ -311,8 +327,8 @@ void nejlika::geometry::Converter::ExportGLTF(std::stringstream& writer)
     // Export the model to the writer
     // Fist, create a byte stream
     tinygltf::TinyGLTF gltf;
-    
-    bool result = gltf.WriteGltfSceneToStream(&model, writer, true, true);
+
+    bool result = gltf.WriteGltfSceneToStream(&model, writer, true, false);
 
     if (!result)
     {
@@ -336,7 +352,7 @@ nejlika::geometry::Converter::~Converter()
     Cleanup();
 }
 
-int32_t nejlika::geometry::Converter::ExportGLTFHeirarchy(NiAVObject* node, const std::string& type, tinygltf::Model& model, nejlika::Writer& buffer, int32_t childIndex, int32_t levelOfDetail, bool hasLOD)
+int32_t nejlika::geometry::Converter::ExportGLTFHeirarchy(NiAVObject *node, const std::string &type, tinygltf::Model &model, nejlika::Writer &buffer, int32_t childIndex, int32_t levelOfDetail, bool hasLOD)
 {
     if (m_ExportedNodes.find(node) != m_ExportedNodes.end())
     {
@@ -354,34 +370,34 @@ int32_t nejlika::geometry::Converter::ExportGLTFHeirarchy(NiAVObject* node, cons
 
     if (node->GetName().GetIndex() != 0xFFFFFFFF)
     {
-        const auto& nameVector = m_Header.GetStrings()[node->GetName().GetIndex()].GetValue();
+        const auto &nameVector = m_Header.GetStrings()[node->GetName().GetIndex()].GetValue();
         gltfNode.name = std::string(nameVector.begin(), nameVector.end());
     }
     else
     {
         gltfNode.name = type;
     }
-    
+
     ExportNodeTransformations(node, model, buffer, gltfNode);
 
-    if (auto* niTriShape = dynamic_cast<NiTriShape*>(node))
+    if (auto *niTriShape = dynamic_cast<NiTriShape *>(node))
     {
         gltfNode.mesh = ExportNiTriShape(niTriShape, model, buffer, gltfNode);
     }
-    else if (auto* niTriStrips = dynamic_cast<NiTriStrips*>(node))
+    else if (auto *niTriStrips = dynamic_cast<NiTriStrips *>(node))
     {
         gltfNode.mesh = ExportNiTriStrips(niTriStrips, model, buffer, gltfNode);
     }
 
-    auto* niNode = dynamic_cast<NiNode*>(node);
-    
-    auto* lodNode = dynamic_cast<NiLODNode*>(node);
+    auto *niNode = dynamic_cast<NiNode *>(node);
+
+    auto *lodNode = dynamic_cast<NiLODNode *>(node);
 
     hasLOD = false;
 
     if (lodNode != nullptr)
     {
-        if (auto* rangeData = dynamic_cast<NiRangeLODData*>(lodNode->GetLODLevelData().Query(m_Blocks)))
+        if (auto *rangeData = dynamic_cast<NiRangeLODData *>(lodNode->GetLODLevelData().Query(m_Blocks)))
         {
             hasLOD = true;
         }
@@ -391,9 +407,9 @@ int32_t nejlika::geometry::Converter::ExportGLTFHeirarchy(NiAVObject* node, cons
     {
         int32_t childPos = 0;
 
-        for (const auto& child : niNode->GetChildren())
+        for (const auto &child : niNode->GetChildren())
         {
-            NiAVObject* childNode = child.Query(m_Blocks);
+            NiAVObject *childNode = child.Query(m_Blocks);
 
             if (!childNode)
             {
@@ -431,7 +447,7 @@ void nejlika::geometry::Converter::AllocateNodeIndices(NiAVObject *node, tinyglt
 
     if (node->GetName().GetIndex() != 0xFFFFFFFF)
     {
-        const auto& nameVector = m_Header.GetStrings()[node->GetName().GetIndex()].GetValue();
+        const auto &nameVector = m_Header.GetStrings()[node->GetName().GetIndex()].GetValue();
         gltfNode.name = std::string(nameVector.begin(), nameVector.end());
     }
     else
@@ -445,7 +461,7 @@ void nejlika::geometry::Converter::AllocateNodeIndices(NiAVObject *node, tinyglt
 
     model.nodes.push_back(gltfNode);
 
-    m_NodeMap.insert({ node, nodeIndex });
+    m_NodeMap.insert({node, nodeIndex});
 
     /*
     auto* niNode = dynamic_cast<NiNode*>(node);
@@ -466,30 +482,37 @@ void nejlika::geometry::Converter::AllocateNodeIndices(NiAVObject *node, tinyglt
     }*/
 }
 
-std::vector<double> nejlika::geometry::Converter::RotationMatrixToQuaternion(const std::array<std::array<float, 3>, 3>& matrix)
+std::vector<double> nejlika::geometry::Converter::RotationMatrixToQuaternion(const std::array<std::array<float, 3>, 3> &matrix)
 {
     std::vector<double> q(4);
 
     double trace = matrix[0][0] + matrix[1][1] + matrix[2][2]; // Trace of the matrix
-    if (trace > 0.0) {
+    if (trace > 0.0)
+    {
         double s = std::sqrt(trace + 1.0) * 2.0; // s = 4 * q[3]
         q[3] = 0.25 * s;
         q[0] = (matrix[2][1] - matrix[1][2]) / s;
         q[1] = (matrix[0][2] - matrix[2][0]) / s;
         q[2] = (matrix[1][0] - matrix[0][1]) / s;
-    } else if ((matrix[0][0] > matrix[1][1]) && (matrix[0][0] > matrix[2][2])) {
+    }
+    else if ((matrix[0][0] > matrix[1][1]) && (matrix[0][0] > matrix[2][2]))
+    {
         double s = std::sqrt(1.0 + matrix[0][0] - matrix[1][1] - matrix[2][2]) * 2.0; // s = 4 * q[0]
         q[3] = (matrix[2][1] - matrix[1][2]) / s;
         q[0] = 0.25 * s;
         q[1] = (matrix[0][1] + matrix[1][0]) / s;
         q[2] = (matrix[0][2] + matrix[2][0]) / s;
-    } else if (matrix[1][1] > matrix[2][2]) {
+    }
+    else if (matrix[1][1] > matrix[2][2])
+    {
         double s = std::sqrt(1.0 + matrix[1][1] - matrix[0][0] - matrix[2][2]) * 2.0; // s = 4 * q[1]
         q[3] = (matrix[0][2] - matrix[2][0]) / s;
         q[0] = (matrix[0][1] + matrix[1][0]) / s;
         q[1] = 0.25 * s;
         q[2] = (matrix[1][2] + matrix[2][1]) / s;
-    } else {
+    }
+    else
+    {
         double s = std::sqrt(1.0 + matrix[2][2] - matrix[0][0] - matrix[1][1]) * 2.0; // s = 4 * q[2]
         q[3] = (matrix[1][0] - matrix[0][1]) / s;
         q[0] = (matrix[0][2] + matrix[2][0]) / s;
@@ -500,14 +523,14 @@ std::vector<double> nejlika::geometry::Converter::RotationMatrixToQuaternion(con
     return q;
 }
 
-int32_t nejlika::geometry::Converter::ExportGLTFVertices(const std::vector<nejlika::geometry::Vector3>& vertices, tinygltf::Model& model, nejlika::Writer& buffer)
+int32_t nejlika::geometry::Converter::ExportGLTFVertices(const std::vector<nejlika::geometry::Vector3> &vertices, tinygltf::Model &model, nejlika::Writer &buffer)
 {
     int32_t bufferViewStart = buffer.GetWriteHead();
 
-    std::vector<float> minValue = { std::numeric_limits<float>::max(), std::numeric_limits<float>::max(), std::numeric_limits<float>::max() };
-    std::vector<float> maxValue = { std::numeric_limits<float>::min(), std::numeric_limits<float>::min(), std::numeric_limits<float>::min() };
+    std::vector<float> minValue = {std::numeric_limits<float>::max(), std::numeric_limits<float>::max(), std::numeric_limits<float>::max()};
+    std::vector<float> maxValue = {std::numeric_limits<float>::min(), std::numeric_limits<float>::min(), std::numeric_limits<float>::min()};
 
-    for (const auto& vertex : vertices)
+    for (const auto &vertex : vertices)
     {
         buffer.Write(vertex.Getx());
         buffer.Write(vertex.Gety());
@@ -535,8 +558,8 @@ int32_t nejlika::geometry::Converter::ExportGLTFVertices(const std::vector<nejli
     accessor.componentType = TINYGLTF_COMPONENT_TYPE_FLOAT;
     accessor.count = vertices.size();
     accessor.type = TINYGLTF_TYPE_VEC3;
-    accessor.minValues = { minValue[0], minValue[1], minValue[2] };
-    accessor.maxValues = { maxValue[0], maxValue[1], maxValue[2] };
+    accessor.minValues = {minValue[0], minValue[1], minValue[2]};
+    accessor.maxValues = {maxValue[0], maxValue[1], maxValue[2]};
     model.accessors.push_back(accessor);
 
     tinygltf::BufferView bufferView;
@@ -554,7 +577,7 @@ int32_t nejlika::geometry::Converter::ExportGLTFIndices(const std::vector<uint16
 {
     int32_t bufferViewStart = buffer.GetWriteHead();
 
-    for (const auto& index : indices)
+    for (const auto &index : indices)
     {
         buffer.Write(index);
     }
@@ -589,7 +612,7 @@ int32_t nejlika::geometry::Converter::ExportGLTFIndices(const std::vector<Triang
 {
     int32_t bufferViewStart = buffer.GetWriteHead();
 
-    for (const auto& triangle : indices)
+    for (const auto &triangle : indices)
     {
         buffer.Write(static_cast<uint16_t>(triangle.Getv1()));
         buffer.Write(static_cast<uint16_t>(triangle.Getv2()));
@@ -622,15 +645,25 @@ int32_t nejlika::geometry::Converter::ExportGLTFIndices(const std::vector<Triang
     return accessorIndex;
 }
 
-int32_t nejlika::geometry::Converter::ExportGLTFNormals(const std::vector<nejlika::geometry::Vector3>& normals, tinygltf::Model& model, nejlika::Writer& buffer)
+int32_t nejlika::geometry::Converter::ExportGLTFNormals(const std::vector<nejlika::geometry::Vector3> &normals, tinygltf::Model &model, nejlika::Writer &buffer)
 {
     int32_t bufferViewStart = buffer.GetWriteHead();
 
-    for (const auto& normal : normals)
+    for (const auto &normal : normals)
     {
-        buffer.Write(normal.Getx());
-        buffer.Write(normal.Gety());
-        buffer.Write(normal.Getz());
+        float x = normal.Getx();
+        float y = normal.Gety();
+        float z = normal.Getz();
+        float len = std::sqrt(x * x + y * y + z * z);
+        if (len > 0.0f)
+        {
+            x /= len;
+            y /= len;
+            z /= len;
+        }
+        buffer.Write(x);
+        buffer.Write(y);
+        buffer.Write(z);
     }
 
     // Make sure the buffer is aligned to 4 bytes
@@ -659,11 +692,11 @@ int32_t nejlika::geometry::Converter::ExportGLTFNormals(const std::vector<nejlik
     return accessorIndex;
 }
 
-int32_t nejlika::geometry::Converter::ExportGLTFUVs(const std::vector<nejlika::geometry::TexCoord>& uvs, tinygltf::Model& model, nejlika::Writer& buffer)
+int32_t nejlika::geometry::Converter::ExportGLTFUVs(const std::vector<nejlika::geometry::TexCoord> &uvs, tinygltf::Model &model, nejlika::Writer &buffer)
 {
     int32_t bufferViewStart = buffer.GetWriteHead();
 
-    for (const auto& uv : uvs)
+    for (const auto &uv : uvs)
     {
         buffer.Write(uv.Getu());
         buffer.Write(uv.Getv());
@@ -695,11 +728,11 @@ int32_t nejlika::geometry::Converter::ExportGLTFUVs(const std::vector<nejlika::g
     return accessorIndex;
 }
 
-int32_t nejlika::geometry::Converter::ExportGLTFColors(const std::vector<nejlika::geometry::Color4>& colors, tinygltf::Model& model, nejlika::Writer& buffer)
+int32_t nejlika::geometry::Converter::ExportGLTFColors(const std::vector<nejlika::geometry::Color4> &colors, tinygltf::Model &model, nejlika::Writer &buffer)
 {
     int32_t bufferViewStart = buffer.GetWriteHead();
 
-    for (const auto& color : colors)
+    for (const auto &color : colors)
     {
         buffer.Write(color.Getr());
         buffer.Write(color.Getg());
@@ -733,11 +766,11 @@ int32_t nejlika::geometry::Converter::ExportGLTFColors(const std::vector<nejlika
     return accessorIndex;
 }
 
-void nejlika::geometry::Converter::ExportNiTriBasedGeomData(const NiTriBasedGeomData* data, tinygltf::Model& model, nejlika::Writer& buffer, tinygltf::Primitive& primitive)
+void nejlika::geometry::Converter::ExportNiTriBasedGeomData(const NiTriBasedGeomData *data, tinygltf::Model &model, nejlika::Writer &buffer, tinygltf::Primitive &primitive)
 {
     if (data->GetHasVertices())
     {
-        primitive.attributes["POSITION"] = ExportGLTFVertices(data->GetVertices(), model, buffer);;
+        primitive.attributes["POSITION"] = ExportGLTFVertices(data->GetVertices(), model, buffer);
     }
 
     if (data->GetHasNormals())
@@ -773,7 +806,7 @@ void nejlika::geometry::Converter::ExportNiTriStripsData(const NiTriStripsData *
         std::vector<uint16_t> indices;
         indices.reserve(data->GetPoints().size() * 3);
 
-        for (const auto& strip : data->GetPoints())
+        for (const auto &strip : data->GetPoints())
         {
             int32_t index = 1;
 
@@ -806,24 +839,24 @@ void nejlika::geometry::Converter::ExportNiTriStripsData(const NiTriStripsData *
     ExportNiTriBasedGeomData(data, model, buffer, primitive);
 }
 
-void nejlika::geometry::Converter::ExportMaterial(const NiAVObject *node, tinygltf::Model &model, tinygltf::Primitive &primitive, nejlika::Writer& buffer, const std::vector<Vector3>& vertices)
+void nejlika::geometry::Converter::ExportMaterial(const NiAVObject *node, tinygltf::Model &model, tinygltf::Primitive &primitive, nejlika::Writer &buffer, const std::vector<Vector3> &vertices)
 {
     bool hasMaterial = false;
-    
+
     int32_t materialIndex = model.materials.size();
 
     tinygltf::Material material;
     material.name = "Material";
-    material.pbrMetallicRoughness.baseColorFactor = { 1.0f, 1.0f, 1.0f, 1.0f };
+    material.pbrMetallicRoughness.baseColorFactor = {1.0f, 1.0f, 1.0f, 1.0f};
     material.pbrMetallicRoughness.baseColorTexture.index = -1;
     material.pbrMetallicRoughness.metallicFactor = 0.0f;
     material.pbrMetallicRoughness.roughnessFactor = 0.0f;
     material.alphaMode = "OPAQUE";
     material.doubleSided = true;
 
-    for (const auto& propertyPtr : node->GetProperties())
+    for (const auto &propertyPtr : node->GetProperties())
     {
-        auto* property = propertyPtr.Query(m_Blocks);
+        auto *property = propertyPtr.Query(m_Blocks);
 
         if (!property)
         {
@@ -832,35 +865,36 @@ void nejlika::geometry::Converter::ExportMaterial(const NiAVObject *node, tinygl
 
         std::string name = m_BlockNames[property];
 
-        if (auto* niAlphaProperty = dynamic_cast<NiAlphaProperty*>(property))
+        if (auto *niAlphaProperty = dynamic_cast<NiAlphaProperty *>(property))
         {
             material.alphaCutoff = niAlphaProperty->GetThreshold();
             hasMaterial = true;
         }
-        else if (auto* niMaterialProperty = dynamic_cast<NiMaterialProperty*>(property))
+        else if (auto *niMaterialProperty = dynamic_cast<NiMaterialProperty *>(property))
         {
-            const auto& ambient = niMaterialProperty->GetAmbientColor();
-            const auto& diffuse = niMaterialProperty->GetDiffuseColor();
-            const auto& specular = niMaterialProperty->GetSpecularColor();
-            const auto& emissive = niMaterialProperty->GetEmissiveColor();
-            const auto& shininess = niMaterialProperty->GetGlossiness();
-            const auto& alpha = niMaterialProperty->GetAlpha();
+            const auto &ambient = niMaterialProperty->GetAmbientColor();
+            const auto &diffuse = niMaterialProperty->GetDiffuseColor();
+            const auto &specular = niMaterialProperty->GetSpecularColor();
+            const auto &emissive = niMaterialProperty->GetEmissiveColor();
+            const auto &shininess = niMaterialProperty->GetGlossiness();
+            const auto &alpha = niMaterialProperty->GetAlpha();
 
             if (diffuse.Getr() == 0 && diffuse.Getg() == 0 && diffuse.Getb() == 0)
             {
-                material.pbrMetallicRoughness.baseColorFactor = { 1, 1, 1, alpha };
+                material.pbrMetallicRoughness.baseColorFactor = {1, 1, 1, alpha};
             }
-            else {
+            else
+            {
                 // Base color and alpha
-                material.pbrMetallicRoughness.baseColorFactor = { diffuse.Getr(), diffuse.Getg(), diffuse.Getb(), alpha };
+                material.pbrMetallicRoughness.baseColorFactor = {diffuse.Getr(), diffuse.Getg(), diffuse.Getb(), alpha};
             }
-            
+
             // Metallic and roughness from shininess
             material.pbrMetallicRoughness.metallicFactor = 0.0f;
             material.pbrMetallicRoughness.roughnessFactor = 1.0f - shininess / 128.0f;
 
             // Emissive color
-            //material.emissiveFactor = { emissive.Getr(), emissive.Getg(), emissive.Getb() };
+            // material.emissiveFactor = { emissive.Getr(), emissive.Getg(), emissive.Getb() };
 
             // Alpha mode
             material.alphaMode = (alpha < 1.0f) ? "BLEND" : "OPAQUE";
@@ -870,18 +904,18 @@ void nejlika::geometry::Converter::ExportMaterial(const NiAVObject *node, tinygl
 
             hasMaterial = true;
 
-            if (auto* niTimeController = niMaterialProperty->GetController().Query(m_Blocks))
+            if (auto *niTimeController = niMaterialProperty->GetController().Query(m_Blocks))
             {
-                if (auto* niAlphaController = dynamic_cast<NiAlphaController*>(niTimeController))
+                if (auto *niAlphaController = dynamic_cast<NiAlphaController *>(niTimeController))
                 {
-                    auto* niFloatInterpolator = dynamic_cast<NiFloatInterpolator*>(niAlphaController->GetInterpolator().Query(m_Blocks));
+                    auto *niFloatInterpolator = dynamic_cast<NiFloatInterpolator *>(niAlphaController->GetInterpolator().Query(m_Blocks));
 
                     if (!niFloatInterpolator)
                     {
                         continue;
                     }
 
-                    auto* alphaData = dynamic_cast<NiFloatData*>(niFloatInterpolator->GetData().Query(m_Blocks));
+                    auto *alphaData = dynamic_cast<NiFloatData *>(niFloatInterpolator->GetData().Query(m_Blocks));
 
                     if (!alphaData)
                     {
@@ -889,286 +923,278 @@ void nejlika::geometry::Converter::ExportMaterial(const NiAVObject *node, tinygl
                     }
 
                     m_OnAnimationExport.push_back(
-                        [this, alphaData, niAlphaController, materialIndex, diffuse]
-                        (tinygltf::Model& model, tinygltf::Animation& animation, nejlika::Writer& buffer)
-                    {
-                        std::vector<float> times;
-                        std::vector<float> values;
-
-                        for (const auto& key : alphaData->GetData().GetKeys())
+                        [this, alphaData, niAlphaController, materialIndex, diffuse](tinygltf::Model &model, tinygltf::Animation &animation, nejlika::Writer &buffer)
                         {
-                            times.push_back(key.GetTime());
-                            values.push_back(diffuse.Getr());
-                            values.push_back(diffuse.Getg());
-                            values.push_back(diffuse.Getb());
-                            values.push_back(key.GetValue());
-                        }
+                            std::vector<float> times;
+                            std::vector<float> values;
 
-                        // Write time buffer
-                        int32_t timeBufferStart = buffer.GetWriteHead();
-                        for (const auto &time : times) buffer.Write(time);
-                        AlignBuffer(buffer);
-                        int32_t timeBufferEnd = buffer.GetWriteHead();
+                            for (const auto &key : alphaData->GetData().GetKeys())
+                            {
+                                times.push_back(key.GetTime());
+                                values.push_back(diffuse.Getr());
+                                values.push_back(diffuse.Getg());
+                                values.push_back(diffuse.Getb());
+                                values.push_back(key.GetValue());
+                            }
 
-                        tinygltf::BufferView timeBufferView;
-                        timeBufferView.buffer = 0;
-                        timeBufferView.byteOffset = timeBufferStart;
-                        timeBufferView.byteLength = timeBufferEnd - timeBufferStart;
-                        model.bufferViews.push_back(timeBufferView);
-                        int32_t timeBufferIndex = model.bufferViews.size() - 1;
+                            // Write time buffer
+                            int32_t timeBufferStart = buffer.GetWriteHead();
+                            for (const auto &time : times)
+                                buffer.Write(time);
+                            AlignBuffer(buffer);
+                            int32_t timeBufferEnd = buffer.GetWriteHead();
 
-                        tinygltf::Accessor timeAccessor;
-                        timeAccessor.bufferView = timeBufferIndex;
-                        timeAccessor.componentType = TINYGLTF_COMPONENT_TYPE_FLOAT;
-                        timeAccessor.count = times.size();
-                        timeAccessor.type = TINYGLTF_TYPE_SCALAR;
-                        timeAccessor.minValues = { *std::min_element(times.begin(), times.end()) };
-                        timeAccessor.maxValues = { *std::max_element(times.begin(), times.end()) };
-                        model.accessors.push_back(timeAccessor);
-                        int32_t timeAccessorIndex = model.accessors.size() - 1;
+                            tinygltf::BufferView timeBufferView;
+                            timeBufferView.buffer = 0;
+                            timeBufferView.byteOffset = timeBufferStart;
+                            timeBufferView.byteLength = timeBufferEnd - timeBufferStart;
+                            model.bufferViews.push_back(timeBufferView);
+                            int32_t timeBufferIndex = model.bufferViews.size() - 1;
 
-                        // Write value buffer
-                        int32_t valueBufferStart = buffer.GetWriteHead();
-                        for (const auto &value : values) buffer.Write(value);
-                        AlignBuffer(buffer);
-                        int32_t valueBufferEnd = buffer.GetWriteHead();
+                            tinygltf::Accessor timeAccessor;
+                            timeAccessor.bufferView = timeBufferIndex;
+                            timeAccessor.componentType = TINYGLTF_COMPONENT_TYPE_FLOAT;
+                            timeAccessor.count = times.size();
+                            timeAccessor.type = TINYGLTF_TYPE_SCALAR;
+                            timeAccessor.minValues = {*std::min_element(times.begin(), times.end())};
+                            timeAccessor.maxValues = {*std::max_element(times.begin(), times.end())};
+                            model.accessors.push_back(timeAccessor);
+                            int32_t timeAccessorIndex = model.accessors.size() - 1;
 
-                        tinygltf::BufferView valueBufferView;
-                        valueBufferView.buffer = 0;
-                        valueBufferView.byteOffset = valueBufferStart;
-                        valueBufferView.byteLength = valueBufferEnd - valueBufferStart;
-                        model.bufferViews.push_back(valueBufferView);
-                        int32_t valueBufferIndex = model.bufferViews.size() - 1;
+                            // Write value buffer
+                            int32_t valueBufferStart = buffer.GetWriteHead();
+                            for (const auto &value : values)
+                                buffer.Write(value);
+                            AlignBuffer(buffer);
+                            int32_t valueBufferEnd = buffer.GetWriteHead();
 
-                        tinygltf::Accessor valueAccessor;
-                        valueAccessor.bufferView = valueBufferIndex;
-                        valueAccessor.componentType = TINYGLTF_COMPONENT_TYPE_FLOAT;
-                        valueAccessor.count = values.size() / 4;
-                        valueAccessor.type = TINYGLTF_TYPE_VEC4;
-                        model.accessors.push_back(valueAccessor);
-                        int32_t valueAccessorIndex = model.accessors.size() - 1;
+                            tinygltf::BufferView valueBufferView;
+                            valueBufferView.buffer = 0;
+                            valueBufferView.byteOffset = valueBufferStart;
+                            valueBufferView.byteLength = valueBufferEnd - valueBufferStart;
+                            model.bufferViews.push_back(valueBufferView);
+                            int32_t valueBufferIndex = model.bufferViews.size() - 1;
 
-                        // Use KHR_animation_pointer to animate the alpha value
-                        tinygltf::AnimationChannel channel;
-                        channel.sampler = animation.samplers.size();
-                        channel.target_path = "pointer";
-                        channel.target_extensions["KHR_animation_pointer"] = tinygltf::Value ({
-                            { "pointer", tinygltf::Value("/materials/" + std::to_string(materialIndex) + "/pbrMetallicRoughness/baseColorFactor") }
+                            tinygltf::Accessor valueAccessor;
+                            valueAccessor.bufferView = valueBufferIndex;
+                            valueAccessor.componentType = TINYGLTF_COMPONENT_TYPE_FLOAT;
+                            valueAccessor.count = values.size() / 4;
+                            valueAccessor.type = TINYGLTF_TYPE_VEC4;
+                            model.accessors.push_back(valueAccessor);
+                            int32_t valueAccessorIndex = model.accessors.size() - 1;
+
+                            // Use KHR_animation_pointer to animate the alpha value
+                            tinygltf::AnimationChannel channel;
+                            channel.sampler = animation.samplers.size();
+                            channel.target_path = "pointer";
+                            channel.target_extensions["KHR_animation_pointer"] = tinygltf::Value({{"pointer", tinygltf::Value("/materials/" + std::to_string(materialIndex) + "/pbrMetallicRoughness/baseColorFactor")}});
+
+                            const auto &extensionsUsedIt = std::find(model.extensionsUsed.begin(), model.extensionsUsed.end(), "KHR_animation_pointer");
+                            if (extensionsUsedIt == model.extensionsUsed.end())
+                                model.extensionsUsed.push_back("KHR_animation_pointer");
+
+                            tinygltf::AnimationSampler sampler;
+                            sampler.input = timeAccessorIndex;
+                            sampler.output = valueAccessorIndex;
+                            sampler.interpolation = "LINEAR";
+
+                            animation.channels.push_back(channel);
+                            animation.samplers.push_back(sampler);
                         });
-
-                        const auto& extensionsUsedIt = std::find(model.extensionsUsed.begin(), model.extensionsUsed.end(), "KHR_animation_pointer");
-                        if (extensionsUsedIt == model.extensionsUsed.end()) model.extensionsUsed.push_back("KHR_animation_pointer");
-
-                        tinygltf::AnimationSampler sampler;
-                        sampler.input = timeAccessorIndex;
-                        sampler.output = valueAccessorIndex;
-                        sampler.interpolation = "LINEAR";
-
-                        animation.channels.push_back(channel);
-                        animation.samplers.push_back(sampler);
-                    });
                 }
             }
         }
-        else if (auto* niTexturingProperty = dynamic_cast<NiTexturingProperty*>(property))
+        else if (auto *niTexturingProperty = dynamic_cast<NiTexturingProperty *>(property))
         {
             if (!niTexturingProperty->GetHasBaseTexture())
             {
                 continue;
             }
 
-            auto* niTextureTransformController = dynamic_cast<NiTextureTransformController*>(niTexturingProperty->GetController().Query(m_Blocks));
+            auto *niTextureTransformController = dynamic_cast<NiTextureTransformController *>(niTexturingProperty->GetController().Query(m_Blocks));
 
             if (niTextureTransformController != nullptr)
             {
                 if (niTextureTransformController->GetOperation() == TT_TRANSLATE_V)
                 {
-                    auto* nextController = dynamic_cast<NiTextureTransformController*>(niTextureTransformController->GetNextController().Query(m_Blocks));
+                    auto *nextController = dynamic_cast<NiTextureTransformController *>(niTextureTransformController->GetNextController().Query(m_Blocks));
 
                     if (nextController != nullptr)
                     {
 
-                    auto* vInterpolator = dynamic_cast<NiFloatInterpolator*>(niTextureTransformController->GetInterpolator().Query(m_Blocks));
-                    auto* vData = vInterpolator == nullptr ? nullptr : dynamic_cast<NiFloatData*>(vInterpolator->GetData().Query(m_Blocks));
-                    const std::vector<Key<float>> vKey = vData == nullptr ? std::vector<Key<float>>{} : vData->GetData().GetKeys();
-                    auto* uInterpolator = dynamic_cast<NiFloatInterpolator*>(nextController->GetInterpolator().Query(m_Blocks));
-                    auto* uData = uInterpolator == nullptr ? nullptr : dynamic_cast<NiFloatData*>(uInterpolator->GetData().Query(m_Blocks));
-                    const std::vector<Key<float>> uKey = uData == nullptr ? std::vector<Key<float>>{} : uData->GetData().GetKeys();
+                        auto *vInterpolator = dynamic_cast<NiFloatInterpolator *>(niTextureTransformController->GetInterpolator().Query(m_Blocks));
+                        auto *vData = vInterpolator == nullptr ? nullptr : dynamic_cast<NiFloatData *>(vInterpolator->GetData().Query(m_Blocks));
+                        const std::vector<Key<float>> vKey = vData == nullptr ? std::vector<Key<float>>{} : vData->GetData().GetKeys();
+                        auto *uInterpolator = dynamic_cast<NiFloatInterpolator *>(nextController->GetInterpolator().Query(m_Blocks));
+                        auto *uData = uInterpolator == nullptr ? nullptr : dynamic_cast<NiFloatData *>(uInterpolator->GetData().Query(m_Blocks));
+                        const std::vector<Key<float>> uKey = uData == nullptr ? std::vector<Key<float>>{} : uData->GetData().GetKeys();
 
-                    m_OnAnimationExport.push_back(
-                        [this, uKey, vKey, materialIndex]
-                        (tinygltf::Model& model, tinygltf::Animation& animation, nejlika::Writer& buffer)
-                    {
-                        std::vector<float> times;
-                        std::vector<float> values;
-                        
-                        // u and v may have different key counts, use interpolation to match the key count
-                        std::set<float> timeSet;
-                        for (const auto& key : uKey)
-                        {
-                            timeSet.insert(key.GetTime());
-                        }
-
-                        for (const auto& key : vKey)
-                        {
-                            timeSet.insert(key.GetTime());
-                        }
-
-                        for (const auto& time : timeSet)
-                        {
-                            times.push_back(time);
-
-                            float uValue = 0.0f;
-                            float vValue = 0.0f;
-                            
-                            // Interpolate u
-                            if (uKey.size() > 0)
+                        m_OnAnimationExport.push_back(
+                            [this, uKey, vKey, materialIndex](tinygltf::Model &model, tinygltf::Animation &animation, nejlika::Writer &buffer)
                             {
-                                for (size_t i = 0; i < uKey.size() - 1; i++)
+                                std::vector<float> times;
+                                std::vector<float> values;
+
+                                // u and v may have different key counts, use interpolation to match the key count
+                                std::set<float> timeSet;
+                                for (const auto &key : uKey)
                                 {
-                                    if (time >= uKey[i].GetTime() && time <= uKey[i + 1].GetTime())
-                                    {
-                                        float t = (time - uKey[i].GetTime()) / (uKey[i + 1].GetTime() - uKey[i].GetTime());
-                                        uValue = uKey[i].GetValue() + t * (uKey[i + 1].GetValue() - uKey[i].GetValue());
-                                        break;
-                                    }
+                                    timeSet.insert(key.GetTime());
                                 }
-                            }
-                            else
-                            {
-                                uValue = 0.0f;
-                            }
 
-                            // Interpolate v
-                            if (vKey.size() > 0)
-                            {
-                                for (size_t i = 0; i < vKey.size() - 1; i++)
+                                for (const auto &key : vKey)
                                 {
-                                    if (time >= vKey[i].GetTime() && time <= vKey[i + 1].GetTime())
-                                    {
-                                        float t = (time - vKey[i].GetTime()) / (vKey[i + 1].GetTime() - vKey[i].GetTime());
-                                        vValue = vKey[i].GetValue() + t * (vKey[i + 1].GetValue() - vKey[i].GetValue());
-                                        break;
-                                    }
+                                    timeSet.insert(key.GetTime());
                                 }
-                            }
-                            else
-                            {
-                                vValue = 0.0f;
-                            }
 
-                            values.push_back(uValue);
-                            values.push_back(vValue);
-                        }
+                                for (const auto &time : timeSet)
+                                {
+                                    times.push_back(time);
 
-                        if (times.size() == 0)
-                        {
-                            return;
-                        }
+                                    float uValue = 0.0f;
+                                    float vValue = 0.0f;
 
-                        // Write time buffer
-                        int32_t timeBufferStart = buffer.GetWriteHead();
-                        for (const auto &time : times) buffer.Write(time);
-                        AlignBuffer(buffer);
-                        int32_t timeBufferEnd = buffer.GetWriteHead();
+                                    // Interpolate u
+                                    if (uKey.size() > 0)
+                                    {
+                                        for (size_t i = 0; i < uKey.size() - 1; i++)
+                                        {
+                                            if (time >= uKey[i].GetTime() && time <= uKey[i + 1].GetTime())
+                                            {
+                                                float t = (time - uKey[i].GetTime()) / (uKey[i + 1].GetTime() - uKey[i].GetTime());
+                                                uValue = uKey[i].GetValue() + t * (uKey[i + 1].GetValue() - uKey[i].GetValue());
+                                                break;
+                                            }
+                                        }
+                                    }
+                                    else
+                                    {
+                                        uValue = 0.0f;
+                                    }
 
-                        tinygltf::BufferView timeBufferView;
-                        timeBufferView.buffer = 0;
-                        timeBufferView.byteOffset = timeBufferStart;
-                        timeBufferView.byteLength = timeBufferEnd - timeBufferStart;
-                        model.bufferViews.push_back(timeBufferView);
-                        int32_t timeBufferIndex = model.bufferViews.size() - 1;
+                                    // Interpolate v
+                                    if (vKey.size() > 0)
+                                    {
+                                        for (size_t i = 0; i < vKey.size() - 1; i++)
+                                        {
+                                            if (time >= vKey[i].GetTime() && time <= vKey[i + 1].GetTime())
+                                            {
+                                                float t = (time - vKey[i].GetTime()) / (vKey[i + 1].GetTime() - vKey[i].GetTime());
+                                                vValue = vKey[i].GetValue() + t * (vKey[i + 1].GetValue() - vKey[i].GetValue());
+                                                break;
+                                            }
+                                        }
+                                    }
+                                    else
+                                    {
+                                        vValue = 0.0f;
+                                    }
 
-                        tinygltf::Accessor timeAccessor;
-                        timeAccessor.bufferView = timeBufferIndex;
-                        timeAccessor.componentType = TINYGLTF_COMPONENT_TYPE_FLOAT;
-                        timeAccessor.count = times.size();
-                        timeAccessor.type = TINYGLTF_TYPE_SCALAR;
-                        timeAccessor.minValues = { *std::min_element(times.begin(), times.end()) };
-                        timeAccessor.maxValues = { *std::max_element(times.begin(), times.end()) };
-                        model.accessors.push_back(timeAccessor);
-                        int32_t timeAccessorIndex = model.accessors.size() - 1;
+                                    values.push_back(uValue);
+                                    values.push_back(vValue);
+                                }
 
-                        // Write value buffer
-                        int32_t valueBufferStart = buffer.GetWriteHead();
-                        for (const auto &value : values) buffer.Write(value);
-                        AlignBuffer(buffer);
-                        int32_t valueBufferEnd = buffer.GetWriteHead();
+                                if (times.size() == 0)
+                                {
+                                    return;
+                                }
 
-                        tinygltf::BufferView valueBufferView;
-                        valueBufferView.buffer = 0;
-                        valueBufferView.byteOffset = valueBufferStart;
-                        valueBufferView.byteLength = valueBufferEnd - valueBufferStart;
-                        model.bufferViews.push_back(valueBufferView);
-                        int32_t valueBufferIndex = model.bufferViews.size() - 1;
+                                // Write time buffer
+                                int32_t timeBufferStart = buffer.GetWriteHead();
+                                for (const auto &time : times)
+                                    buffer.Write(time);
+                                AlignBuffer(buffer);
+                                int32_t timeBufferEnd = buffer.GetWriteHead();
 
-                        tinygltf::Accessor valueAccessor;
-                        valueAccessor.bufferView = valueBufferIndex;
-                        valueAccessor.componentType = TINYGLTF_COMPONENT_TYPE_FLOAT;
-                        valueAccessor.count = values.size() / 2;
-                        valueAccessor.type = TINYGLTF_TYPE_VEC2;
-                        model.accessors.push_back(valueAccessor);
-                        int32_t valueAccessorIndex = model.accessors.size() - 1;
+                                tinygltf::BufferView timeBufferView;
+                                timeBufferView.buffer = 0;
+                                timeBufferView.byteOffset = timeBufferStart;
+                                timeBufferView.byteLength = timeBufferEnd - timeBufferStart;
+                                model.bufferViews.push_back(timeBufferView);
+                                int32_t timeBufferIndex = model.bufferViews.size() - 1;
 
-                        // Use KHR_animation_pointer to animate the UV values
-                        tinygltf::AnimationChannel channel;
-                        channel.sampler = animation.samplers.size();
-                        channel.target_path = "pointer";
-                        channel.target_extensions["KHR_animation_pointer"] = tinygltf::Value({
-                            { "pointer", tinygltf::Value("/materials/" + std::to_string(materialIndex) + "/pbrMetallicRoughness/baseColorTexture/extensions/KHR_texture_transform/offset") }
-                        });
+                                tinygltf::Accessor timeAccessor;
+                                timeAccessor.bufferView = timeBufferIndex;
+                                timeAccessor.componentType = TINYGLTF_COMPONENT_TYPE_FLOAT;
+                                timeAccessor.count = times.size();
+                                timeAccessor.type = TINYGLTF_TYPE_SCALAR;
+                                timeAccessor.minValues = {*std::min_element(times.begin(), times.end())};
+                                timeAccessor.maxValues = {*std::max_element(times.begin(), times.end())};
+                                model.accessors.push_back(timeAccessor);
+                                int32_t timeAccessorIndex = model.accessors.size() - 1;
 
-                        const auto& extensionsUsedIt = std::find(model.extensionsUsed.begin(), model.extensionsUsed.end(), "KHR_animation_pointer");
-                        if (extensionsUsedIt == model.extensionsUsed.end()) model.extensionsUsed.push_back("KHR_animation_pointer");
+                                // Write value buffer
+                                int32_t valueBufferStart = buffer.GetWriteHead();
+                                for (const auto &value : values)
+                                    buffer.Write(value);
+                                AlignBuffer(buffer);
+                                int32_t valueBufferEnd = buffer.GetWriteHead();
 
-                        tinygltf::AnimationSampler sampler;
-                        sampler.input = timeAccessorIndex;
-                        sampler.output = valueAccessorIndex;
-                        sampler.interpolation = "LINEAR";
+                                tinygltf::BufferView valueBufferView;
+                                valueBufferView.buffer = 0;
+                                valueBufferView.byteOffset = valueBufferStart;
+                                valueBufferView.byteLength = valueBufferEnd - valueBufferStart;
+                                model.bufferViews.push_back(valueBufferView);
+                                int32_t valueBufferIndex = model.bufferViews.size() - 1;
 
-                        animation.channels.push_back(channel);
-                        animation.samplers.push_back(sampler);
-                    });
+                                tinygltf::Accessor valueAccessor;
+                                valueAccessor.bufferView = valueBufferIndex;
+                                valueAccessor.componentType = TINYGLTF_COMPONENT_TYPE_FLOAT;
+                                valueAccessor.count = values.size() / 2;
+                                valueAccessor.type = TINYGLTF_TYPE_VEC2;
+                                model.accessors.push_back(valueAccessor);
+                                int32_t valueAccessorIndex = model.accessors.size() - 1;
+
+                                // Use KHR_animation_pointer to animate the UV values
+                                tinygltf::AnimationChannel channel;
+                                channel.sampler = animation.samplers.size();
+                                channel.target_path = "pointer";
+                                channel.target_extensions["KHR_animation_pointer"] = tinygltf::Value({{"pointer", tinygltf::Value("/materials/" + std::to_string(materialIndex) + "/pbrMetallicRoughness/baseColorTexture/extensions/KHR_texture_transform/offset")}});
+
+                                const auto &extensionsUsedIt = std::find(model.extensionsUsed.begin(), model.extensionsUsed.end(), "KHR_animation_pointer");
+                                if (extensionsUsedIt == model.extensionsUsed.end())
+                                    model.extensionsUsed.push_back("KHR_animation_pointer");
+
+                                tinygltf::AnimationSampler sampler;
+                                sampler.input = timeAccessorIndex;
+                                sampler.output = valueAccessorIndex;
+                                sampler.interpolation = "LINEAR";
+
+                                animation.channels.push_back(channel);
+                                animation.samplers.push_back(sampler);
+                            });
                     }
                 }
             }
 
+            const auto &niTexture = niTexturingProperty->GetBaseTexture();
 
-            const auto& niTexture = niTexturingProperty->GetBaseTexture();
-
-            const auto& tiling = niTexture.GetTiling(); // For example 100, 100
+            const auto &tiling = niTexture.GetTiling(); // For example 100, 100
 
             // Add texture transform extension
-            material.pbrMetallicRoughness.baseColorTexture.extensions["KHR_texture_transform"] = tinygltf::Value({
-                { "offset", tinygltf::Value(std::vector<tinygltf::Value>
-                    {
-                        { tinygltf::Value(0.0f) },
-                        { tinygltf::Value(0.0f) }
-                    })
-                },
-                { "scale", tinygltf::Value(std::vector<tinygltf::Value>
-                    {
-                        { tinygltf::Value(niTexture.GetHasTextureTransform() ? tiling.Getu() : 1.0f) },
-                        { tinygltf::Value(niTexture.GetHasTextureTransform() ? tiling.Getv() : 1.0f) }
-                    })
-                }
-            });
+            material.pbrMetallicRoughness.baseColorTexture.extensions["KHR_texture_transform"] = tinygltf::Value({{"offset", tinygltf::Value(std::vector<tinygltf::Value>{
+                                                                                                                                 {tinygltf::Value(0.0f)},
+                                                                                                                                 {tinygltf::Value(0.0f)}})},
+                                                                                                                  {"scale", tinygltf::Value(std::vector<tinygltf::Value>{
+                                                                                                                                {tinygltf::Value(niTexture.GetHasTextureTransform() ? tiling.Getu() : 1.0f)},
+                                                                                                                                {tinygltf::Value(niTexture.GetHasTextureTransform() ? tiling.Getv() : 1.0f)}})}});
 
-            const auto& extensionsUsedIt = std::find(model.extensionsUsed.begin(), model.extensionsUsed.end(), "KHR_texture_transform");
-            if (extensionsUsedIt == model.extensionsUsed.end()) model.extensionsUsed.push_back("KHR_texture_transform");
+            const auto &extensionsUsedIt = std::find(model.extensionsUsed.begin(), model.extensionsUsed.end(), "KHR_texture_transform");
+            if (extensionsUsedIt == model.extensionsUsed.end())
+                model.extensionsUsed.push_back("KHR_texture_transform");
 
-            if (auto* niSourceTexture = niTexture.GetSource().Query(m_Blocks))
+            if (auto *niSourceTexture = niTexture.GetSource().Query(m_Blocks))
             {
                 std::string textureName = GetNifString(niSourceTexture->GetFileName().GetIndex());
 
                 // Make all lowercase
                 std::transform(textureName.begin(), textureName.end(), textureName.begin(), ::tolower);
 
-                std::filesystem::path texturePath = 
-                    std::filesystem::path(m_NifPath).parent_path() / 
+                std::filesystem::path texturePath =
+                    std::filesystem::path(m_NifPath).parent_path() /
                     textureName;
 
-                const auto& cacheIt = m_TextureCache.find(texturePath.string());
+                const auto &cacheIt = m_TextureCache.find(texturePath.string());
 
                 if (cacheIt != m_TextureCache.end())
                 {
@@ -1211,7 +1237,7 @@ void nejlika::geometry::Converter::ExportMaterial(const NiAVObject *node, tinygl
                 model.images.push_back(image);
 
                 int32_t materialIndex = model.materials.size();
-    
+
                 material.pbrMetallicRoughness.baseColorTexture.index = textureIndex;
 
                 m_TextureCache[texturePath.string()] = textureIndex;
@@ -1227,9 +1253,9 @@ void nejlika::geometry::Converter::ExportMaterial(const NiAVObject *node, tinygl
     primitive.material = materialIndex;
 }
 
-int32_t nejlika::geometry::Converter::ExportNiTriShape(const NiTriShape *shape, tinygltf::Model &model, nejlika::Writer &buffer, tinygltf::Node& gltfNode)
+int32_t nejlika::geometry::Converter::ExportNiTriShape(const NiTriShape *shape, tinygltf::Model &model, nejlika::Writer &buffer, tinygltf::Node &gltfNode)
 {
-    auto* data = shape->GetData().Query(m_Blocks);
+    auto *data = shape->GetData().Query(m_Blocks);
 
     if (!data)
     {
@@ -1238,7 +1264,7 @@ int32_t nejlika::geometry::Converter::ExportNiTriShape(const NiTriShape *shape, 
         throw std::runtime_error("Failed to find data for NiTriShape");
     }
 
-    auto* niTriShapeData = dynamic_cast<NiTriShapeData*>(data);
+    auto *niTriShapeData = dynamic_cast<NiTriShapeData *>(data);
 
     if (!niTriShapeData)
     {
@@ -1256,37 +1282,37 @@ int32_t nejlika::geometry::Converter::ExportNiTriShape(const NiTriShape *shape, 
 
     tinygltf::Mesh mesh;
 
-    if (auto* skinInstance = shape->GetSkinInstance().Query(m_Blocks))
+    if (auto *skinInstance = shape->GetSkinInstance().Query(m_Blocks))
     {
-        auto* rootNode = skinInstance->GetSkeletonRoot().Query(m_Blocks);
+        auto *rootNode = skinInstance->GetSkeletonRoot().Query(m_Blocks);
 
-        if (auto* skinData = skinInstance->GetData().Query(m_Blocks))
+        if (auto *skinData = skinInstance->GetData().Query(m_Blocks))
         {
-            const auto& bones = skinData->GetBoneList();
+            const auto &bones = skinData->GetBoneList();
 
-            if (auto* skinPartition = skinInstance->GetSkinPartition().Query(m_Blocks))
+            if (auto *skinPartition = skinInstance->GetSkinPartition().Query(m_Blocks))
             {
-                const auto& blocks = skinPartition->GetSkinPartitionBlocks();
+                const auto &blocks = skinPartition->GetSkinPartitionBlocks();
 
-                std::vector<std::array<uint8_t, 4>> jointsBuffer;  // For JOINTS_0 (unsigned int, 4 components)
+                std::vector<std::array<uint8_t, 4>> jointsBuffer; // For JOINTS_0 (unsigned int, 4 components)
                 std::vector<std::array<float, 4>> weightsBuffer;  // For WEIGHTS_0 (float, 4 components)
                 jointsBuffer.resize(niTriShapeData->GetNumVertices());
                 weightsBuffer.resize(niTriShapeData->GetNumVertices());
 
                 // Fill with a 1 to indicate no bone
-                for (auto& joint : jointsBuffer)
+                for (auto &joint : jointsBuffer)
                 {
-                    joint = { 0, 0, 0, 0 };
+                    joint = {0, 0, 0, 0};
                 }
 
-                for (auto& weight : weightsBuffer)
+                for (auto &weight : weightsBuffer)
                 {
-                    weight = { 1.0f, 0.0f, 0.0f, 0.0f };
+                    weight = {1.0f, 0.0f, 0.0f, 0.0f};
                 }
 
-                for (const auto& partition : blocks)
+                for (const auto &partition : blocks)
                 {
-                    const auto& vertexMap = partition.GetVertexMap();
+                    const auto &vertexMap = partition.GetVertexMap();
                     const auto numWeightsPerVertex = partition.GetNumWeightsPerVertex();
 
                     for (size_t v = 0; v < partition.GetVertexWeights().size(); v++)
@@ -1296,10 +1322,10 @@ int32_t nejlika::geometry::Converter::ExportNiTriShape(const NiTriShape *shape, 
                         std::array<uint8_t, 4> joints = {0, 0, 0, 0};
                         std::array<float, 4> weights = {0.0f, 0.0f, 0.0f, 0.0f};
 
-                        for (size_t w = 0; w < numWeightsPerVertex && w < 4; w++)  // Limit to 4
+                        for (size_t w = 0; w < numWeightsPerVertex && w < 4; w++) // Limit to 4
                         {
-                            const auto& boneIndex = partition.GetBoneIndices()[v][w];
-                            const auto& vertexWeight = partition.GetVertexWeights()[v][w];
+                            const auto &boneIndex = partition.GetBoneIndices()[v][w];
+                            const auto &vertexWeight = partition.GetVertexWeights()[v][w];
 
                             if (boneIndex < bones.size())
                             {
@@ -1328,9 +1354,9 @@ int32_t nejlika::geometry::Converter::ExportNiTriShape(const NiTriShape *shape, 
                 jointsBufferView.buffer = 0;
                 jointsBufferView.byteOffset = buffer.GetWriteHead();
 
-                for (const auto& joint : jointsBuffer)
+                for (const auto &joint : jointsBuffer)
                 {
-                    for (const auto& j : joint)
+                    for (const auto &j : joint)
                     {
                         buffer.Write(j);
                     }
@@ -1342,7 +1368,7 @@ int32_t nejlika::geometry::Converter::ExportNiTriShape(const NiTriShape *shape, 
                 jointsBufferView.byteStride = 0;
                 jointsBufferView.target = TINYGLTF_TARGET_ARRAY_BUFFER;
                 model.bufferViews.push_back(jointsBufferView);
-                
+
                 tinygltf::Accessor jointsAccessor;
                 jointsAccessor.bufferView = jointsBufferViewIndex;
                 jointsAccessor.componentType = TINYGLTF_COMPONENT_TYPE_UNSIGNED_BYTE;
@@ -1359,9 +1385,9 @@ int32_t nejlika::geometry::Converter::ExportNiTriShape(const NiTriShape *shape, 
                 weightsBufferView.buffer = 0;
                 weightsBufferView.byteOffset = buffer.GetWriteHead();
 
-                for (const auto& weight : weightsBuffer)
+                for (const auto &weight : weightsBuffer)
                 {
-                    for (const auto& w : weight)
+                    for (const auto &w : weight)
                     {
                         buffer.Write(w);
                     }
@@ -1379,7 +1405,7 @@ int32_t nejlika::geometry::Converter::ExportNiTriShape(const NiTriShape *shape, 
                 weightsAccessor.componentType = TINYGLTF_COMPONENT_TYPE_FLOAT;
                 weightsAccessor.count = weightsBuffer.size();
                 weightsAccessor.type = TINYGLTF_TYPE_VEC4;
-                weightsAccessor.normalized = false;  // Weights are not normalized
+                weightsAccessor.normalized = false; // Weights are not normalized
                 model.accessors.push_back(weightsAccessor);
                 primitive.attributes["WEIGHTS_0"] = model.accessors.size() - 1;
 
@@ -1388,15 +1414,15 @@ int32_t nejlika::geometry::Converter::ExportNiTriShape(const NiTriShape *shape, 
                 inverseBindMatrices.reserve(bones.size() * 16);
 
                 int32_t i = 0;
-                for (const auto& bone : bones)
+                for (const auto &bone : bones)
                 {
-                    auto* node = skinInstance->GetBones()[i].Query(m_Blocks);
+                    auto *node = skinInstance->GetBones()[i].Query(m_Blocks);
                     ++i;
 
                     // Construct the bind matrix
-                    const auto& translation = bone.GetSkinTransform().GetTranslation();
-                    const auto& rotation = bone.GetSkinTransform().GetRotation();
-                    const auto& scale = bone.GetSkinTransform().GetScale();
+                    const auto &translation = bone.GetSkinTransform().GetTranslation();
+                    const auto &rotation = bone.GetSkinTransform().GetRotation();
+                    const auto &scale = bone.GetSkinTransform().GetScale();
 
                     glm::mat4 T = glm::translate(glm::mat4(1.0f), glm::vec3(translation.Getx(), translation.Gety(), translation.Getz()));
 
@@ -1404,9 +1430,8 @@ int32_t nejlika::geometry::Converter::ExportNiTriShape(const NiTriShape *shape, 
                     glm::mat3 rotationMatrix = glm::mat3(
                         rotation.Getm11(), rotation.Getm12(), rotation.Getm13(),
                         rotation.Getm21(), rotation.Getm22(), rotation.Getm23(),
-                        rotation.Getm31(), rotation.Getm32(), rotation.Getm33()
-                    );
-                    
+                        rotation.Getm31(), rotation.Getm32(), rotation.Getm33());
+
                     glm::quat q = glm::quat_cast(rotationMatrix);
 
                     glm::mat4 R = glm::mat4_cast(q);
@@ -1415,10 +1440,10 @@ int32_t nejlika::geometry::Converter::ExportNiTriShape(const NiTriShape *shape, 
 
                     glm::mat4 bindMatrix = T * R * S;
 
-                    //glm::mat4 bindMatrix = ComputeGlobalTransform(node);
+                    // glm::mat4 bindMatrix = ComputeGlobalTransform(node);
 
                     // Compute the inverse bind matrix
-                    glm::mat4 inverseBindMatrix = bindMatrix; //glm::inverse(bindMatrix);
+                    glm::mat4 inverseBindMatrix = bindMatrix; // glm::inverse(bindMatrix);
 
                     // Store in column-major order
                     for (int col = 0; col < 4; ++col)
@@ -1436,7 +1461,7 @@ int32_t nejlika::geometry::Converter::ExportNiTriShape(const NiTriShape *shape, 
                 inverseBindMatricesBufferView.buffer = 0;
                 inverseBindMatricesBufferView.byteOffset = buffer.GetWriteHead();
 
-                for (const auto& matrix : inverseBindMatrices)
+                for (const auto &matrix : inverseBindMatrices)
                 {
                     buffer.Write(matrix);
                 }
@@ -1461,15 +1486,15 @@ int32_t nejlika::geometry::Converter::ExportNiTriShape(const NiTriShape *shape, 
 
                 skin.inverseBindMatrices = model.accessors.size() - 1;
                 std::vector<int> joints;
-                std::vector<NiNode*> jointsNiAVObjects;
+                std::vector<NiNode *> jointsNiAVObjects;
                 for (int i = 0; i < bones.size(); i++)
                 {
-                    auto* node = skinInstance->GetBones()[i].Query(m_Blocks);
+                    auto *node = skinInstance->GetBones()[i].Query(m_Blocks);
                     joints.push_back(m_NodeMap[node]);
-                    jointsNiAVObjects.push_back(dynamic_cast<NiNode*>(node));
+                    jointsNiAVObjects.push_back(dynamic_cast<NiNode *>(node));
                 }
                 skin.joints = joints;
-                auto* skeletonNode = FindClosestCommonParent(rootNode, jointsNiAVObjects);
+                auto *skeletonNode = FindClosestCommonParent(rootNode, jointsNiAVObjects);
                 skin.skeleton = skeletonNode == nullptr ? m_NodeMap[rootNode] : m_NodeMap[skeletonNode];
                 model.skins.push_back(skin);
 
@@ -1486,9 +1511,9 @@ int32_t nejlika::geometry::Converter::ExportNiTriShape(const NiTriShape *shape, 
     return meshIndex;
 }
 
-int32_t nejlika::geometry::Converter::ExportNiTriStrips(const NiTriStrips *strips, tinygltf::Model &model, nejlika::Writer &buffer, tinygltf::Node& gltfNode)
+int32_t nejlika::geometry::Converter::ExportNiTriStrips(const NiTriStrips *strips, tinygltf::Model &model, nejlika::Writer &buffer, tinygltf::Node &gltfNode)
 {
-    auto* data = strips->GetData().Query(m_Blocks);
+    auto *data = strips->GetData().Query(m_Blocks);
 
     if (!data)
     {
@@ -1497,7 +1522,7 @@ int32_t nejlika::geometry::Converter::ExportNiTriStrips(const NiTriStrips *strip
         throw std::runtime_error("Failed to find data for NiTriStrips");
     }
 
-    auto* niTriStripsData = dynamic_cast<NiTriStripsData*>(data);
+    auto *niTriStripsData = dynamic_cast<NiTriStripsData *>(data);
 
     if (!niTriStripsData)
     {
@@ -1524,12 +1549,12 @@ int32_t nejlika::geometry::Converter::ExportNiTriStrips(const NiTriStrips *strip
 
 void nejlika::geometry::Converter::ExportNodeTransformations(const NiAVObject *node, tinygltf::Model &model, nejlika::Writer &buffer, tinygltf::Node &gltfNode)
 {
-    const auto& translation = node->GetTranslation();
-    const auto& rotation = node->GetRotation();
-    const auto& scale = node->GetScale();
+    const auto &translation = node->GetTranslation();
+    const auto &rotation = node->GetRotation();
+    const auto &scale = node->GetScale();
 
-    gltfNode.translation = { translation.Getx(), translation.Gety(), translation.Getz() };
-    gltfNode.scale = { scale, scale, scale };
+    gltfNode.translation = {translation.Getx(), translation.Gety(), translation.Getz()};
+    gltfNode.scale = {scale, scale, scale};
 
     /*std::array<std::array<float, 3>, 3> array;
     array[0][0] = rotation.Getm11();
@@ -1545,13 +1570,12 @@ void nejlika::geometry::Converter::ExportNodeTransformations(const NiAVObject *n
 
     // Use glm to convert rotation matrix to quaternion
     glm::mat3 rotationMatrix = {
-        { rotation.Getm11(), rotation.Getm12(), rotation.Getm13() },
-        { rotation.Getm21(), rotation.Getm22(), rotation.Getm23() },
-        { rotation.Getm31(), rotation.Getm32(), rotation.Getm33() }
-    };
+        {rotation.Getm11(), rotation.Getm12(), rotation.Getm13()},
+        {rotation.Getm21(), rotation.Getm22(), rotation.Getm23()},
+        {rotation.Getm31(), rotation.Getm32(), rotation.Getm33()}};
 
     glm::quat quaternion = glm::quat_cast(rotationMatrix);
-    gltfNode.rotation = { quaternion.x, quaternion.y, quaternion.z, quaternion.w };
+    gltfNode.rotation = {quaternion.x, quaternion.y, quaternion.z, quaternion.w};
 }
 
 void nejlika::geometry::Converter::ExportAnimation(const std::string &name, const nejlika::geometry::Header &header, const std::vector<nejlika::geometry::Construct *> &blocks, tinygltf::Model &model, nejlika::Writer &buffer)
@@ -1559,45 +1583,57 @@ void nejlika::geometry::Converter::ExportAnimation(const std::string &name, cons
     std::map<int32_t, KeyframeSet> keyframeMap; // Map of node index to combined keyframe data
 
     // Stage 1: Collect and merge keyframe data
-    for (auto *block : blocks) {
-        if (NiControllerSequence *sequence = dynamic_cast<NiControllerSequence *>(block)) {
-            for (const auto &controllerBlock : sequence->GetControlledBlocks()) {
+    for (auto *block : blocks)
+    {
+        if (NiControllerSequence *sequence = dynamic_cast<NiControllerSequence *>(block))
+        {
+            for (const auto &controllerBlock : sequence->GetControlledBlocks())
+            {
                 int32_t nodeNameIndex = controllerBlock.GetNodeName().GetIndex();
-                if (nodeNameIndex >= header.GetStrings().size()) continue;
+                if (nodeNameIndex >= header.GetStrings().size())
+                    continue;
 
                 const auto &nodeName = GetNifString(header, nodeNameIndex);
 
                 // Find the corresponding node in the model
                 auto nodeIt = std::find_if(model.nodes.begin(), model.nodes.end(),
-                    [&nodeName](const tinygltf::Node &node) { return node.name == nodeName; });
-                if (nodeIt == model.nodes.end()) continue;
+                                           [&nodeName](const tinygltf::Node &node)
+                                           { return node.name == nodeName; });
+                if (nodeIt == model.nodes.end())
+                    continue;
 
                 int32_t nodeIndex = std::distance(model.nodes.begin(), nodeIt);
                 auto *interpolator = controllerBlock.GetInterpolator().Query(blocks);
-                if (!interpolator) continue;
+                if (!interpolator)
+                    continue;
 
-                if (NiTransformInterpolator *transformInterpolator = dynamic_cast<NiTransformInterpolator *>(interpolator)) {
+                if (NiTransformInterpolator *transformInterpolator = dynamic_cast<NiTransformInterpolator *>(interpolator))
+                {
                     NiTransformData *data = transformInterpolator->GetData().Query(blocks);
-                    if (!data) continue;
+                    if (!data)
+                        continue;
 
                     auto &keyframes = keyframeMap[nodeIndex];
 
                     // Collect translations
-                    for (const auto &key : data->GetTranslations().GetKeys()) {
+                    for (const auto &key : data->GetTranslations().GetKeys())
+                    {
                         float time = key.GetTime();
                         const auto &value = key.GetValue();
                         keyframes.translations[time] = {value.Getx(), value.Gety(), value.Getz()};
                     }
 
                     // Collect rotations
-                    for (const auto &key : data->GetQuaternionKeys()) {
+                    for (const auto &key : data->GetQuaternionKeys())
+                    {
                         float time = key.GetTime();
                         const auto &value = key.GetValue();
                         keyframes.rotations[time] = {value.Getx(), value.Gety(), value.Getz(), value.Getw()};
                     }
 
                     // Collect scales
-                    for (const auto &key : data->GetScales().GetKeys()) {
+                    for (const auto &key : data->GetScales().GetKeys())
+                    {
                         float time = key.GetTime();
                         float scaleValue = key.GetValue();
                         keyframes.scales[time] = {scaleValue, scaleValue, scaleValue};
@@ -1611,20 +1647,23 @@ void nejlika::geometry::Converter::ExportAnimation(const std::string &name, cons
     tinygltf::Animation animation;
     animation.name = std::filesystem::path(name).filename().string();
 
-    for (const auto &[nodeIndex, keyframes] : keyframeMap) {
+    for (const auto &[nodeIndex, keyframes] : keyframeMap)
+    {
         // Prepare buffers
         std::set<float> translationTimes, rotationTimes, scaleTimes;
         std::vector<float> translations, rotations, scales;
 
         // Collect times and values
-        for (const auto &[time, value] : keyframes.translations) {
+        for (const auto &[time, value] : keyframes.translations)
+        {
             translationTimes.insert(time);
             translations.push_back(value[0]);
             translations.push_back(value[1]);
             translations.push_back(value[2]);
         }
 
-        for (const auto &[time, value] : keyframes.rotations) {
+        for (const auto &[time, value] : keyframes.rotations)
+        {
             rotationTimes.insert(time);
             rotations.push_back(value[0]);
             rotations.push_back(value[1]);
@@ -1632,7 +1671,8 @@ void nejlika::geometry::Converter::ExportAnimation(const std::string &name, cons
             rotations.push_back(value[3]);
         }
 
-        for (const auto &[time, value] : keyframes.scales) {
+        for (const auto &[time, value] : keyframes.scales)
+        {
             scaleTimes.insert(time);
             scales.push_back(value[0]);
             scales.push_back(value[1]);
@@ -1645,22 +1685,25 @@ void nejlika::geometry::Converter::ExportAnimation(const std::string &name, cons
         std::vector<float> scaleTimesVec(scaleTimes.begin(), scaleTimes.end());
 
         // Write translation channel
-        if (!translations.empty()) {
+        if (!translations.empty())
+        {
             WriteAnimationData(buffer, model, animation, nodeIndex, "translation", {translationTimesVec, translations, 3});
         }
 
         // Write rotation channel
-        if (!rotations.empty()) {
+        if (!rotations.empty())
+        {
             WriteAnimationData(buffer, model, animation, nodeIndex, "rotation", {rotationTimesVec, rotations, 4});
         }
 
         // Write scale channel
-        if (!scales.empty()) {
+        if (!scales.empty())
+        {
             WriteAnimationData(buffer, model, animation, nodeIndex, "scale", {scaleTimesVec, scales, 3});
         }
     }
 
-    for (const auto& extension : m_OnAnimationExport)
+    for (const auto &extension : m_OnAnimationExport)
     {
         extension(model, animation, buffer);
     }
@@ -1676,7 +1719,8 @@ void nejlika::geometry::Converter::WriteAnimationData(
 
     // Write time buffer
     int32_t timeBufferStart = buffer.GetWriteHead();
-    for (const auto &time : times) buffer.Write(time);
+    for (const auto &time : times)
+        buffer.Write(time);
     AlignBuffer(buffer);
     int32_t timeBufferEnd = buffer.GetWriteHead();
 
@@ -1692,14 +1736,15 @@ void nejlika::geometry::Converter::WriteAnimationData(
     timeAccessor.componentType = TINYGLTF_COMPONENT_TYPE_FLOAT;
     timeAccessor.count = times.size();
     timeAccessor.type = TINYGLTF_TYPE_SCALAR;
-    timeAccessor.minValues = { *std::min_element(times.begin(), times.end()) };
-    timeAccessor.maxValues = { *std::max_element(times.begin(), times.end()) };
+    timeAccessor.minValues = {*std::min_element(times.begin(), times.end())};
+    timeAccessor.maxValues = {*std::max_element(times.begin(), times.end())};
     model.accessors.push_back(timeAccessor);
     int32_t timeAccessorIndex = model.accessors.size() - 1;
 
     // Write value buffer
     int32_t valueBufferStart = buffer.GetWriteHead();
-    for (const auto &value : values) buffer.Write(value);
+    for (const auto &value : values)
+        buffer.Write(value);
     AlignBuffer(buffer);
     int32_t valueBufferEnd = buffer.GetWriteHead();
 
@@ -1732,12 +1777,12 @@ void nejlika::geometry::Converter::WriteAnimationData(
     animation.channels.push_back(channel);
 }
 
-std::pair<int32_t, int32_t> nejlika::geometry::Converter::ConvertDDSToPNG(const std::string& ddsPath, nejlika::Writer& buffer)
+std::pair<int32_t, int32_t> nejlika::geometry::Converter::ConvertDDSToPNG(const std::string &ddsPath, nejlika::Writer &buffer)
 {
     // Use "convert" to convert the DDS to PNG in memory
     std::string command = "convert " + ddsPath + " png:-";
 
-    FILE* pipe = popen(command.c_str(), "r");
+    FILE *pipe = popen(command.c_str(), "r");
 
     if (!pipe)
     {
@@ -1766,10 +1811,10 @@ std::pair<int32_t, int32_t> nejlika::geometry::Converter::ConvertDDSToPNG(const 
 
     int32_t end = buffer.GetWriteHead();
 
-    return { start, end };
+    return {start, end};
 }
 
-void nejlika::geometry::Converter::AlignBuffer(nejlika::Writer& buffer)
+void nejlika::geometry::Converter::AlignBuffer(nejlika::Writer &buffer)
 {
     while (buffer.GetWriteHead() % 4 != 0)
     {
@@ -1777,29 +1822,29 @@ void nejlika::geometry::Converter::AlignBuffer(nejlika::Writer& buffer)
     }
 }
 
-NiNode* nejlika::geometry::Converter::FindClosestCommonParent(NiNode* root, std::vector<NiNode*> nodes)
+NiNode *nejlika::geometry::Converter::FindClosestCommonParent(NiNode *root, std::vector<NiNode *> nodes)
 {
     // Base case: if the root is null or if the root itself is one of the nodes
     if (!root || std::find(nodes.begin(), nodes.end(), root) != nodes.end())
         return root;
 
     // Check children for potential common parent
-    const auto& children = root->GetChildren();
-    NiNode* commonParent = nullptr;
+    const auto &children = root->GetChildren();
+    NiNode *commonParent = nullptr;
 
     int count = 0;
     for (auto child : children)
     {
-        NiAVObject* childNode = child.Query(m_Blocks);
+        NiAVObject *childNode = child.Query(m_Blocks);
 
         if (!childNode)
         {
             continue;
         }
 
-        if (NiNode* childNiNode = dynamic_cast<NiNode*>(childNode))
+        if (NiNode *childNiNode = dynamic_cast<NiNode *>(childNode))
         {
-            NiNode* childResult = FindClosestCommonParent(childNiNode, nodes);
+            NiNode *childResult = FindClosestCommonParent(childNiNode, nodes);
             if (childResult)
             {
                 commonParent = childResult; // Update common parent if one was found
@@ -1816,7 +1861,6 @@ NiNode* nejlika::geometry::Converter::FindClosestCommonParent(NiNode* root, std:
     return commonParent;
 }
 
-
 std::string nejlika::geometry::Converter::GetNifString(uint32_t index) const
 {
     if (index >= m_Header.GetStrings().size())
@@ -1824,9 +1868,9 @@ std::string nejlika::geometry::Converter::GetNifString(uint32_t index) const
         return "";
     }
 
-    const auto& strings = m_Header.GetStrings();
+    const auto &strings = m_Header.GetStrings();
 
-    const auto& string = strings[index].GetValue();
+    const auto &string = strings[index].GetValue();
 
     return std::string(string.begin(), string.end());
 }
@@ -1838,22 +1882,22 @@ std::string nejlika::geometry::Converter::GetNifString(const nejlika::geometry::
         return "";
     }
 
-    const auto& strings = header.GetStrings();
+    const auto &strings = header.GetStrings();
 
-    const auto& string = strings[index].GetValue();
+    const auto &string = strings[index].GetValue();
 
     return std::string(string.begin(), string.end());
 }
 
-glm::mat4 nejlika::geometry::Converter::ComputeGlobalTransform(NiAVObject* node)
+glm::mat4 nejlika::geometry::Converter::ComputeGlobalTransform(NiAVObject *node)
 {
     glm::mat4 transform = glm::mat4(1.0f);
 
     while (node)
     {
-        const auto& translation = node->GetTranslation();
-        const auto& rotation = node->GetRotation();
-        const auto& scale = node->GetScale();
+        const auto &translation = node->GetTranslation();
+        const auto &rotation = node->GetRotation();
+        const auto &scale = node->GetScale();
 
         glm::mat4 T = glm::translate(glm::mat4(1.0f), glm::vec3(translation.Getx(), translation.Gety(), translation.Getz()));
 
@@ -1871,8 +1915,7 @@ glm::mat4 nejlika::geometry::Converter::ComputeGlobalTransform(NiAVObject* node)
         glm::mat3 rotationMatrix = glm::mat3(
             rotation.Getm11(), rotation.Getm12(), rotation.Getm13(),
             rotation.Getm21(), rotation.Getm22(), rotation.Getm23(),
-            rotation.Getm31(), rotation.Getm32(), rotation.Getm33()
-        );
+            rotation.Getm31(), rotation.Getm32(), rotation.Getm33());
 
         glm::quat q = glm::quat_cast(rotationMatrix);
         glm::mat4 R = glm::mat4_cast(q);
@@ -1880,8 +1923,8 @@ glm::mat4 nejlika::geometry::Converter::ComputeGlobalTransform(NiAVObject* node)
         glm::mat4 S = glm::scale(glm::mat4(1.0f), glm::vec3(scale, scale, scale));
 
         transform = T * R * S * transform;
-        
-        const auto& parentIt = m_ParentMap.find(node);
+
+        const auto &parentIt = m_ParentMap.find(node);
 
         if (parentIt == m_ParentMap.end())
         {

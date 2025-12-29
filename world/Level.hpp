@@ -19,83 +19,93 @@
 namespace nejlika::world
 {
 
-class Level
-{
-public:
-    Level() = default;
+    class Level
+    {
+    public:
+        Level() = default;
 
-    /**
-     * @brief Reads the level data from the input stream.
-     * 
-     * @param io The input stream.
-     *
-     * @throw If the data was not in the format that was expected.
-     * @note A lot of checks are done to ensure that the data is in the correct format.
-     *       Some formats which might be okay for the game to load will still throw exceptions.
-     */
-    Level(nejlika::Reader& io);
+        /**
+         * @brief Reads the level data from the input stream.
+         *
+         * @param io The input stream.
+         *
+         * @throw If the data was not in the format that was expected.
+         * @note A lot of checks are done to ensure that the data is in the correct format.
+         *       Some formats which might be okay for the game to load will still throw exceptions.
+         */
+        Level(nejlika::Reader &io);
 
-    void Save(nejlika::Writer& io);
+        void Save(nejlika::Writer &io);
 
-    OldLevelInfo& GetOldInfo();
+        OldLevelInfo &GetOldInfo();
 
-    LevelInfo& GetInfo();
+        LevelInfo &GetInfo();
 
-    EnvironmentInformation& GetEnvironmentInformation();
+        EnvironmentInformation &GetEnvironmentInformation();
 
-    LevelObjects& GetObjects();
+        LevelObjects &GetObjects();
 
-    ParticleInformation& GetParticleInformation();
+        ParticleInformation &GetParticleInformation();
 
-    bool IsOld() const;
+        const OldLevelInfo &GetOldInfo() const;
 
-    bool HasEnvironmentInformation() const;
+        const LevelInfo &GetInfo() const;
 
-    bool HasObjects() const;
+        const EnvironmentInformation &GetEnvironmentInformation() const;
 
-    bool HasParticleInformation() const;
+        const LevelObjects &GetObjects() const;
 
-    version GetVersion() const;
+        const ParticleInformation &GetParticleInformation() const;
 
-    void SetVersion(version version);
+        bool IsOld() const;
 
-    void SetEnvironmentInformation(EnvironmentInformation& environmentInformation);
+        bool HasEnvironmentInformation() const;
 
-    void SetObjects(LevelObjects& objects);
+        bool HasObjects() const;
 
-    void SetParticleInformation(ParticleInformation& particleInformation);
+        bool HasParticleInformation() const;
 
-    void SetOldInfo(OldLevelInfo& oldInfo);
+        version GetVersion() const;
 
-    void SetHasEnvironmentInformation(bool hasEnvironmentInformation);
+        void SetVersion(version version);
 
-    void SetHasObjects(bool hasObjects);
+        void SetEnvironmentInformation(EnvironmentInformation &environmentInformation);
 
-    void SetHasParticleInformation(bool hasParticleInformation);
+        void SetObjects(LevelObjects &objects);
 
-    ~Level();
+        void SetParticleInformation(ParticleInformation &particleInformation);
 
-    /**
-     * @brief Peeks at the next four bytes in the input stream to determine if the level data is (very) old.
-     * 
-     * @param io The input stream.
-     * @return true If the level data is (very) old.
-     */
-    static bool IsOld(nejlika::Reader& io);
+        void SetOldInfo(OldLevelInfo &oldInfo);
 
-private:
-    void WriteHeader(nejlika::Writer& io, uint32_t chunkType, uint32_t headerVersion, uint32_t dataVersion);
+        void SetHasEnvironmentInformation(bool hasEnvironmentInformation);
 
-    void Align(nejlika::Writer& io);
+        void SetHasObjects(bool hasObjects);
 
-    OldLevelInfo m_OldInfo;
-    LevelInfo m_Info;
-    EnvironmentInformation m_EnvironmentInformation;
-    LevelObjects m_Objects;
-    ParticleInformation m_ParticleInformation;
-    bool m_HasEnvironmentInformation = false;
-    bool m_HasObjects = false;
-    bool m_HasParticleInformation = false;
-};
+        void SetHasParticleInformation(bool hasParticleInformation);
+
+        ~Level();
+
+        /**
+         * @brief Peeks at the next four bytes in the input stream to determine if the level data is (very) old.
+         *
+         * @param io The input stream.
+         * @return true If the level data is (very) old.
+         */
+        static bool IsOld(nejlika::Reader &io);
+
+    private:
+        void WriteHeader(nejlika::Writer &io, uint32_t chunkType, uint32_t headerVersion, uint32_t dataVersion);
+
+        void Align(nejlika::Writer &io);
+
+        OldLevelInfo m_OldInfo;
+        LevelInfo m_Info;
+        EnvironmentInformation m_EnvironmentInformation;
+        LevelObjects m_Objects;
+        ParticleInformation m_ParticleInformation;
+        bool m_HasEnvironmentInformation = false;
+        bool m_HasObjects = false;
+        bool m_HasParticleInformation = false;
+    };
 
 }

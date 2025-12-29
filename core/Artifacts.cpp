@@ -245,8 +245,13 @@ void nejlika::Artifacts::Save() const
     // Symlink mirrors
     for (const auto& [source, destination] : m_Mirrors)
     {
+        // Make the symlink relative to its destination.
+        const auto& sourcePath = std::filesystem::path(source);
+        const auto& destinationPath = std::filesystem::path(destination);
+        const auto& relativePath = sourcePath.lexically_relative(destinationPath.parent_path());
+        
         // Create the symlink.
-        std::filesystem::create_symlink(source, destination);
+        std::filesystem::create_symlink(relativePath, destinationPath);
     }
 }
 
