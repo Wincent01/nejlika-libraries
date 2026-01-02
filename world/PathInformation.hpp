@@ -22,7 +22,11 @@ public:
 
     version GetPathVersion() const;
 
+    void SetPathVersion(version pathVersion);
+
     std::vector<Path>& GetPaths();
+
+    const std::vector<Path>& GetPaths() const;
 
     ~PathInformation();
 

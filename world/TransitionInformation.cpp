@@ -1,6 +1,6 @@
 #include "TransitionInformation.hpp"
 
-nejlika::world::TransitionInformation::TransitionInformation(nejlika::Reader &io, version version)
+nejlika::world::TransitionInformation::TransitionInformation(nejlika::Reader& io, version version)
 {
     uint32_t transitionCount = io.Read<uint32_t>();
 
@@ -12,7 +12,7 @@ nejlika::world::TransitionInformation::TransitionInformation(nejlika::Reader &io
     }
 }
 
-void nejlika::world::TransitionInformation::Save(nejlika::Writer &io, version version) const
+void nejlika::world::TransitionInformation::Save(nejlika::Writer& io, version version) const
 {
     io.Write(static_cast<uint32_t>(m_Transitions.size()));
 
@@ -22,11 +22,14 @@ void nejlika::world::TransitionInformation::Save(nejlika::Writer &io, version ve
     }
 }
 
-const std::vector<nejlika::world::Transition> &nejlika::world::TransitionInformation::GetTransitions() const
+const std::vector<nejlika::world::Transition>& nejlika::world::TransitionInformation::GetTransitions() const
 {
     return m_Transitions;
 }
 
-nejlika::world::TransitionInformation::~TransitionInformation()
+std::vector<nejlika::world::Transition>& nejlika::world::TransitionInformation::GetTransitions()
 {
+    return m_Transitions;
 }
+
+nejlika::world::TransitionInformation::~TransitionInformation() {}

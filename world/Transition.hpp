@@ -29,7 +29,7 @@ public:
 private:
     std::string m_Name;
 
-    float m_Unknown1;
+    float m_Unknown1 = 0.0f;
 
     std::vector<TransitionPoint> m_TransitionPoints;
 };

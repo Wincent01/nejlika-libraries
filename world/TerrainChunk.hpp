@@ -14,7 +14,8 @@
 #include "TerrainDirectDrawSurface.hpp"
 #include "TerrainFoliage.hpp"
 
-namespace nejlika::world {
+namespace nejlika::world
+{
 
 class TerrainChunk
 {
@@ -38,6 +39,17 @@ public:
     const std::vector<uint16_t>& GetMeshVertexUsage() const;
     const std::vector<uint16_t>& GetMeshVertexSize() const;
     const std::vector<std::vector<uint16_t>>& GetMeshTriangles() const;
+
+    TerrainHeightMap& GetHeightMap();
+    TerrainColorMap& GetColorMap();
+    TerrainDirectDrawSurface& GetLightMap();
+    TerrainColorMap& GetTextureMap();
+    TerrainDirectDrawSurface& GetBlendMap();
+    std::vector<TerrainFoliage>& GetFoliage();
+    std::vector<uint8_t>& GetSceneData();
+    std::vector<uint16_t>& GetMeshVertexUsage();
+    std::vector<uint16_t>& GetMeshVertexSize();
+    std::vector<std::vector<uint16_t>>& GetMeshTriangles();
 
     void SetIndex(int32_t index);
     void SetHeightMap(const TerrainHeightMap& heightMap);
@@ -80,5 +92,4 @@ private:
     std::vector<std::vector<uint16_t>> m_MeshTriangles;
 };
 
-
-}
+} // namespace nejlika::world

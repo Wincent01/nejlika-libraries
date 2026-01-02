@@ -23,6 +23,8 @@ public:
 
     void Deinitialize(Context& ctx) override;
 
+    bool HasWorld(const nejlika::name& name) const;
+
     /**
      * @brief Get a world.
      *
@@ -37,4 +39,4 @@ private:
     std::unordered_map<nejlika::name, World> m_Worlds;
 };
 
-}
+} // namespace nejlika::world

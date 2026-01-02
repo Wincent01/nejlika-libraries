@@ -19,7 +19,58 @@
 using namespace nejlika::world;
 using namespace nejlika;
 
+World::World(const World& other)
+    : m_Zone(other.m_Zone), m_Levels(other.m_Levels), m_ObjectIds(other.m_ObjectIds), m_Triggers(other.m_Triggers), m_Audio(other.m_Audio),
+      m_LowestObjectId(other.m_LowestObjectId), m_ScriptID(other.m_ScriptID), m_GhostDistanceMin(other.m_GhostDistanceMin), m_GhostDistanceMax(other.m_GhostDistanceMax),
+      m_PopulationSoftCap(other.m_PopulationSoftCap), m_PopulationHardCap(other.m_PopulationHardCap), m_MixerProgram(other.m_MixerProgram), m_PetsAllowed(other.m_PetsAllowed),
+      m_PlayersLoseCoinsOnDeath(other.m_PlayersLoseCoinsOnDeath), m_MountsAllowed(other.m_MountsAllowed), m_OriginalPath(other.m_OriginalPath), m_TerrainPath(other.m_TerrainPath)
+{
+    if (other.m_Terrain)
+    {
+        m_Terrain = std::make_unique<Terrain>(*other.m_Terrain);
+    }
+}
+
+World& World::operator=(const World& other)
+{
+    if (this != &other)
+    {
+        m_Zone = other.m_Zone;
+        m_Levels = other.m_Levels;
+        m_ObjectIds = other.m_ObjectIds;
+        m_Triggers = other.m_Triggers;
+        m_Audio = other.m_Audio;
+        m_LowestObjectId = other.m_LowestObjectId;
+        m_ScriptID = other.m_ScriptID;
+        m_GhostDistanceMin = other.m_GhostDistanceMin;
+        m_GhostDistanceMax = other.m_GhostDistanceMax;
+        m_PopulationSoftCap = other.m_PopulationSoftCap;
+        m_PopulationHardCap = other.m_PopulationHardCap;
+        m_MixerProgram = other.m_MixerProgram;
+        m_PetsAllowed = other.m_PetsAllowed;
+        m_PlayersLoseCoinsOnDeath = other.m_PlayersLoseCoinsOnDeath;
+        m_MountsAllowed = other.m_MountsAllowed;
+        m_OriginalPath = other.m_OriginalPath;
+        m_TerrainPath = other.m_TerrainPath;
+
+        if (other.m_Terrain)
+        {
+            m_Terrain = std::make_unique<Terrain>(*other.m_Terrain);
+        }
+        else
+        {
+            m_Terrain.reset();
+        }
+    }
+    return *this;
+}
+
 Zone& World::GetZone()
+{
+    return m_Zone;
+}
+
+const Zone& nejlika::world::World::GetZone() const
 {
     return m_Zone;
 }
@@ -40,7 +91,39 @@ Level& World::GetLevel(int32_t id, int32_t layer)
     return it->second;
 }
 
+const Level& nejlika::world::World::GetLevel(int32_t id, int32_t layer) const
+{
+    auto it = m_Levels.find((static_cast<uint64_t>(id) << 32) | layer);
+
+    if (it == m_Levels.end())
+    {
+        std::stringstream ss;
+
+        ss << "Level with id " << id << " and layer " << layer << " does not exist in the world.";
+
+        throw std::runtime_error(ss.str());
+    }
+
+    return it->second;
+}
+
 Level& nejlika::world::World::GetLevel(uint64_t key)
+{
+    auto it = m_Levels.find(key);
+
+    if (it == m_Levels.end())
+    {
+        std::stringstream ss;
+
+        ss << "Level with key " << key << " does not exist in the world.";
+
+        throw std::runtime_error(ss.str());
+    }
+
+    return it->second;
+}
+
+const Level& nejlika::world::World::GetLevel(uint64_t key) const
 {
     auto it = m_Levels.find(key);
 
@@ -88,11 +171,6 @@ bool World::HasLevel(int32_t id, int32_t layer) const
 
 void World::Save(nejlika::Context& ctx, const nejlika::name& name)
 {
-    if (!ctx.artifacts->CanGenerateFiles())
-    {
-        return;
-    }
-
     // The path from with all files will be saved.
     const auto root = ctx.artifacts->GetAddedResourcePath(ctx, name);
 
@@ -113,19 +191,36 @@ void World::Save(nejlika::Context& ctx, const nejlika::name& name)
 
         auto levelPath = root / filename;
 
+        auto foundSceneInZone = false;
+
         for (auto& scene : scenes)
         {
             if (scene.GetSceneID() == id && scene.GetLayerID() == layer)
             {
                 scene.SetSceneFilename(filename);
+
+                foundSceneInZone = true;
             }
         }
 
-        Writer levelWriter;
-        level.Save(levelWriter);
-        levelWriter.Save(path / levelPath);
+        if (!foundSceneInZone)
+        {
+            // Add a new scene to the zone.
+            nejlika::world::SceneReference sceneReference;
+            sceneReference.SetSceneID(id);
+            sceneReference.SetLayerID(layer);
+            sceneReference.SetSceneFilename(filename);
+            scenes.push_back(sceneReference);
+        }
 
-        ctx.artifacts->RegisterGeneratedFile(ctx, levelPath);
+        if (ctx.artifacts->CanGenerateFiles())
+        {
+            Writer levelWriter;
+            level.Save(levelWriter);
+            levelWriter.Save(path / levelPath);
+
+            ctx.artifacts->RegisterGeneratedFile(ctx, levelPath);
+        }
 
         if (layer == 0)
         {
@@ -155,20 +250,25 @@ void World::Save(nejlika::Context& ctx, const nejlika::name& name)
         }
     }
 
+    const auto worldId = ctx.lookup->GetValue(name);
+
     // The path to the world file.
     const auto zonePath = root / "zone.luz";
 
-    m_Zone.GetTerrainFilename() = "zone.raw";
+    m_Zone.SetTerrainFilename("zone.raw");
+
+    m_Zone.SetZoneID(worldId);
 
     // Save the world file.
-    Writer zoneWriter;
-    m_Zone.Save(zoneWriter);
-    zoneWriter.Save(path / zonePath);
+    if (ctx.artifacts->CanGenerateFiles())
+    {
+        Writer zoneWriter;
+        m_Zone.Save(zoneWriter);
+        zoneWriter.Save(path / zonePath);
 
-    ctx.artifacts->RegisterGeneratedFile(ctx, zonePath);
+        ctx.artifacts->RegisterGeneratedFile(ctx, zonePath);
+    }
 
-    const auto worldId = ctx.lookup->GetValue(name);
-    
     auto deltStmt = ctx.database->Prepare("DELETE FROM ZoneTable WHERE zoneID = ?;");
 
     deltStmt.bind(1, worldId);
@@ -213,16 +313,45 @@ void World::Save(nejlika::Context& ctx, const nejlika::name& name)
 
     bool hasCopiedRaw = false;
 
+    if (m_Terrain != nullptr)
+    {
+        const auto terrainPath = root / "zone.raw";
+
+        if (ctx.artifacts->CanGenerateFiles())
+        {
+            Writer terrainWriter;
+            m_Terrain->Save(terrainWriter);
+            terrainWriter.Save(path / terrainPath);
+
+            ctx.artifacts->RegisterGeneratedFile(ctx, terrainPath);
+        }
+
+        m_TerrainPath = std::filesystem::path(root) / "zone.raw";
+
+        hasCopiedRaw = true;
+    }
+
     if (m_OriginalPath.empty())
     {
-        // Copy /var/www/client/res/maps/01_live_maps/space_ship/nd_space_ship.raw
-        const auto originalPath = ctx.configuration->GetClient() / "res/maps/01_live_maps/space_ship/nd_space_ship.raw";
-        const auto newPath = root / "zone.raw";
-        std::filesystem::copy(originalPath, path / newPath, std::filesystem::copy_options::overwrite_existing);
-        ctx.artifacts->RegisterGeneratedFile(ctx, newPath);
-        hasCopiedRaw = true;
+        if (!hasCopiedRaw)
+        {
+            if (ctx.artifacts->CanGenerateFiles())
+            {
+                const auto originalPath = ctx.configuration->GetClient() / "res/maps/01_live_maps/space_ship/nd_space_ship.raw";
+                const auto newPath = root / "zone.raw";
+                std::filesystem::copy(originalPath, path / newPath, std::filesystem::copy_options::overwrite_existing);
+                ctx.artifacts->RegisterGeneratedFile(ctx, newPath);
+            }
+
+            hasCopiedRaw = true;
+        }
 
         std::cerr << "Original path is empty. Skipping copying of files." << std::endl;
+        return;
+    }
+
+    if (!ctx.artifacts->CanGenerateFiles())
+    {
         return;
     }
 
@@ -254,7 +383,7 @@ void World::Save(nejlika::Context& ctx, const nejlika::name& name)
     }
 }
 
-void nejlika::world::World::Load(nejlika::Context &ctx, const nejlika::name &name)
+void nejlika::world::World::Load(nejlika::Context& ctx, const nejlika::name& name)
 {
     auto top_start = std::chrono::high_resolution_clock::now();
 
@@ -308,7 +437,7 @@ void nejlika::world::World::Load(nejlika::Context &ctx, const nejlika::name &nam
 
     m_TerrainPath = std::filesystem::path(filename).parent_path() / m_Zone.GetTerrainFilename();
     m_OriginalPath = root.string();
-    
+
     for (auto& scene : m_Zone.GetScenes())
     {
         std::string filename = scene.GetSceneFilename();
@@ -366,7 +495,7 @@ void nejlika::world::World::Load(nejlika::Context &ctx, const nejlika::name &nam
     std::cout << "Loaded world in " << std::chrono::duration_cast<std::chrono::milliseconds>(top_end - top_start).count() << "ms" << std::endl;
 }
 
-std::unordered_map<uint64_t, Level> &nejlika::world::World::GetLevels()
+std::unordered_map<uint64_t, Level>& nejlika::world::World::GetLevels()
 {
     return m_Levels;
 }
@@ -374,6 +503,42 @@ std::unordered_map<uint64_t, Level> &nejlika::world::World::GetLevels()
 std::filesystem::path nejlika::world::World::GetTerrainPath()
 {
     return m_TerrainPath;
+}
+
+Terrain& nejlika::world::World::GetTerrain(nejlika::Context& ctx)
+{
+    if (!m_Terrain)
+    {
+        LoadTerrain(ctx);
+    }
+
+    return *m_Terrain;
+}
+
+const Terrain& nejlika::world::World::GetTerrain() const
+{
+    if (!m_Terrain)
+    {
+        throw std::runtime_error("Terrain has not been loaded yet.");
+    }
+
+    return *m_Terrain;
+}
+
+void nejlika::world::World::LoadTerrain(nejlika::Context& ctx)
+{
+    if (m_TerrainPath.empty())
+    {
+        m_Terrain = std::make_unique<Terrain>();
+    }
+    else
+    {
+        const auto terrainFullPath = ctx.configuration->GetClient() / "res/maps" / m_TerrainPath;
+
+        Reader terrainReader(terrainFullPath.string());
+
+        m_Terrain = std::make_unique<Terrain>(terrainReader);
+    }
 }
 
 uint64_t nejlika::world::World::ClaimObjectId()
@@ -384,7 +549,7 @@ uint64_t nejlika::world::World::ClaimObjectId()
     }
 
     m_ObjectIds.insert(m_LowestObjectId);
-    
+
     return m_LowestObjectId;
 }
 

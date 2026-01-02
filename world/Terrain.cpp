@@ -67,6 +67,26 @@ const std::vector<TerrainChunk>& Terrain::GetChunks() const
     return m_Chunks;
 }
 
+const TerrainChunk& nejlika::world::Terrain::GetChunk(int32_t x, int32_t y) const
+{
+    if (x < 0 || x >= m_Width || y < 0 || y >= m_Height)
+    {
+        throw std::out_of_range("Chunk coordinates out of range");
+    }
+
+    return m_Chunks[y * m_Width + x];
+}
+
+TerrainChunk& nejlika::world::Terrain::GetChunk(int32_t x, int32_t y)
+{
+    if (x < 0 || x >= m_Width || y < 0 || y >= m_Height)
+    {
+        throw std::out_of_range("Chunk coordinates out of range");
+    }
+
+    return m_Chunks[y * m_Width + x];
+}
+
 int32_t Terrain::GetVersion() const
 {
     return m_Version;
@@ -100,6 +120,13 @@ void Terrain::SetWidth(int32_t width)
 void Terrain::SetHeight(int32_t height)
 {
     m_Height = height;
+}
+
+void nejlika::world::Terrain::AllocateChunks(int32_t width, int32_t height)
+{
+    m_Width = width;
+    m_Height = height;
+    m_Chunks.resize(width * height);
 }
 
 Terrain::~Terrain()

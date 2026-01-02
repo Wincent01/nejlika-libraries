@@ -35,7 +35,7 @@ public:
     uint32_t GetParticleInformationReadPointer() const;
 
     WritePointer& GetEnvironmentInformationPointer();
-    
+
     WritePointer& GetObjectsPointer();
 
     WritePointer& GetParticleInformationPointer();
@@ -43,24 +43,24 @@ public:
     void SetHeaderVersion(uint32_t headerVersion);
 
     void SetVersion(uint32_t version);
-    
+
     void SetRevision(uint32_t revision);
 
     ~LevelInfo();
 
 private:
-    uint32_t m_HeaderVersion;
+    uint32_t m_HeaderVersion = 1;
 
-    uint32_t m_Version;
-    uint32_t m_Revision;
+    uint32_t m_Version = 48;
+    uint32_t m_Revision = 0;
 
-    uint32_t m_EnvironmentInformationReadPointer;
-    uint32_t m_ObjectsReadPointer;
-    uint32_t m_ParticleInformationReadPointer;
-    
+    uint32_t m_EnvironmentInformationReadPointer = 0;
+    uint32_t m_ObjectsReadPointer = 0;
+    uint32_t m_ParticleInformationReadPointer = 0;
+
     WritePointer m_EnvironmentInformationPointer;
     WritePointer m_ObjectsPointer;
     WritePointer m_ParticleInformationPointer;
 };
 
-}
+} // namespace nejlika::world

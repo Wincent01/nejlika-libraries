@@ -24,80 +24,85 @@
 
 namespace
 {
-    glm::vec3 ToGLM(const nejlika::geometry::Vector3& vec)
-    {
-        return glm::vec3(vec.Getx(), vec.Gety(), vec.Getz());
-    }
-
-    nejlika::geometry::Vector3 ToGeometry(const glm::vec3& vec)
-    {
-        nejlika::geometry::Vector3 v;
-        v.Setx(vec.x);
-        v.Sety(vec.y);
-        v.Setz(vec.z);
-
-        return v;
-    }
-
-    nejlika::geometry::Color4 ToGeometryColor4(const glm::vec4& vec)
-    {
-        nejlika::geometry::Color4 v;
-        v.Setr(vec.r);
-        v.Setg(vec.g);
-        v.Setb(vec.b);
-        v.Seta(vec.a);
-
-        return v;
-    }
-
-    nejlika::geometry::Color3 ToGeometryColor3(const glm::vec3& vec)
-    {
-        nejlika::geometry::Color3 v;
-        v.Setr(vec.r);
-        v.Setg(vec.g);
-        v.Setb(vec.b);
-
-        return v;
-    }
-
-
-    glm::vec4 ToGLM(const nejlika::geometry::Quaternion& quat)
-    {
-        return glm::vec4(quat.Getx(), quat.Gety(), quat.Getz(), quat.Getw());
-    }
-
-    nejlika::geometry::Quaternion ToGeometry(const glm::vec4& quat)
-    {
-        nejlika::geometry::Quaternion q;
-        q.Setx(quat.x);
-        q.Sety(quat.y);
-        q.Setz(quat.z);
-        q.Setw(quat.w);
-
-        return q;
-    }
-
-    nejlika::geometry::Matrix33 ConvertQuatToRotationMatrix(const glm::quat& quat)
-    {
-        glm::mat4 rotationMatrix = glm::mat4_cast(quat);
-
-        std::vector<glm::vec3> rows(3);
-        for (int i = 0; i < 3; i++)
-        {
-            for (int j = 0; j < 3; j++)
-            {
-                rows[i][j] = rotationMatrix[j][i];
-            }
-        }
-
-        nejlika::geometry::Matrix33 result;
-        result.Setm11(rows[0].x); result.Setm12(rows[0].y); result.Setm13(rows[0].z);
-        result.Setm21(rows[1].x); result.Setm22(rows[1].y); result.Setm23(rows[1].z);
-        result.Setm31(rows[2].x); result.Setm32(rows[2].y); result.Setm33(rows[2].z);
-
-        return result;
-    }
+glm::vec3 ToGLM(const nejlika::geometry::Vector3& vec)
+{
+    return glm::vec3(vec.Getx(), vec.Gety(), vec.Getz());
 }
+
+nejlika::geometry::Vector3 ToGeometry(const glm::vec3& vec)
+{
+    nejlika::geometry::Vector3 v;
+    v.Setx(vec.x);
+    v.Sety(vec.y);
+    v.Setz(vec.z);
+
+    return v;
+}
+
+nejlika::geometry::Color4 ToGeometryColor4(const glm::vec4& vec)
+{
+    nejlika::geometry::Color4 v;
+    v.Setr(vec.r);
+    v.Setg(vec.g);
+    v.Setb(vec.b);
+    v.Seta(vec.a);
+
+    return v;
+}
+
+nejlika::geometry::Color3 ToGeometryColor3(const glm::vec3& vec)
+{
+    nejlika::geometry::Color3 v;
+    v.Setr(vec.r);
+    v.Setg(vec.g);
+    v.Setb(vec.b);
+
+    return v;
+}
+
+glm::vec4 ToGLM(const nejlika::geometry::Quaternion& quat)
+{
+    return glm::vec4(quat.Getx(), quat.Gety(), quat.Getz(), quat.Getw());
+}
+
+nejlika::geometry::Quaternion ToGeometry(const glm::vec4& quat)
+{
+    nejlika::geometry::Quaternion q;
+    q.Setx(quat.x);
+    q.Sety(quat.y);
+    q.Setz(quat.z);
+    q.Setw(quat.w);
+
+    return q;
+}
+
+nejlika::geometry::Matrix33 ConvertQuatToRotationMatrix(const glm::quat& quat)
+{
+    glm::mat4 rotationMatrix = glm::mat4_cast(quat);
+
+    std::vector<glm::vec3> rows(3);
+    for (int i = 0; i < 3; i++)
+    {
+        for (int j = 0; j < 3; j++)
+        {
+            rows[i][j] = rotationMatrix[j][i];
+        }
+    }
+
+    nejlika::geometry::Matrix33 result;
+    result.Setm11(rows[0].x);
+    result.Setm12(rows[0].y);
+    result.Setm13(rows[0].z);
+    result.Setm21(rows[1].x);
+    result.Setm22(rows[1].y);
+    result.Setm23(rows[1].z);
+    result.Setm31(rows[2].x);
+    result.Setm32(rows[2].y);
+    result.Setm33(rows[2].z);
+
+    return result;
+}
+} // namespace
 
 void NifWrapper::LoadNif(nejlika::Reader& reader)
 {
@@ -155,7 +160,7 @@ void NifWrapper::LoadNif(nejlika::Reader& reader)
 
         m_Blocks.push_back(block);
         m_BlockNames[block] = blockName;
-    
+
         reader.SetReadHead(startHead + blockSizes[i]);
     }
 
@@ -165,7 +170,7 @@ void NifWrapper::LoadNif(nejlika::Reader& reader)
 void NifWrapper::ExportNif(nejlika::Writer& writer)
 {
     const auto& version = m_Header.GetVersion();
-    
+
     // We have to re-calculate the block sizes
     m_Header.GetBlockSize().clear();
 
@@ -262,12 +267,13 @@ nejlika::geometry::Construct* NifWrapper::AddBlock(const std::string& name)
         }
     }
 
-    if (index == -1) {
+    if (index == -1)
+    {
         index = m_Header.GetBlockTypes().size();
         nejlika::geometry::SizedString blockType;
         blockType.SetValue(std::vector<char>(name.begin(), name.end()));
         blockType.SetLength(name.size());
-    
+
         m_Header.GetBlockTypes().push_back(blockType);
     }
 
@@ -275,7 +281,6 @@ nejlika::geometry::Construct* NifWrapper::AddBlock(const std::string& name)
 
     return block;
 }
-
 
 uint32_t NifWrapper::GetBlockIndex(nejlika::geometry::Construct* block) const
 {
@@ -300,7 +305,7 @@ nejlika::geometry::Construct* NifWrapper::GetBlock(uint32_t index) const
     return m_Blocks[index];
 }
 
-nejlika::geometry::NiNode* NifWrapper::FindNodeByName(const std::string &name)
+nejlika::geometry::NiNode* NifWrapper::FindNodeByName(const std::string& name)
 {
     for (auto* block : m_Blocks)
     {
@@ -341,20 +346,12 @@ glm::mat4 NifWrapper::GetWorldTransform(nejlika::geometry::NiAVObject* node)
 
         if (auto* niNode = dynamic_cast<nejlika::geometry::NiNode*>(node))
         {
-            localTransform = glm::translate(localTransform, 
-                glm::vec3(
-                    niNode->GetTranslation().Getx(),
-                    niNode->GetTranslation().Gety(),
-                    niNode->GetTranslation().Getz()
-                )
-            );
+            localTransform = glm::translate(localTransform, glm::vec3(niNode->GetTranslation().Getx(), niNode->GetTranslation().Gety(), niNode->GetTranslation().Getz()));
 
             const auto& rotation = niNode->GetRotation();
-            glm::mat3 rotationMatrix = {
-                { rotation.Getm11(), rotation.Getm12(), rotation.Getm13() },
-                { rotation.Getm21(), rotation.Getm22(), rotation.Getm23() },
-                { rotation.Getm31(), rotation.Getm32(), rotation.Getm33() }
-            };
+            glm::mat3 rotationMatrix = {{rotation.Getm11(), rotation.Getm12(), rotation.Getm13()},
+                                        {rotation.Getm21(), rotation.Getm22(), rotation.Getm23()},
+                                        {rotation.Getm31(), rotation.Getm32(), rotation.Getm33()}};
 
             glm::quat q = glm::quat_cast(rotationMatrix);
             glm::mat4 r = glm::mat4_cast(q);
@@ -474,7 +471,7 @@ void NifWrapper::SetRootNodes(const std::vector<nejlika::geometry::NiNode*>& nod
     m_Footer.SetNumRoots(nodes.size());
 }
 
-nejlika::geometry::StringIndex NifWrapper::GetStringIndex(const std::string &str)
+nejlika::geometry::StringIndex NifWrapper::GetStringIndex(const std::string& str)
 {
     const auto& strings = m_Header.GetStrings();
 
@@ -483,7 +480,7 @@ nejlika::geometry::StringIndex NifWrapper::GetStringIndex(const std::string &str
     for (uint32_t i = 0; i < strings.size(); i++)
     {
         const auto& value = strings[i].GetValue();
-        
+
         std::string string(value.begin(), value.end());
 
         maxStringLength = std::max(maxStringLength, static_cast<uint32_t>(string.size()));
@@ -661,7 +658,7 @@ nejlika::geometry::NiTriShape* NifWrapper::ImportMesh(const MeshImport& mesh)
     {
         data->SetHasVertexColors(false);
     }
-    
+
     data->SetConsistencyFlags(nejlika::geometry::ConsistencyType::CT_STATIC);
 
     data->SetNumTriangles(triangles.size());
@@ -697,7 +694,7 @@ nejlika::geometry::NiTriShape* NifWrapper::ImportMesh(const MeshImport& mesh)
     niMaterialProperty->SetGlossiness(4.0f);
     niMaterialProperty->SetAlpha(mesh.m_DiffuseAlpha);
     niMaterialProperty->SetFlags(0);
-    
+
     auto* niAlphaProperty = AddBlock<nejlika::geometry::NiAlphaProperty>("NiAlphaProperty");
 
     niAlphaProperty->GetName().SetIndex(GetStringIndex("Alpha"));
@@ -737,7 +734,7 @@ nejlika::geometry::NiTriShape* NifWrapper::ImportMesh(const MeshImport& mesh)
         niTexturingProperty->SetHasUnknown2Texture(false);
         niTexturingProperty->SetHasDecal0Texture(false);
         niTexturingProperty->SetNumShaderTextures(0);
-        
+
         auto* niSourceTexture = AddBlock<nejlika::geometry::NiSourceTexture>("NiSourceTexture");
 
         niSourceTexture->SetNumExtraDataList(0);
@@ -754,12 +751,8 @@ nejlika::geometry::NiTriShape* NifWrapper::ImportMesh(const MeshImport& mesh)
         baseTexture.SetHasTextureTransform(false);
     }
 
-    niTriShape->SetProperties({ 
-        PointerTo<nejlika::geometry::NiProperty>(niMaterialProperty),
-        PointerTo<nejlika::geometry::NiProperty>(niAlphaProperty),
-        PointerTo<nejlika::geometry::NiProperty>(niSpecularProperty),
-        PointerTo<nejlika::geometry::NiProperty>(niVertexColorProperty)
-    });
+    niTriShape->SetProperties({PointerTo<nejlika::geometry::NiProperty>(niMaterialProperty), PointerTo<nejlika::geometry::NiProperty>(niAlphaProperty),
+                               PointerTo<nejlika::geometry::NiProperty>(niSpecularProperty), PointerTo<nejlika::geometry::NiProperty>(niVertexColorProperty)});
 
     if (niTexturingProperty)
     {
@@ -834,12 +827,10 @@ glm::vec3 NifWrapper::GetPosition(nejlika::geometry::NiAVObject* node) const
 glm::quat NifWrapper::GetRotation(nejlika::geometry::NiAVObject* node) const
 {
     nejlika::geometry::Matrix33 rotation = node->GetRotation();
-    
-    glm::mat3 rotationMatrix = {
-        { rotation.Getm11(), rotation.Getm12(), rotation.Getm13() },
-        { rotation.Getm21(), rotation.Getm22(), rotation.Getm23() },
-        { rotation.Getm31(), rotation.Getm32(), rotation.Getm33() }
-    };
+
+    glm::mat3 rotationMatrix = {{rotation.Getm11(), rotation.Getm12(), rotation.Getm13()},
+                                {rotation.Getm21(), rotation.Getm22(), rotation.Getm23()},
+                                {rotation.Getm31(), rotation.Getm32(), rotation.Getm33()}};
 
     return glm::quat_cast(rotationMatrix);
 }

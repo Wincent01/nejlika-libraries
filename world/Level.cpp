@@ -4,7 +4,7 @@
 
 using namespace nejlika::world;
 
-nejlika::world::Level::Level(nejlika::Reader &io)
+nejlika::world::Level::Level(nejlika::Reader& io)
 {
     uint32_t index = 1;
 
@@ -148,7 +148,7 @@ nejlika::world::Level::Level(nejlika::Reader &io)
     }
 }
 
-void nejlika::world::Level::Save(nejlika::Writer &io)
+void nejlika::world::Level::Save(nejlika::Writer& io)
 {
     if (IsOld())
     {
@@ -260,52 +260,52 @@ void nejlika::world::Level::Save(nejlika::Writer &io)
     }
 }
 
-OldLevelInfo &nejlika::world::Level::GetOldInfo()
+OldLevelInfo& nejlika::world::Level::GetOldInfo()
 {
     return m_OldInfo;
 }
 
-LevelInfo &nejlika::world::Level::GetInfo()
+LevelInfo& nejlika::world::Level::GetInfo()
 {
     return m_Info;
 }
 
-EnvironmentInformation &nejlika::world::Level::GetEnvironmentInformation()
+EnvironmentInformation& nejlika::world::Level::GetEnvironmentInformation()
 {
     return m_EnvironmentInformation;
 }
 
-LevelObjects &nejlika::world::Level::GetObjects()
+LevelObjects& nejlika::world::Level::GetObjects()
 {
     return m_Objects;
 }
 
-ParticleInformation &nejlika::world::Level::GetParticleInformation()
+ParticleInformation& nejlika::world::Level::GetParticleInformation()
 {
     return m_ParticleInformation;
 }
 
-const OldLevelInfo &nejlika::world::Level::GetOldInfo() const
+const OldLevelInfo& nejlika::world::Level::GetOldInfo() const
 {
     return m_OldInfo;
 }
 
-const LevelInfo &nejlika::world::Level::GetInfo() const
+const LevelInfo& nejlika::world::Level::GetInfo() const
 {
     return m_Info;
 }
 
-const EnvironmentInformation &nejlika::world::Level::GetEnvironmentInformation() const
+const EnvironmentInformation& nejlika::world::Level::GetEnvironmentInformation() const
 {
     return m_EnvironmentInformation;
 }
 
-const LevelObjects &nejlika::world::Level::GetObjects() const
+const LevelObjects& nejlika::world::Level::GetObjects() const
 {
     return m_Objects;
 }
 
-const ParticleInformation &nejlika::world::Level::GetParticleInformation() const
+const ParticleInformation& nejlika::world::Level::GetParticleInformation() const
 {
     return m_ParticleInformation;
 }
@@ -347,28 +347,28 @@ void nejlika::world::Level::SetVersion(version version)
     }
 }
 
-void nejlika::world::Level::SetEnvironmentInformation(EnvironmentInformation &environmentInformation)
+void nejlika::world::Level::SetEnvironmentInformation(const EnvironmentInformation& environmentInformation)
 {
     m_EnvironmentInformation = environmentInformation;
 
     m_HasEnvironmentInformation = true;
 }
 
-void nejlika::world::Level::SetObjects(LevelObjects &objects)
+void nejlika::world::Level::SetObjects(const LevelObjects& objects)
 {
     m_Objects = objects;
 
     m_HasObjects = true;
 }
 
-void nejlika::world::Level::SetParticleInformation(ParticleInformation &particleInformation)
+void nejlika::world::Level::SetParticleInformation(const ParticleInformation& particleInformation)
 {
     m_ParticleInformation = particleInformation;
 
     m_HasParticleInformation = true;
 }
 
-void nejlika::world::Level::SetOldInfo(OldLevelInfo &oldInfo)
+void nejlika::world::Level::SetOldInfo(OldLevelInfo& oldInfo)
 {
     m_OldInfo = oldInfo;
 }
@@ -388,11 +388,9 @@ void nejlika::world::Level::SetHasParticleInformation(bool hasParticleInformatio
     m_HasParticleInformation = hasParticleInformation;
 }
 
-nejlika::world::Level::~Level()
-{
-}
+nejlika::world::Level::~Level() {}
 
-bool nejlika::world::Level::IsOld(nejlika::Reader &io)
+bool nejlika::world::Level::IsOld(nejlika::Reader& io)
 {
     if (io.GetSize() < sizeof(uint32_t))
         return true;
@@ -406,7 +404,7 @@ bool nejlika::world::Level::IsOld(nejlika::Reader &io)
     return magic != ('C' | ('H' << 8) | ('N' << 16) | ('K' << 24));
 }
 
-void nejlika::world::Level::WriteHeader(nejlika::Writer &io, uint32_t chunkType, uint32_t headerVersion, uint32_t dataVersion)
+void nejlika::world::Level::WriteHeader(nejlika::Writer& io, uint32_t chunkType, uint32_t headerVersion, uint32_t dataVersion)
 {
     const static uint32_t magic = ('C' | ('H' << 8) | ('N' << 16) | ('K' << 24));
 
@@ -417,7 +415,7 @@ void nejlika::world::Level::WriteHeader(nejlika::Writer &io, uint32_t chunkType,
     io.Write<uint16_t>(dataVersion);
 }
 
-void nejlika::world::Level::Align(nejlika::Writer &io)
+void nejlika::world::Level::Align(nejlika::Writer& io)
 {
     while (io.GetWriteHead() % 16 != 0)
     {

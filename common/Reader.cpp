@@ -1,6 +1,7 @@
 #include "Reader.hpp"
 #include <fstream>
 #include <iterator>
+#include <sstream>
 
 nejlika::Reader::Reader(const std::filesystem::path& path)
 {
@@ -10,12 +11,15 @@ nejlika::Reader::Reader(const std::filesystem::path& path)
 
     if (!file)
     {
-        throw std::runtime_error("Failed to open file");
+        std::stringstream ss;
+        ss << "Failed to open file: " << path.string();
+
+        throw std::runtime_error(ss.str());
     }
 
     // Read in 4K chunks
     char buffer[4096];
-    
+
     size_t bytesRead = 0;
 
     while ((bytesRead = fread(buffer, 1, sizeof(buffer), file)) > 0)
@@ -48,6 +52,4 @@ void nejlika::Reader::Skip(size_t size)
     m_ReadHead += size;
 }
 
-nejlika::Reader::~Reader()
-{
-}
+nejlika::Reader::~Reader() {}

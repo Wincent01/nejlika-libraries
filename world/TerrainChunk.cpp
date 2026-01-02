@@ -59,7 +59,7 @@ TerrainChunk::TerrainChunk(nejlika::Reader& io, int32_t version)
     }
 
     m_MeshVertexSize.resize(16);
-    
+
     for (auto& vertexSize : m_MeshVertexSize)
     {
         vertexSize = io.Read<uint16_t>();
@@ -223,6 +223,56 @@ const std::vector<uint16_t>& TerrainChunk::GetMeshVertexSize() const
 }
 
 const std::vector<std::vector<uint16_t>>& TerrainChunk::GetMeshTriangles() const
+{
+    return m_MeshTriangles;
+}
+
+TerrainHeightMap& nejlika::world::TerrainChunk::GetHeightMap()
+{
+    return m_HeightMap;
+}
+
+TerrainColorMap& TerrainChunk::GetColorMap()
+{
+    return m_ColorMap;
+}
+
+TerrainDirectDrawSurface& TerrainChunk::GetLightMap()
+{
+    return m_LightMap;
+}
+
+TerrainColorMap& TerrainChunk::GetTextureMap()
+{
+    return m_TextureMap;
+}
+
+TerrainDirectDrawSurface& TerrainChunk::GetBlendMap()
+{
+    return m_BlendMap;
+}
+
+std::vector<TerrainFoliage>& TerrainChunk::GetFoliage()
+{
+    return m_Foliage;
+}
+
+std::vector<uint8_t>& TerrainChunk::GetSceneData()
+{
+    return m_SceneData;
+}
+
+std::vector<uint16_t>& TerrainChunk::GetMeshVertexUsage()
+{
+    return m_MeshVertexUsage;
+}
+
+std::vector<uint16_t>& TerrainChunk::GetMeshVertexSize()
+{
+    return m_MeshVertexSize;
+}
+
+std::vector<std::vector<uint16_t>>& TerrainChunk::GetMeshTriangles()
 {
     return m_MeshTriangles;
 }

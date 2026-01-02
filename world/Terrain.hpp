@@ -11,7 +11,8 @@
 #include "numerics.hpp"
 #include "TerrainChunk.hpp"
 
-namespace nejlika::world {
+namespace nejlika::world
+{
 
 class Terrain
 {
@@ -23,6 +24,10 @@ public:
     void Save(nejlika::Writer& io) const;
 
     const std::vector<TerrainChunk>& GetChunks() const;
+
+    const TerrainChunk& GetChunk(int32_t x, int32_t y) const;
+
+    TerrainChunk& GetChunk(int32_t x, int32_t y);
 
     int32_t GetVersion() const;
 
@@ -38,6 +43,8 @@ public:
 
     void SetHeight(int32_t height);
 
+    void AllocateChunks(int32_t width, int32_t height);
+
     ~Terrain();
 
 private:
@@ -50,5 +57,4 @@ private:
     int32_t m_Height = 0;
 };
 
-
-}
+} // namespace nejlika::world

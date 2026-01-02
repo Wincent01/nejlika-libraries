@@ -10,7 +10,8 @@
 
 #include "numerics.hpp"
 
-namespace nejlika::world {
+namespace nejlika::world
+{
 
 class TerrainColorMap
 {
@@ -27,11 +28,16 @@ public:
 
     void SetColorMap(const std::vector<color4>& colorMap);
 
+    void AllocateColorMap(uint32_t size);
+
+    void SetColorMapValue(uint32_t x, uint32_t y, const color4& color);
+
+    const color4& GetColorMapValue(uint32_t x, uint32_t y) const;
+
     ~TerrainColorMap();
 
 private:
     std::vector<color4> m_ColorMap;
 };
 
-
-}
+} // namespace nejlika::world

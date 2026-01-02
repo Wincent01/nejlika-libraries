@@ -22,6 +22,8 @@ public:
 
     const std::vector<Transition>& GetTransitions() const;
 
+    std::vector<Transition>& GetTransitions();
+
     ~TransitionInformation();
 
 private:

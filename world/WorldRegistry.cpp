@@ -12,30 +12,27 @@
 using namespace nejlika;
 using namespace nejlika::world;
 
-nejlika::world::WorldRegistry::WorldRegistry(const WorldRegistry &other)
+nejlika::world::WorldRegistry::WorldRegistry(const WorldRegistry& other)
 {
     m_Worlds = other.m_Worlds;
 }
 
-ContextExtention *nejlika::world::WorldRegistry::Clone() const
+ContextExtention* nejlika::world::WorldRegistry::Clone() const
 {
     return new WorldRegistry(*this);
 }
 
 void nejlika::world::WorldRegistry::Initalize(Context& ctx)
-{   
-    ctx.templates->GetApplier().RegisterExtentionFunction("claim-world-id", [](
-        const std::shared_ptr<TypeTemplateContext>& context,
-        const boost::json::object& operation,
-        const boost::json::object& json,
-        const TypeTemplate& typeTemplate,
-        const std::unordered_map<std::string, TypeTemplateValue>& parameters
-    ) -> TypeTemplateError
+{
+    ctx.templates->GetApplier().RegisterExtentionFunction("claim-world-id",
+                                                          [](const std::shared_ptr<TypeTemplateContext>& context, const boost::json::object& operation,
+                                                             const boost::json::object& json, const TypeTemplate& typeTemplate,
+                                                             const std::unordered_map<std::string, TypeTemplateValue>& parameters) -> TypeTemplateError
     {
         auto* worldRegistry = context->GetContext().Extention<WorldRegistry>();
 
         const auto zone = context->FindValue(operation.at("zone"), TypeTemplateQueryOptions::Full);
-        
+
         auto& world = worldRegistry->GetWorld(context->GetContext(), std::to_string(zone.as_int64()));
 
         context->SetVariable("id", world.ClaimObjectId());
@@ -43,13 +40,10 @@ void nejlika::world::WorldRegistry::Initalize(Context& ctx)
         return TypeTemplateError::Success;
     });
 
-    ctx.templates->GetApplier().RegisterExtentionFunction("world-info", [](
-        const std::shared_ptr<TypeTemplateContext>& context,
-        const boost::json::object& operation,
-        const boost::json::object& json,
-        const TypeTemplate& typeTemplate,
-        const std::unordered_map<std::string, TypeTemplateValue>& parameters
-    ) -> TypeTemplateError
+    ctx.templates->GetApplier().RegisterExtentionFunction("world-info",
+                                                          [](const std::shared_ptr<TypeTemplateContext>& context, const boost::json::object& operation,
+                                                             const boost::json::object& json, const TypeTemplate& typeTemplate,
+                                                             const std::unordered_map<std::string, TypeTemplateValue>& parameters) -> TypeTemplateError
     {
         auto* worldRegistry = context->GetContext().Extention<WorldRegistry>();
 
@@ -63,7 +57,7 @@ void nejlika::world::WorldRegistry::Initalize(Context& ctx)
         const auto petsAllowed = context->FindValue(operation.at("pets-allowed"), TypeTemplateQueryOptions::Full);
         const auto playerLoseCoinsOnDeath = context->FindValue(operation.at("player-lose-coins-on-death"), TypeTemplateQueryOptions::Full);
         const auto mountsAllowed = context->FindValue(operation.at("mounts-allowed"), TypeTemplateQueryOptions::Full);
-        
+
         auto& world = worldRegistry->GetWorld(context->GetContext(), std::to_string(zone.as_int64()));
         world.SetScriptID(scriptId.to_number<int32_t>());
         world.SetGhostDistanceMin(ghostDistanceMin.to_number<float>());
@@ -82,16 +76,13 @@ void nejlika::world::WorldRegistry::Initalize(Context& ctx)
         return TypeTemplateError::Success;
     });
 
-    ctx.templates->GetApplier().RegisterExtentionFunction("claim-scene-id", [](
-        const std::shared_ptr<TypeTemplateContext>& context,
-        const boost::json::object& operation,
-        const boost::json::object& json,
-        const TypeTemplate& typeTemplate,
-        const std::unordered_map<std::string, TypeTemplateValue>& parameters
-    ) -> TypeTemplateError
+    ctx.templates->GetApplier().RegisterExtentionFunction("claim-scene-id",
+                                                          [](const std::shared_ptr<TypeTemplateContext>& context, const boost::json::object& operation,
+                                                             const boost::json::object& json, const TypeTemplate& typeTemplate,
+                                                             const std::unordered_map<std::string, TypeTemplateValue>& parameters) -> TypeTemplateError
     {
         const bool sync = operation.contains("sync") ? operation.at("sync").as_bool() : true;
-    
+
         id id;
 
         const auto& name = json.at("name").as_string().c_str();
@@ -100,7 +91,8 @@ void nejlika::world::WorldRegistry::Initalize(Context& ctx)
         {
             context->GetContext().lookup->Register(name, id);
 
-            if (json.contains("aliases")) {
+            if (json.contains("aliases"))
+            {
                 const auto& aliases = json.at("aliases");
 
                 if (aliases.is_array())
@@ -119,7 +111,7 @@ void nejlika::world::WorldRegistry::Initalize(Context& ctx)
         auto* worldRegistry = context->GetContext().Extention<WorldRegistry>();
 
         const auto zone = context->FindValue(operation.at("zone"), TypeTemplateQueryOptions::Full);
-        
+
         auto& world = worldRegistry->GetWorld(context->GetContext(), std::to_string(zone.as_int64()));
 
         int32_t maxId = -1;
@@ -142,13 +134,10 @@ void nejlika::world::WorldRegistry::Initalize(Context& ctx)
         return TypeTemplateError::Success;
     });
 
-    ctx.templates->GetApplier().RegisterExtentionFunction("add-scene", [](
-        const std::shared_ptr<TypeTemplateContext>& context,
-        const boost::json::object& operation,
-        const boost::json::object& json,
-        const TypeTemplate& typeTemplate,
-        const std::unordered_map<std::string, TypeTemplateValue>& parameters
-    ) -> TypeTemplateError
+    ctx.templates->GetApplier().RegisterExtentionFunction("add-scene",
+                                                          [](const std::shared_ptr<TypeTemplateContext>& context, const boost::json::object& operation,
+                                                             const boost::json::object& json, const TypeTemplate& typeTemplate,
+                                                             const std::unordered_map<std::string, TypeTemplateValue>& parameters) -> TypeTemplateError
     {
         auto* worldRegistry = context->GetContext().Extention<WorldRegistry>();
 
@@ -163,7 +152,7 @@ void nejlika::world::WorldRegistry::Initalize(Context& ctx)
         sceneReference.SetSceneID(sceneId.to_number<int32_t>());
         sceneReference.SetLayerID(sceneLayer.to_number<int32_t>());
         sceneReference.SetSceneName(sceneName.as_string().c_str());
-        
+
         world.GetZone().GetScenes().push_back(sceneReference);
 
         auto& scene = world.AddLevel(sceneId.to_number<int32_t>(), sceneLayer.to_number<int32_t>());
@@ -175,13 +164,10 @@ void nejlika::world::WorldRegistry::Initalize(Context& ctx)
         return TypeTemplateError::Success;
     });
 
-    ctx.templates->GetApplier().RegisterExtentionFunction("add-world-object", [](
-        const std::shared_ptr<TypeTemplateContext>& context,
-        const boost::json::object& operation,
-        const boost::json::object& json,
-        const TypeTemplate& typeTemplate,
-        const std::unordered_map<std::string, TypeTemplateValue>& parameters
-    ) -> TypeTemplateError
+    ctx.templates->GetApplier().RegisterExtentionFunction("add-world-object",
+                                                          [](const std::shared_ptr<TypeTemplateContext>& context, const boost::json::object& operation,
+                                                             const boost::json::object& json, const TypeTemplate& typeTemplate,
+                                                             const std::unordered_map<std::string, TypeTemplateValue>& parameters) -> TypeTemplateError
     {
         auto* worldRegistry = context->GetContext().Extention<WorldRegistry>();
 
@@ -196,7 +182,7 @@ void nejlika::world::WorldRegistry::Initalize(Context& ctx)
         const auto lot = context->FindValue(operation.at("lot"), TypeTemplateQueryOptions::Full);
 
         t = lot.kind();
-        
+
         const auto x = context->FindValue(operation.at("x"), TypeTemplateQueryOptions::Full);
         const auto y = context->FindValue(operation.at("y"), TypeTemplateQueryOptions::Full);
         const auto z = context->FindValue(operation.at("z"), TypeTemplateQueryOptions::Full);
@@ -216,22 +202,19 @@ void nejlika::world::WorldRegistry::Initalize(Context& ctx)
         ObjectInformation object;
         object.SetObjectId(objectId.to_number<int64_t>());
         object.SetTemplateId(lot.to_number<int64_t>());
-        object.SetPosition({ (float) x.to_number<float>(), (float) y.to_number<float>(), (float) z.to_number<float>() });
-        object.SetRotation({ (float) rw.to_number<float>(), (float) rx.to_number<float>(), (float) ry.to_number<float>(), (float) rz.to_number<float>() });
-        object.SetScale((float) scale.to_number<float>());
+        object.SetPosition({(float)x.to_number<float>(), (float)y.to_number<float>(), (float)z.to_number<float>()});
+        object.SetRotation({(float)rw.to_number<float>(), (float)rx.to_number<float>(), (float)ry.to_number<float>(), (float)rz.to_number<float>()});
+        object.SetScale((float)scale.to_number<float>());
 
         objects.AddObject(object);
 
         return TypeTemplateError::Success;
     });
 
-    ctx.templates->GetApplier().RegisterExtentionFunction("remove-world-object", [](
-        const std::shared_ptr<TypeTemplateContext>& context,
-        const boost::json::object& operation,
-        const boost::json::object& json,
-        const TypeTemplate& typeTemplate,
-        const std::unordered_map<std::string, TypeTemplateValue>& parameters
-    ) -> TypeTemplateError
+    ctx.templates->GetApplier().RegisterExtentionFunction("remove-world-object",
+                                                          [](const std::shared_ptr<TypeTemplateContext>& context, const boost::json::object& operation,
+                                                             const boost::json::object& json, const TypeTemplate& typeTemplate,
+                                                             const std::unordered_map<std::string, TypeTemplateValue>& parameters) -> TypeTemplateError
     {
         auto* worldRegistry = context->GetContext().Extention<WorldRegistry>();
 
@@ -245,13 +228,16 @@ void nejlika::world::WorldRegistry::Initalize(Context& ctx)
         }
 
         auto& world = worldRegistry->GetWorld(context->GetContext(), std::to_string(zone.as_int64()));
-        
+
         const auto levelId = context->FindValue(operation.at("level-id"), TypeTemplateQueryOptions::Full).to_number<int32_t>();
         const auto levelLayer = context->FindValue(operation.at("level-layer"), TypeTemplateQueryOptions::Full).to_number<int32_t>();
 
-        for (auto& [levelHash, level] : world.GetLevels()) {
-            if (levelId != 0 && levelLayer != 0) {
-                if (((static_cast<uint64_t>(levelId) << 32) | levelLayer) != levelHash) {
+        for (auto& [levelHash, level] : world.GetLevels())
+        {
+            if (levelId != 0 && levelLayer != 0)
+            {
+                if (((static_cast<uint64_t>(levelId) << 32) | levelLayer) != levelHash)
+                {
                     continue;
                 }
             }
@@ -273,13 +259,10 @@ void nejlika::world::WorldRegistry::Initalize(Context& ctx)
         return TypeTemplateError::Success;
     });
 
-    ctx.templates->GetApplier().RegisterExtentionFunction("transform-world-object", [](
-        const std::shared_ptr<TypeTemplateContext>& context,
-        const boost::json::object& operation,
-        const boost::json::object& json,
-        const TypeTemplate& typeTemplate,
-        const std::unordered_map<std::string, TypeTemplateValue>& parameters
-    ) -> TypeTemplateError
+    ctx.templates->GetApplier().RegisterExtentionFunction("transform-world-object",
+                                                          [](const std::shared_ptr<TypeTemplateContext>& context, const boost::json::object& operation,
+                                                             const boost::json::object& json, const TypeTemplate& typeTemplate,
+                                                             const std::unordered_map<std::string, TypeTemplateValue>& parameters) -> TypeTemplateError
     {
         auto* worldRegistry = context->GetContext().Extention<WorldRegistry>();
 
@@ -349,17 +332,17 @@ void nejlika::world::WorldRegistry::Initalize(Context& ctx)
 
             if (!x.is_null() && !y.is_null() && !z.is_null())
             {
-                object.SetPosition({ (float) x.to_number<float>(), (float) y.to_number<float>(), (float) z.to_number<float>() });
+                object.SetPosition({(float)x.to_number<float>(), (float)y.to_number<float>(), (float)z.to_number<float>()});
             }
-            
+
             if (!rx.is_null() && !ry.is_null() && !rz.is_null() && !rw.is_null())
             {
-                object.SetRotation({ (float) rw.to_number<float>(), (float) rx.to_number<float>(), (float) ry.to_number<float>(), (float) rz.to_number<float>() });
+                object.SetRotation({(float)rw.to_number<float>(), (float)rx.to_number<float>(), (float)ry.to_number<float>(), (float)rz.to_number<float>()});
             }
 
             if (!scale.is_null())
             {
-                object.SetScale((float) scale.to_number<float>());
+                object.SetScale((float)scale.to_number<float>());
             }
 
             break;
@@ -368,13 +351,10 @@ void nejlika::world::WorldRegistry::Initalize(Context& ctx)
         return TypeTemplateError::Success;
     });
 
-    ctx.templates->GetApplier().RegisterExtentionFunction("world-environment", [](
-        const std::shared_ptr<TypeTemplateContext>& context,
-        const boost::json::object& operation,
-        const boost::json::object& json,
-        const TypeTemplate& typeTemplate,
-        const std::unordered_map<std::string, TypeTemplateValue>& parameters
-    ) -> TypeTemplateError
+    ctx.templates->GetApplier().RegisterExtentionFunction("world-environment",
+                                                          [](const std::shared_ptr<TypeTemplateContext>& context, const boost::json::object& operation,
+                                                             const boost::json::object& json, const TypeTemplate& typeTemplate,
+                                                             const std::unordered_map<std::string, TypeTemplateValue>& parameters) -> TypeTemplateError
     {
         auto* worldRegistry = context->GetContext().Extention<WorldRegistry>();
 
@@ -397,13 +377,10 @@ void nejlika::world::WorldRegistry::Initalize(Context& ctx)
         return TypeTemplateError::Success;
     });
 
-    ctx.templates->GetApplier().RegisterExtentionFunction("world-lighting", [](
-        const std::shared_ptr<TypeTemplateContext>& context,
-        const boost::json::object& operation,
-        const boost::json::object& json,
-        const TypeTemplate& typeTemplate,
-        const std::unordered_map<std::string, TypeTemplateValue>& parameters
-    ) -> TypeTemplateError
+    ctx.templates->GetApplier().RegisterExtentionFunction("world-lighting",
+                                                          [](const std::shared_ptr<TypeTemplateContext>& context, const boost::json::object& operation,
+                                                             const boost::json::object& json, const TypeTemplate& typeTemplate,
+                                                             const std::unordered_map<std::string, TypeTemplateValue>& parameters) -> TypeTemplateError
     {
         auto* worldRegistry = context->GetContext().Extention<WorldRegistry>();
 
@@ -442,25 +419,20 @@ void nejlika::world::WorldRegistry::Initalize(Context& ctx)
 
         auto& lighting = level.GetEnvironmentInformation().GetLightingInformation();
         lighting.SetBlendTime(blendTime.to_number<float>());
-        lighting.SetAmbient({ (float) ambientColorR.to_number<float>(), (float) ambientColorG.to_number<float>(), (float) ambientColorB.to_number<float>() });
-        lighting.SetSpecular({ (float) specularColorR.to_number<float>(), (float) specularColorG.to_number<float>(), (float) specularColorB.to_number<float>() });
-        lighting.SetUpperHemi({ (float) upperHemiColorR.to_number<float>(), (float) upperHemiColorG.to_number<float>(), (float) upperHemiColorB.to_number<float>() });
-        lighting.SetPosition({ (float) positionX.to_number<float>(), (float) positionY.to_number<float>(), (float) positionZ.to_number<float>() });
-        
-        SceneDrawDistances sceneDrawDistances(
-            fogNear.to_number<float>(),
-            fogFar.to_number<float>(),
-            postFogSolid.to_number<float>(),
-            postFogFade.to_number<float>(),
-            staticObjectDistance.to_number<float>(),
-            dynamicObjectDistance.to_number<float>()
-        );
+        lighting.SetAmbient({(float)ambientColorR.to_number<float>(), (float)ambientColorG.to_number<float>(), (float)ambientColorB.to_number<float>()});
+        lighting.SetSpecular({(float)specularColorR.to_number<float>(), (float)specularColorG.to_number<float>(), (float)specularColorB.to_number<float>()});
+        lighting.SetUpperHemi({(float)upperHemiColorR.to_number<float>(), (float)upperHemiColorG.to_number<float>(), (float)upperHemiColorB.to_number<float>()});
+        lighting.SetPosition({(float)positionX.to_number<float>(), (float)positionY.to_number<float>(), (float)positionZ.to_number<float>()});
+
+        SceneDrawDistances sceneDrawDistances(fogNear.to_number<float>(), fogFar.to_number<float>(), postFogSolid.to_number<float>(), postFogFade.to_number<float>(),
+                                              staticObjectDistance.to_number<float>(), dynamicObjectDistance.to_number<float>());
 
         lighting.SetMinDrawDistances(sceneDrawDistances);
         lighting.SetMaxDrawDistances(sceneDrawDistances);
 
-        lighting.SetFogColor({ (float) fogColorR.to_number<float>(), (float) fogColorG.to_number<float>(), (float) fogColorB.to_number<float>() });
-        lighting.SetDirectionalLightColor({ (float) directionalLightColorR.to_number<float>(), (float) directionalLightColorG.to_number<float>(), (float) directionalLightColorB.to_number<float>() });
+        lighting.SetFogColor({(float)fogColorR.to_number<float>(), (float)fogColorG.to_number<float>(), (float)fogColorB.to_number<float>()});
+        lighting.SetDirectionalLightColor(
+            {(float)directionalLightColorR.to_number<float>(), (float)directionalLightColorG.to_number<float>(), (float)directionalLightColorB.to_number<float>()});
 
         /*
         1	100	150
@@ -474,29 +446,15 @@ void nejlika::world::WorldRegistry::Initalize(Context& ctx)
         9	50	100
         10	300	400
         */
-        lighting.SetCullData({
-            { 1, 100, 150 },
-            { 2, 150, 200 },
-            { 3, 200, 250 },
-            { 4, 250, 300 },
-            { 5, 40, 40 },
-            { 6, 40, 40 },
-            { 7, 400, 600 },
-            { 8, 60, 100 },
-            { 9, 50, 100 },
-            { 10, 300, 400 }
-        });
+        lighting.SetCullData({{1, 100, 150}, {2, 150, 200}, {3, 200, 250}, {4, 250, 300}, {5, 40, 40}, {6, 40, 40}, {7, 400, 600}, {8, 60, 100}, {9, 50, 100}, {10, 300, 400}});
 
         return TypeTemplateError::Success;
     });
 
-    ctx.templates->GetApplier().RegisterExtentionFunction("add-world-object-property", [](
-        const std::shared_ptr<TypeTemplateContext>& context,
-        const boost::json::object& operation,
-        const boost::json::object& json,
-        const TypeTemplate& typeTemplate,
-        const std::unordered_map<std::string, TypeTemplateValue>& parameters
-    ) -> TypeTemplateError
+    ctx.templates->GetApplier().RegisterExtentionFunction("add-world-object-property",
+                                                          [](const std::shared_ptr<TypeTemplateContext>& context, const boost::json::object& operation,
+                                                             const boost::json::object& json, const TypeTemplate& typeTemplate,
+                                                             const std::unordered_map<std::string, TypeTemplateValue>& parameters) -> TypeTemplateError
     {
         auto* worldRegistry = context->GetContext().Extention<WorldRegistry>();
 
@@ -518,7 +476,7 @@ void nejlika::world::WorldRegistry::Initalize(Context& ctx)
         {
             return TypeTemplateError("Object not found.");
         }
-        
+
         auto& object = objects.GetObject(objectId.as_uint64());
 
         std::string str;
@@ -552,20 +510,15 @@ void nejlika::world::WorldRegistry::Initalize(Context& ctx)
             return TypeTemplateError("Invalid data type.");
         }
 
-        object.GetProperties().GetPropertyMap().emplace(
-            string_to_u16string(name.as_string().c_str()), Property(static_cast<ObjectPropertyType>(type.to_number<int64_t>()), str)
-        );
+        object.GetProperties().GetPropertyMap().emplace(string_to_u16string(name.as_string().c_str()), Property(static_cast<ObjectPropertyType>(type.to_number<int64_t>()), str));
 
         return TypeTemplateError::Success;
     });
 
-    ctx.templates->GetApplier().RegisterExtentionFunction("add-world-spawn-waypoint", [](
-        const std::shared_ptr<TypeTemplateContext>& context,
-        const boost::json::object& operation,
-        const boost::json::object& json,
-        const TypeTemplate& typeTemplate,
-        const std::unordered_map<std::string, TypeTemplateValue>& parameters
-    ) -> TypeTemplateError
+    ctx.templates->GetApplier().RegisterExtentionFunction("add-world-spawn-waypoint",
+                                                          [](const std::shared_ptr<TypeTemplateContext>& context, const boost::json::object& operation,
+                                                             const boost::json::object& json, const TypeTemplate& typeTemplate,
+                                                             const std::unordered_map<std::string, TypeTemplateValue>& parameters) -> TypeTemplateError
     {
         auto* worldRegistry = context->GetContext().Extention<WorldRegistry>();
 
@@ -596,8 +549,8 @@ void nejlika::world::WorldRegistry::Initalize(Context& ctx)
             return TypeTemplateError("Rotation must be a number.");
         }
 
-        vector3 position = { (float) x.to_number<float>(), (float) y.to_number<float>(), (float) z.to_number<float>() };
-        vector4 rotation = { (float) rw.to_number<float>(), (float) rx.to_number<float>(), (float) ry.to_number<float>(), (float) rz.to_number<float>() };
+        vector3 position = {(float)x.to_number<float>(), (float)y.to_number<float>(), (float)z.to_number<float>()};
+        vector4 rotation = {(float)rw.to_number<float>(), (float)rx.to_number<float>(), (float)ry.to_number<float>(), (float)rz.to_number<float>()};
 
         auto& world = worldRegistry->GetWorld(context->GetContext(), std::to_string(zone.as_int64()));
 
@@ -616,10 +569,7 @@ void nejlika::world::WorldRegistry::Initalize(Context& ctx)
 
                 auto& waypoints = pathInfo.GetWaypoints();
 
-                Waypoint waypoint(
-                    position,
-                    PathType::Spawner
-                );
+                Waypoint waypoint(position, PathType::Spawner);
 
                 auto& data = waypoint.GetData<SpawnerWaypointData>();
 
@@ -630,17 +580,14 @@ void nejlika::world::WorldRegistry::Initalize(Context& ctx)
                 return TypeTemplateError::Success;
             }
         }
-        
+
         return TypeTemplateError("Path not found.");
     });
 
-    ctx.templates->GetApplier().RegisterExtentionFunction("add-world-spawn-path", [](
-        const std::shared_ptr<TypeTemplateContext>& context,
-        const boost::json::object& operation,
-        const boost::json::object& json,
-        const TypeTemplate& typeTemplate,
-        const std::unordered_map<std::string, TypeTemplateValue>& parameters
-    ) -> TypeTemplateError
+    ctx.templates->GetApplier().RegisterExtentionFunction("add-world-spawn-path",
+                                                          [](const std::shared_ptr<TypeTemplateContext>& context, const boost::json::object& operation,
+                                                             const boost::json::object& json, const TypeTemplate& typeTemplate,
+                                                             const std::unordered_map<std::string, TypeTemplateValue>& parameters) -> TypeTemplateError
     {
         auto* worldRegistry = context->GetContext().Extention<WorldRegistry>();
 
@@ -683,10 +630,7 @@ void nejlika::world::WorldRegistry::Initalize(Context& ctx)
             }
         }
 
-        Path pathInfo(
-            PathType::Spawner,
-            version
-        );
+        Path pathInfo(PathType::Spawner, version);
 
         pathInfo.SetName(string_to_u16string(pathStr));
 
@@ -704,14 +648,10 @@ void nejlika::world::WorldRegistry::Initalize(Context& ctx)
         return TypeTemplateError::Success;
     });
 
-
-    ctx.templates->GetApplier().RegisterExtentionFunction("add-world-camera-path", [](
-        const std::shared_ptr<TypeTemplateContext>& context,
-        const boost::json::object& operation,
-        const boost::json::object& json,
-        const TypeTemplate& typeTemplate,
-        const std::unordered_map<std::string, TypeTemplateValue>& parameters
-    ) -> TypeTemplateError
+    ctx.templates->GetApplier().RegisterExtentionFunction("add-world-camera-path",
+                                                          [](const std::shared_ptr<TypeTemplateContext>& context, const boost::json::object& operation,
+                                                             const boost::json::object& json, const TypeTemplate& typeTemplate,
+                                                             const std::unordered_map<std::string, TypeTemplateValue>& parameters) -> TypeTemplateError
     {
         auto* worldRegistry = context->GetContext().Extention<WorldRegistry>();
 
@@ -742,10 +682,7 @@ void nejlika::world::WorldRegistry::Initalize(Context& ctx)
             }
         }
 
-        Path pathInfo(
-            PathType::Camera,
-            version
-        );
+        Path pathInfo(PathType::Camera, version);
 
         pathInfo.SetName(string_to_u16string(pathStr));
 
@@ -762,13 +699,10 @@ void nejlika::world::WorldRegistry::Initalize(Context& ctx)
         return TypeTemplateError::Success;
     });
 
-    ctx.templates->GetApplier().RegisterExtentionFunction("add-world-camera-waypoint", [](
-        const std::shared_ptr<TypeTemplateContext>& context,
-        const boost::json::object& operation,
-        const boost::json::object& json,
-        const TypeTemplate& typeTemplate,
-        const std::unordered_map<std::string, TypeTemplateValue>& parameters
-    ) -> TypeTemplateError
+    ctx.templates->GetApplier().RegisterExtentionFunction("add-world-camera-waypoint",
+                                                          [](const std::shared_ptr<TypeTemplateContext>& context, const boost::json::object& operation,
+                                                             const boost::json::object& json, const TypeTemplate& typeTemplate,
+                                                             const std::unordered_map<std::string, TypeTemplateValue>& parameters) -> TypeTemplateError
     {
         auto* worldRegistry = context->GetContext().Extention<WorldRegistry>();
 
@@ -810,8 +744,8 @@ void nejlika::world::WorldRegistry::Initalize(Context& ctx)
             return TypeTemplateError("Invalid data type.");
         }
 
-        vector3 position = { (float) x.to_number<float>(), (float) y.to_number<float>(), (float) z.to_number<float>() };
-        vector4 rotation = { (float) rw.to_number<float>(), (float) rx.to_number<float>(), (float) ry.to_number<float>(), (float) rz.to_number<float>() };
+        vector3 position = {(float)x.to_number<float>(), (float)y.to_number<float>(), (float)z.to_number<float>()};
+        vector4 rotation = {(float)rw.to_number<float>(), (float)rx.to_number<float>(), (float)ry.to_number<float>(), (float)rz.to_number<float>()};
 
         auto& world = worldRegistry->GetWorld(context->GetContext(), std::to_string(zone.as_int64()));
 
@@ -830,10 +764,7 @@ void nejlika::world::WorldRegistry::Initalize(Context& ctx)
 
                 auto& waypoints = pathInfo.GetWaypoints();
 
-                Waypoint waypoint(
-                    position,
-                    PathType::Camera
-                );
+                Waypoint waypoint(position, PathType::Camera);
 
                 auto& data = waypoint.GetData<CameraWaypointData>();
 
@@ -871,6 +802,16 @@ void nejlika::world::WorldRegistry::Deinitialize(Context& ctx)
     m_Worlds.clear();
 }
 
+bool nejlika::world::WorldRegistry::HasWorld(const nejlika::name& name) const
+{
+    if (Lookup::IsCoreSymbol(name))
+    {
+        return true;
+    }
+
+    return m_Worlds.find(name) != m_Worlds.end();
+}
+
 World& nejlika::world::WorldRegistry::GetWorld(Context& ctx, const nejlika::name& name)
 {
     // If the name is an integer, append the core prefix to it
@@ -882,7 +823,6 @@ World& nejlika::world::WorldRegistry::GetWorld(Context& ctx, const nejlika::name
     }
     catch (const std::exception&)
     {
-    
     }
 
     if (m_Worlds.find(name) == m_Worlds.end())

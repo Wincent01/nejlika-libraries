@@ -154,6 +154,33 @@ void TerrainHeightMap::SetHeightMap(const std::vector<float>& heightMap)
     m_HeightMap = heightMap;
 }
 
+void nejlika::world::TerrainHeightMap::AllocateHeightMap(uint32_t width, uint32_t height)
+{
+    m_Width = width;
+    m_Height = height;
+    m_HeightMap.resize(width * height);
+}
+
+void nejlika::world::TerrainHeightMap::SetHeightMapValue(uint32_t x, uint32_t y, float height)
+{
+    if (x >= m_Width || y >= m_Height)
+    {
+        throw std::out_of_range("Height map coordinates out of range");
+    }
+
+    m_HeightMap[y * m_Width + x] = height;
+}
+
+float nejlika::world::TerrainHeightMap::GetHeightMapValue(uint32_t x, uint32_t y) const
+{
+    if (x >= m_Width || y >= m_Height)
+    {
+        throw std::out_of_range("Height map coordinates out of range");
+    }
+
+    return m_HeightMap[y * m_Width + x];
+}
+
 TerrainHeightMap::~TerrainHeightMap()
 {
     m_TexturePallet.clear();

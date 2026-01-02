@@ -1,9 +1,9 @@
 #include "PathInformation.hpp"
 
-nejlika::world::PathInformation::PathInformation(nejlika::Reader &io, version version)
+nejlika::world::PathInformation::PathInformation(nejlika::Reader& io, version version)
 {
     m_PathVersion = io.Read<::version>();
-    
+
     uint32_t pathCount = io.Read<uint32_t>();
 
     m_Paths.reserve(pathCount);
@@ -14,7 +14,7 @@ nejlika::world::PathInformation::PathInformation(nejlika::Reader &io, version ve
     }
 }
 
-void nejlika::world::PathInformation::Save(nejlika::Writer &io, version version) const
+void nejlika::world::PathInformation::Save(nejlika::Writer& io, version version) const
 {
     io.Write(m_PathVersion);
 
@@ -31,12 +31,19 @@ version nejlika::world::PathInformation::GetPathVersion() const
     return m_PathVersion;
 }
 
-std::vector<nejlika::world::Path> &nejlika::world::PathInformation::GetPaths()
+void nejlika::world::PathInformation::SetPathVersion(version pathVersion)
+{
+    m_PathVersion = pathVersion;
+}
+
+std::vector<nejlika::world::Path>& nejlika::world::PathInformation::GetPaths()
 {
     return m_Paths;
 }
 
-nejlika::world::PathInformation::~PathInformation()
+const std::vector<nejlika::world::Path>& nejlika::world::PathInformation::GetPaths() const
 {
+    return m_Paths;
 }
 
+nejlika::world::PathInformation::~PathInformation() {}

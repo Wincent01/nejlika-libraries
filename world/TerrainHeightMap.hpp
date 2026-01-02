@@ -10,7 +10,8 @@
 
 #include "numerics.hpp"
 
-namespace nejlika::world {
+namespace nejlika::world
+{
 
 class TerrainHeightMap
 {
@@ -31,9 +32,9 @@ public:
 
     /**
      * @brief Get the shader id
-     * 
+     *
      * @return The shader id
-     * 
+     *
      * @note Only for older versions
      */
     uint32_t GetShaderId() const;
@@ -41,7 +42,7 @@ public:
     float GetScaleFactor() const;
 
     const std::vector<int32_t>& GetTexturePallet() const;
-    
+
     const std::vector<float>& GetHeightMap() const;
 
     void SetWidth(uint32_t width);
@@ -59,6 +60,12 @@ public:
     void SetTexturePallet(const std::vector<int32_t>& texturePallet);
 
     void SetHeightMap(const std::vector<float>& heightMap);
+
+    void AllocateHeightMap(uint32_t width, uint32_t height);
+
+    void SetHeightMapValue(uint32_t x, uint32_t y, float height);
+
+    float GetHeightMapValue(uint32_t x, uint32_t y) const;
 
     ~TerrainHeightMap();
 
@@ -80,5 +87,4 @@ private:
     std::vector<float> m_HeightMap;
 };
 
-
-}
+} // namespace nejlika::world

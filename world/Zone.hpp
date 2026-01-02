@@ -15,7 +15,8 @@
 #include "TransitionInformation.hpp"
 #include "PathInformation.hpp"
 
-namespace nejlika::world {
+namespace nejlika::world
+{
 
 class Zone
 {
@@ -50,6 +51,10 @@ public:
 
     PathInformation& GetPathInformation();
 
+    const TransitionInformation& GetTransitionInformation() const;
+
+    const PathInformation& GetPathInformation() const;
+
     void SetVersion(version version);
 
     void SetFileRevision(uint32_t fileRevision);
@@ -77,11 +82,11 @@ public:
     ~Zone();
 
 private:
-    uint32_t m_Version;
+    uint32_t m_Version = 41;
 
-    uint32_t m_FileRevision;
+    uint32_t m_FileRevision = 0;
 
-    uint32_t m_ZoneID;
+    uint32_t m_ZoneID = 0;
 
     vector3 m_PlayerStartPos;
 
@@ -102,5 +107,4 @@ private:
     PathInformation m_PathInformation;
 };
 
-
-}
+} // namespace nejlika::world

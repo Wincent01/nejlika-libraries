@@ -3,6 +3,7 @@
 #include "Zone.hpp"
 #include "Level.hpp"
 #include "nejlika.hpp"
+#include "Terrain.hpp"
 
 #include <tinyxml2.h>
 
@@ -17,16 +18,26 @@ class World
 public:
     World() = default;
 
+    World(const World& other);
+
+    World& operator=(const World& other);
+
     Zone& GetZone();
+
+    const Zone& GetZone() const;
 
     Level& GetLevel(int32_t id, int32_t layer);
 
+    const Level& GetLevel(int32_t id, int32_t layer) const;
+
     Level& GetLevel(uint64_t key);
+
+    const Level& GetLevel(uint64_t key) const;
 
     Level& AddLevel(int32_t id, int32_t layer);
 
     bool RemoveLevel(int32_t id, int32_t layer);
-    
+
     bool HasLevel(int32_t id, int32_t layer) const;
 
     void Save(nejlika::Context& ctx, const nejlika::name& name);
@@ -36,6 +47,12 @@ public:
     std::unordered_map<uint64_t, Level>& GetLevels();
 
     std::filesystem::path GetTerrainPath();
+
+    Terrain& GetTerrain(nejlika::Context& ctx);
+
+    const Terrain& GetTerrain() const;
+
+    void LoadTerrain(nejlika::Context& ctx);
 
     uint64_t ClaimObjectId();
 
@@ -100,6 +117,8 @@ private:
     std::string m_OriginalPath;
 
     std::filesystem::path m_TerrainPath;
+
+    std::unique_ptr<Terrain> m_Terrain;
 };
 
-}
+} // namespace nejlika::world
