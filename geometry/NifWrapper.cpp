@@ -91,14 +91,24 @@ nejlika::geometry::Matrix33 ConvertQuatToRotationMatrix(const glm::quat& quat)
 
     nejlika::geometry::Matrix33 result;
     result.Setm11(rows[0].x);
-    result.Setm12(rows[0].y);
-    result.Setm13(rows[0].z);
-    result.Setm21(rows[1].x);
+    result.Setm12(rows[1].x);
+    result.Setm13(rows[2].x);
+    result.Setm21(rows[0].y);
     result.Setm22(rows[1].y);
-    result.Setm23(rows[1].z);
-    result.Setm31(rows[2].x);
-    result.Setm32(rows[2].y);
+    result.Setm23(rows[2].y);
+    result.Setm31(rows[0].z);
+    result.Setm32(rows[1].z);
     result.Setm33(rows[2].z);
+
+    glm::mat3 rotationMatrixCheck = {
+        {result.Getm11(), result.Getm12(), result.Getm13()}, {result.Getm21(), result.Getm22(), result.Getm23()}, {result.Getm31(), result.Getm32(), result.Getm33()}};
+
+    glm::quat sanityCheckQuat = glm::quat_cast(rotationMatrixCheck);
+
+    if (glm::dot(sanityCheckQuat, quat) < 0.999f)
+    {
+        std::cout << "Warning: Quaternion to rotation matrix conversion mismatch." << std::endl;
+    }
 
     return result;
 }
@@ -675,10 +685,7 @@ nejlika::geometry::NiTriShape* NifWrapper::ImportMesh(const MeshImport& mesh)
     niTriShape->SetFlags(16);
     niTriShape->SetScale(1.0f);
     niTriShape->SetTranslation(ToGeometry(glm::vec3(0.0f)));
-    // Roll 180 degrees
-    glm::vec3 axis = glm::vec3(0.0f, 0.0f, 0.0f);
-    glm::quat rotation = glm::angleAxis(glm::radians(180.0f), axis);
-    niTriShape->SetRotation(ConvertQuatToRotationMatrix(rotation));
+    niTriShape->SetRotation(ConvertQuatToRotationMatrix(glm::quat(1.0f, 0.0f, 0.0f, 0.0f)));
     niTriShape->SetActiveMaterial(-1);
     niTriShape->SetDirtyFlag(true);
 
@@ -773,14 +780,72 @@ nejlika::geometry::NiTriShape* NifWrapper::ImportMesh(const MeshImport& mesh)
     return niTriShape;
 }
 
+nejlika::geometry::NiTriShape* NifWrapper::AddMesh(const std::string& name, nejlika::geometry::NiNode* parent)
+{
+    auto* niTriShape = AddBlock<nejlika::geometry::NiTriShape>("NiTriShape");
+
+    niTriShape->GetName().SetIndex(GetStringIndex(name));
+    niTriShape->SetFlags(16);
+    niTriShape->SetScale(1.0f);
+    niTriShape->SetTranslation(ToGeometry(glm::vec3(0.0f)));
+    niTriShape->SetRotation(ConvertQuatToRotationMatrix(glm::quat(1.0f, 0.0f, 0.0f, 0.0f)));
+
+    niTriShape->SetActiveMaterial(-1);
+    niTriShape->SetDirtyFlag(true);
+
+    if (parent)
+    {
+        parent->GetChildren().push_back(PointerTo<nejlika::geometry::NiAVObject>(niTriShape));
+        parent->SetNumChildren(parent->GetNumChildren() + 1);
+    }
+    else
+    {
+        m_Footer.GetRoots().push_back(PointerTo<nejlika::geometry::NiObject>(niTriShape));
+        m_Footer.SetNumRoots(m_Footer.GetRoots().size());
+    }
+
+    auto* niMaterialProperty = AddBlock<nejlika::geometry::NiMaterialProperty>("NiMaterialProperty");
+
+    niMaterialProperty->GetName().SetIndex(GetStringIndex("Material"));
+    niMaterialProperty->SetNumExtraDataList(0);
+    niMaterialProperty->SetAmbientColor(ToGeometryColor3(glm::vec3(0.0f)));
+    niMaterialProperty->SetDiffuseColor(ToGeometryColor3(glm::vec3(1.0f)));
+    niMaterialProperty->SetSpecularColor(ToGeometryColor3(glm::vec3(0.0f)));
+    niMaterialProperty->SetEmissiveColor(ToGeometryColor3(glm::vec3(0.0f)));
+    niMaterialProperty->SetGlossiness(4.0f);
+    niMaterialProperty->SetAlpha(1);
+    niMaterialProperty->SetFlags(0);
+
+    auto* niSpecularProperty = AddBlock<nejlika::geometry::NiSpecularProperty>("NiSpecularProperty");
+
+    niSpecularProperty->GetName().SetIndex(GetStringIndex("Specular"));
+    niSpecularProperty->SetNumExtraDataList(0);
+    niSpecularProperty->SetFlags(0);
+
+    niTriShape->SetProperties({
+        PointerTo<nejlika::geometry::NiProperty>(niMaterialProperty),
+        PointerTo<nejlika::geometry::NiProperty>(niSpecularProperty),
+    });
+
+    niTriShape->SetNumProperties(niTriShape->GetProperties().size());
+
+    auto* data = AddBlock<nejlika::geometry::NiTriShapeData>("NiTriShapeData");
+
+    data->SetConsistencyFlags(nejlika::geometry::ConsistencyType::CT_STATIC);
+
+    niTriShape->SetData(PointerTo<nejlika::geometry::NiGeometryData>(data));
+
+    return niTriShape;
+}
+
 nejlika::geometry::NiNode* NifWrapper::AddNode(const std::string& name, nejlika::geometry::NiNode* parent)
 {
     auto* niNode = AddBlock<nejlika::geometry::NiNode>("NiNode");
 
     niNode->GetName().SetIndex(GetStringIndex(name));
-    niNode->SetFlags(8);
+    niNode->SetFlags(272);
     niNode->SetTranslation(ToGeometry(glm::vec3(0.0f)));
-    niNode->SetRotation(nejlika::geometry::Matrix33());
+    niNode->SetRotation(ConvertQuatToRotationMatrix(glm::quat(1.0f, 0.0f, 0.0f, 0.0f)));
     niNode->SetScale(1.0f);
 
     if (parent)
@@ -800,7 +865,7 @@ nejlika::geometry::NiNode* NifWrapper::AddNode(const std::string& name, nejlika:
 void NifWrapper::SetLocalTransform(nejlika::geometry::NiAVObject* node, const glm::vec3& position, const glm::quat& rotation, float scale)
 {
     node->SetTranslation(ToGeometry(position));
-    node->SetRotation(ConvertQuatToRotationMatrix(rotation));
+    node->SetRotation(ConvertQuatToRotationMatrix(glm::normalize(rotation)));
     node->SetScale(scale);
 }
 
@@ -811,7 +876,7 @@ void NifWrapper::SetPosition(nejlika::geometry::NiAVObject* node, const glm::vec
 
 void NifWrapper::SetRotation(nejlika::geometry::NiAVObject* node, const glm::quat& rotation)
 {
-    node->SetRotation(ConvertQuatToRotationMatrix(rotation));
+    node->SetRotation(ConvertQuatToRotationMatrix(glm::normalize(rotation)));
 }
 
 void NifWrapper::SetScale(nejlika::geometry::NiAVObject* node, float scale)
@@ -860,6 +925,232 @@ void NifWrapper::RemoveProperty(nejlika::geometry::NiAVObject* node, nejlika::ge
             node->SetNumProperties(properties.size());
             break;
         }
+    }
+}
+
+void NifWrapper::SetMeshVertices(nejlika::geometry::NiTriBasedGeom* mesh, const std::vector<glm::vec3>& vertices)
+{
+    nejlika::geometry::NiTriBasedGeomData* data = GetMeshData(mesh);
+
+    auto& geomVertices = data->GetVertices();
+
+    geomVertices.clear();
+
+    for (const auto& vertex : vertices)
+    {
+        geomVertices.push_back(ToGeometry(vertex));
+    }
+
+    data->SetHasVertices(true);
+    data->SetNumVertices(geomVertices.size());
+}
+
+void NifWrapper::SetMeshNormals(nejlika::geometry::NiTriBasedGeom* mesh, const std::vector<glm::vec3>& normals)
+{
+    nejlika::geometry::NiTriBasedGeomData* data = GetMeshData(mesh);
+
+    auto& geomNormals = data->GetNormals();
+
+    geomNormals.clear();
+
+    for (const auto& normal : normals)
+    {
+        geomNormals.push_back(ToGeometry(normal));
+    }
+
+    data->SetHasNormals(true);
+}
+
+void NifWrapper::SetMeshUVs(nejlika::geometry::NiTriBasedGeom* mesh, const std::vector<glm::vec2>& uvs)
+{
+    nejlika::geometry::NiTriBasedGeomData* data = GetMeshData(mesh);
+
+    auto& uvSets = data->GetUVSets();
+
+    if (uvSets.empty())
+    {
+        uvSets.emplace_back();
+    }
+
+    auto& uvSet = uvSets[0];
+
+    uvSet.clear();
+
+    for (const auto& uv : uvs)
+    {
+        uvSet.push_back(nejlika::geometry::TexCoord(uv.x, uv.y));
+    }
+
+    data->SetNumUVSets(1);
+}
+
+void NifWrapper::SetMeshVertexColors(nejlika::geometry::NiTriBasedGeom* mesh, const std::vector<glm::vec4>& colors)
+{
+    nejlika::geometry::NiTriBasedGeomData* data = GetMeshData(mesh);
+
+    auto& geomColors = data->GetVertexColors();
+
+    geomColors.clear();
+
+    for (const auto& color : colors)
+    {
+        geomColors.push_back(ToGeometryColor4(color));
+    }
+
+    data->SetHasVertexColors(true);
+}
+
+void NifWrapper::SetMeshIndices(nejlika::geometry::NiTriBasedGeom* mesh, const std::vector<uint16_t>& indices)
+{
+    nejlika::geometry::NiTriShape* triShape = dynamic_cast<nejlika::geometry::NiTriShape*>(mesh);
+
+    if (!triShape)
+    {
+        throw std::runtime_error("Unsupported mesh type for setting indices");
+    }
+
+    nejlika::geometry::NiTriShapeData* data = dynamic_cast<nejlika::geometry::NiTriShapeData*>(triShape->GetData().Query(m_Blocks));
+
+    if (!data)
+    {
+        throw std::runtime_error("Failed to get mesh data for setting indices");
+    }
+
+    if (indices.size() % 3 != 0)
+    {
+        throw std::runtime_error("Invalid indices size");
+    }
+
+    auto& triangles = data->GetTriangles();
+
+    triangles.clear();
+
+    float maxDistance = 0.0f;
+    glm::vec3 center;
+
+    for (size_t i = 0; i < indices.size(); i += 3)
+    {
+        nejlika::geometry::Triangle triangle;
+        triangle.Setv3(indices[i]);
+        triangle.Setv2(indices[i + 1]);
+        triangle.Setv1(indices[i + 2]);
+
+        triangles.push_back(triangle);
+
+        // Accumulate center position
+        const auto& v0 = ToGLM(data->GetVertices()[triangle.Getv1()]);
+        const auto& v1 = ToGLM(data->GetVertices()[triangle.Getv2()]);
+        const auto& v2 = ToGLM(data->GetVertices()[triangle.Getv3()]);
+
+        center += (v0 + v1 + v2) / 3.0f;
+    }
+
+    // Calculate average center
+    center /= static_cast<float>(triangles.size());
+
+    // Now calculate radius as max distance from center to any vertex
+    for (const auto& vertex : data->GetVertices())
+    {
+        maxDistance = glm::max(maxDistance, glm::distance(center, ToGLM(vertex)));
+    }
+
+    data->SetNumTriangles(triangles.size());
+    data->SetNumTrianglePoints(triangles.size() * 3);
+    data->SetHasTriangles(true);
+
+    data->SetRadius(maxDistance);
+    data->SetCenter(ToGeometry(center));
+}
+
+void NifWrapper::SetMeshTexture(nejlika::geometry::NiTriBasedGeom* mesh, const std::string& texture, TextureType type)
+{
+    auto* niTexturingProperty = GetProperty<nejlika::geometry::NiTexturingProperty>(mesh);
+
+    if (!niTexturingProperty)
+    {
+        niTexturingProperty = AddBlock<nejlika::geometry::NiTexturingProperty>("NiTexturingProperty");
+
+        niTexturingProperty->GetName().SetIndex(GetStringIndex("Texturing"));
+        niTexturingProperty->SetNumExtraDataList(0);
+        niTexturingProperty->SetFlags(4);
+        niTexturingProperty->SetTextureCount(9);
+        niTexturingProperty->SetNumShaderTextures(0);
+
+        AddProperty(mesh, niTexturingProperty);
+    }
+
+    auto* niSourceTexture = AddBlock<nejlika::geometry::NiSourceTexture>("NiSourceTexture");
+
+    niSourceTexture->SetNumExtraDataList(0);
+    niSourceTexture->SetUseExternal(true);
+    niSourceTexture->GetFileName().SetIndex(GetStringIndex(texture));
+    niSourceTexture->SetPixelLayout(nejlika::geometry::PixelLayout::PIX_LAY_DEFAULT);
+    niSourceTexture->SetUseMipmaps(nejlika::geometry::MipMapFormat::MIP_FMT_DEFAULT);
+    niSourceTexture->SetAlphaFormat(nejlika::geometry::AlphaFormat::ALPHA_DEFAULT);
+    niSourceTexture->SetIsStatic(true);
+
+    nejlika::geometry::TexDesc* texDesc = nullptr;
+
+    switch (type)
+    {
+    case TextureType::Base:
+        texDesc = &niTexturingProperty->GetBaseTexture();
+        niTexturingProperty->SetHasBaseTexture(true);
+        break;
+    case TextureType::Dark:
+        texDesc = &niTexturingProperty->GetDarkTexture();
+        niTexturingProperty->SetHasDarkTexture(true);
+        break;
+    case TextureType::Detail:
+        texDesc = &niTexturingProperty->GetDetailTexture();
+        niTexturingProperty->SetHasDetailTexture(true);
+        break;
+    case TextureType::Gloss:
+        texDesc = &niTexturingProperty->GetGlossTexture();
+        niTexturingProperty->SetHasGlossTexture(true);
+        break;
+    case TextureType::Glow:
+        texDesc = &niTexturingProperty->GetGlowTexture();
+        niTexturingProperty->SetHasGlowTexture(true);
+        break;
+    case TextureType::BumpMap:
+        texDesc = &niTexturingProperty->GetBumpMapTexture();
+        niTexturingProperty->SetHasBumpMapTexture(true);
+        break;
+    case TextureType::Normal:
+        texDesc = &niTexturingProperty->GetNormalTexture();
+        niTexturingProperty->SetHasNormalTexture(true);
+        break;
+    case TextureType::Unknown2:
+        texDesc = &niTexturingProperty->GetUnknown2Texture();
+        niTexturingProperty->SetHasUnknown2Texture(true);
+        break;
+    case TextureType::Decal0:
+        texDesc = &niTexturingProperty->GetDecal0Texture();
+        niTexturingProperty->SetHasDecal0Texture(true);
+        break;
+    default:
+        throw std::runtime_error("Unsupported texture type");
+    }
+
+    texDesc->SetSource(PointerTo<nejlika::geometry::NiSourceTexture>(niSourceTexture));
+    texDesc->SetFlags(12800);
+    texDesc->SetHasTextureTransform(false);
+}
+
+nejlika::geometry::NiTriBasedGeomData* NifWrapper::GetMeshData(nejlika::geometry::NiTriBasedGeom* mesh)
+{
+    if (auto* triShape = dynamic_cast<nejlika::geometry::NiTriShape*>(mesh))
+    {
+        return dynamic_cast<nejlika::geometry::NiTriShapeData*>(triShape->GetData().Query(m_Blocks));
+    }
+    else if (auto* triStrips = dynamic_cast<nejlika::geometry::NiTriStrips*>(mesh))
+    {
+        return dynamic_cast<nejlika::geometry::NiTriStripsData*>(triStrips->GetData().Query(m_Blocks));
+    }
+    else
+    {
+        throw std::runtime_error("Unsupported mesh type");
     }
 }
 

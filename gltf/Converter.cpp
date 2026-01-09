@@ -847,7 +847,7 @@ void nejlika::geometry::Converter::ExportMaterial(const NiAVObject* node, tinygl
 
     int32_t materialIndex = model.materials.size();
 
-    tinygltf::Material material;
+    tinygltf::Material& material = model.materials.emplace_back();
     material.name = "Material";
     material.pbrMetallicRoughness.baseColorFactor = {1.0f, 1.0f, 1.0f, 1.0f};
     material.pbrMetallicRoughness.baseColorTexture.index = -1;
@@ -869,7 +869,13 @@ void nejlika::geometry::Converter::ExportMaterial(const NiAVObject* node, tinygl
 
         if (auto* niAlphaProperty = dynamic_cast<NiAlphaProperty*>(property))
         {
-            material.alphaCutoff = niAlphaProperty->GetThreshold();
+            material.alphaCutoff = niAlphaProperty->GetThreshold() / 255.0f;
+
+            if (material.alphaCutoff < 1.0f)
+            {
+                material.alphaMode = "MASK";
+            }
+
             hasMaterial = true;
         }
         else if (auto* niMaterialProperty = dynamic_cast<NiMaterialProperty*>(property))
@@ -899,7 +905,7 @@ void nejlika::geometry::Converter::ExportMaterial(const NiAVObject* node, tinygl
             // material.emissiveFactor = { emissive.Getr(), emissive.Getg(), emissive.Getb() };
 
             // Alpha mode
-            material.alphaMode = (alpha < 1.0f) ? "BLEND" : "OPAQUE";
+            // material.alphaMode = (alpha < 1.0f) ? "BLEND" : "OPAQUE";
 
             // Double-sided setting
             material.doubleSided = true;
@@ -1247,7 +1253,7 @@ void nejlika::geometry::Converter::ExportMaterial(const NiAVObject* node, tinygl
     }
 
     // Add material to model
-    model.materials.push_back(material);
+    // model.materials.push_back(material);
 
     primitive.material = materialIndex;
 }
@@ -1546,6 +1552,13 @@ int32_t nejlika::geometry::Converter::ExportNiTriStrips(const NiTriStrips* strip
 
 void nejlika::geometry::Converter::ExportNodeTransformations(const NiAVObject* node, tinygltf::Model& model, nejlika::Writer& buffer, tinygltf::Node& gltfNode)
 {
+    const auto& nodeName = gltfNode.name = GetNifString(m_Header, node->GetName().GetIndex());
+
+    if (nodeName == "tower base")
+    {
+        int a = 0;
+    }
+
     const auto& translation = node->GetTranslation();
     const auto& rotation = node->GetRotation();
     const auto& scale = node->GetScale();

@@ -44,6 +44,19 @@ struct MeshImport
     std::vector<MeshImport> Decompose(uint32_t vertexLimit);
 };
 
+enum class TextureType
+{
+    Base,
+    Dark,
+    Detail,
+    Gloss,
+    Glow,
+    BumpMap,
+    Normal,
+    Unknown2,
+    Decal0
+};
+
 class NifWrapper
 {
 public:
@@ -252,6 +265,14 @@ public:
     nejlika::geometry::NiTriShape* ImportMesh(const MeshImport& mesh);
 
     /**
+     * @brief Add a mesh into the NIF
+     *
+     * @param name The name of the mesh
+     * @param parent The parent of the node, or nullptr to add to the root
+     */
+    nejlika::geometry::NiTriShape* AddMesh(const std::string& name, nejlika::geometry::NiNode* parent);
+
+    /**
      * @brief Add a node to the NIF
      *
      * @param name The name of the node
@@ -332,6 +353,85 @@ public:
      * @param property The property
      */
     void RemoveProperty(nejlika::geometry::NiAVObject* node, nejlika::geometry::NiProperty* property);
+
+    /**
+     * @brief Get a property from a node
+     *
+     * @tparam T The type of property
+     * @param node The node
+     * @return T* The property, or nullptr if not found
+     */
+    template <typename T> T* GetProperty(nejlika::geometry::NiAVObject* node)
+    {
+        for (auto& propPtr : node->GetProperties())
+        {
+            nejlika::geometry::NiProperty* prop = propPtr.Query(m_Blocks);
+
+            if (T* castedProp = dynamic_cast<T*>(prop))
+            {
+                return castedProp;
+            }
+        }
+
+        return nullptr;
+    }
+
+    /**
+     * @brief Set mesh vertices
+     *
+     * @param mesh The mesh
+     * @param vertices The vertices
+     */
+    void SetMeshVertices(nejlika::geometry::NiTriBasedGeom* mesh, const std::vector<glm::vec3>& vertices);
+
+    /**
+     * @brief Set mesh normals
+     *
+     * @param mesh The mesh
+     * @param normals The normals
+     */
+    void SetMeshNormals(nejlika::geometry::NiTriBasedGeom* mesh, const std::vector<glm::vec3>& normals);
+
+    /**
+     * @brief Set mesh UVs
+     *
+     * @param mesh The mesh
+     * @param uvs The UVs
+     */
+    void SetMeshUVs(nejlika::geometry::NiTriBasedGeom* mesh, const std::vector<glm::vec2>& uvs);
+
+    /**
+     * @brief Set mesh vertex colors
+     *
+     * @param mesh The mesh
+     * @param colors The colors
+     */
+    void SetMeshVertexColors(nejlika::geometry::NiTriBasedGeom* mesh, const std::vector<glm::vec4>& colors);
+
+    /**
+     * @brief Set mesh indices
+     *
+     * @param mesh The mesh
+     * @param indices The indices
+     */
+    void SetMeshIndices(nejlika::geometry::NiTriBasedGeom* mesh, const std::vector<uint16_t>& indices);
+
+    /**
+     * @brief Set mesh texture
+     *
+     * @param mesh The mesh
+     * @param texture The path to the texture
+     * @param type The texture type
+     */
+    void SetMeshTexture(nejlika::geometry::NiTriBasedGeom* mesh, const std::string& texture, TextureType type = TextureType::Base);
+
+    /**
+     * @brief Get the mesh data
+     *
+     * @param mesh The mesh
+     * @return nejlika::geometry::NiTriBasedGeomData* The mesh data
+     */
+    nejlika::geometry::NiTriBasedGeomData* GetMeshData(nejlika::geometry::NiTriBasedGeom* mesh);
 
     /**
      * @brief Destructor
