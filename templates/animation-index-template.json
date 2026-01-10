@@ -1,0 +1,64 @@
+{
+    "name": "animation-index",
+    "parameters": {
+
+    },
+    "variables": {
+        "values": {
+            "type": "object",
+            "object-properties": {
+                "description": {
+                    "type": "string"
+                },
+                "group-type": {
+                    "type": "enum",
+                    "enum": [
+                        "NPCCreateInvalid",
+                        "MissionGiver",
+                        "Ambient",
+                        "NPCCreateinvalid",
+                        "Vendor",
+                        "Enemy",
+                        ""
+                    ],
+                    "aliases": [
+                        "groupType",
+                        "type"
+                    ]
+                }
+            }
+        }
+    },
+    "actions": {
+        "add": {
+            "prepare": [
+                {
+                    "type": "generate-id",
+                    "table": "AnimationIndex",
+                    "column": "animationGroupID"
+                }
+            ],
+            "apply": [
+                {
+                    "type": "insert",
+                    "table": "AnimationIndex",
+                    "columns": {
+                        "animationGroupID": [
+                            "id"
+                        ],
+                        "description": [
+                            "variables",
+                            "values",
+                            "description"
+                        ],
+                        "groupType": [
+                            "variables",
+                            "values",
+                            "group-type"
+                        ]
+                    }
+                }
+            ]
+        }
+    }
+}

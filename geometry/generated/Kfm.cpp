@@ -82,12 +82,15 @@ void Kfm::Read(nejlika::Reader& reader, uint32_t version, uint32_t user, uint32_
     {
         m_UnknownInt3 = reader.Read<int>();
     }
-
 }
 
 void Kfm::Write(nejlika::Writer& writer, uint32_t version, uint32_t user, uint32_t arg) const
 {
-    writer.Write(m_HeaderString);
+    for (size_t i = 0; i < m_HeaderString.size(); i++)
+    {
+        writer.Write<char>(m_HeaderString[i]);
+    }
+    writer.Write(static_cast<char>(0x0A)); // Newline terminator
 
     if (version >= VERSION_NUMBER(0, 0, 0, 33554432))
     {
@@ -141,5 +144,4 @@ void Kfm::Write(nejlika::Writer& writer, uint32_t version, uint32_t user, uint32
     {
         writer.Write(m_UnknownInt3);
     }
-
 }

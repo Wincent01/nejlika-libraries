@@ -831,6 +831,29 @@ boost::json::value nejlika::TypeTemplateScope::ProcessResource(const boost::json
         }
     }
 
+    // If what we are copying is a .kfm file, copy also all .nif, .kf and .dds files in the same directory
+    if (source.extension() == ".kfm")
+    {
+        const auto sourceDir = source.parent_path();
+
+        for (const auto& entry : std::filesystem::directory_iterator(sourceDir))
+        {
+            const auto e = entry.path().extension().string();
+
+            if (e == ".nif" || e == ".kf" || e == ".dds" || e == ".etk" || e == ".h")
+            {
+                const auto relatedSource = entry.path();
+                const auto relatedRelative = relatedSource.lexically_relative(ctx.configuration->GetModsDirectory());
+                const auto relatedDestination = destination.parent_path() / relatedSource.filename();
+
+                if (!std::filesystem::exists(relatedDestination))
+                {
+                    ctx.artifacts->Symlink(ctx, relatedRelative, relatedDestination);
+                }
+            }
+        }
+    }
+
     ctx.artifacts->Symlink(ctx, modRelative, destination);
 
     // Add the icon to the database

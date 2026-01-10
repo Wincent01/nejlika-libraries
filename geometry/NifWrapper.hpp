@@ -89,6 +89,20 @@ public:
     nejlika::geometry::Header& GetHeader();
 
     /**
+     * @brief Get the footer
+     *
+     * @return const nejlika::geometry::Footer& The footer
+     */
+    const nejlika::geometry::Footer& GetFooter() const { return m_Footer; }
+
+    /**
+     * @brief Get the footer
+     *
+     * @return nejlika::geometry::Footer& The footer
+     */
+    nejlika::geometry::Footer& GetFooter() { return m_Footer; }
+
+    /**
      * @brief Get the blocks
      *
      * @return const std::vector<nejlika::geometry::Construct*>& The blocks

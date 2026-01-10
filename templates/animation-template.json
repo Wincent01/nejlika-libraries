@@ -1,0 +1,217 @@
+{
+    "name": "animation",
+    "parameters": {
+
+    },
+    "variables": {
+        "values": {
+            "type": "object",
+            "object-properties": {
+                "animation-group-id": {
+                    "type": "id",
+                    "types": [
+                        "animation-index"
+                    ],
+                    "aliases": [
+                        "animationGroupID",
+                        "animation-group"
+                    ]
+                },
+                "animation-type": {
+                    "type": "string",
+                    "aliases": [
+                        "animation_type"
+                    ]
+                },
+                "animation-name": {
+                    "type": "string",
+                    "aliases": [
+                        "animation_name",
+                        "name"
+                    ]
+                },
+                "chance-to-play": {
+                    "type": "number",
+                    "required": false,
+                    "nullable": false,
+                    "aliases": [
+                        "chance_to_play"
+                    ]
+                },
+                "min-loops": {
+                    "type": "integer",
+                    "required": false,
+                    "nullable": false,
+                    "aliases": [
+                        "min_loops"
+                    ]
+                },
+                "max-loops": {
+                    "type": "integer",
+                    "required": false,
+                    "nullable": false,
+                    "aliases": [
+                        "max_loops"
+                    ]
+                },
+                "animation-length": {
+                    "type": "number",
+                    "required": true,
+                    "nullable": false,
+                    "aliases": [
+                        "length",
+                        "duration",
+                        "animation_length"
+                    ]
+                },
+                "hide-equip": {
+                    "type": "boolean",
+                    "required": false,
+                    "nullable": false,
+                    "aliases": [
+                        "hideEquip"
+                    ]
+                },
+                "ignore-upper-body": {
+                    "type": "boolean",
+                    "required": false,
+                    "nullable": false,
+                    "aliases": [
+                        "ignoreUpperBody"
+                    ]
+                },
+                "restartable": {
+                    "type": "boolean",
+                    "required": false,
+                    "nullable": false
+                },
+                "face-animation-name": {
+                    "type": "string",
+                    "required": false,
+                    "nullable": true,
+                    "aliases": [
+                        "face",
+                        "face_animation_name"
+                    ]
+                },
+                "priority": {
+                    "type": "number",
+                    "required": false,
+                    "nullable": true
+                },
+                "blend-time": {
+                    "type": "number",
+                    "required": false,
+                    "nullable": true,
+                    "aliases": [
+                        "blendTime"
+                    ]
+                }
+            }
+        }
+    },
+    "actions": {
+        "add": {
+            "apply": [
+                {
+                    "type": "insert",
+                    "table": "Animations",
+                    "columns": {
+                        "animationGroupID": [
+                            "variables",
+                            "values",
+                            "animation-group-id"
+                        ],
+                        "animation_type": [
+                            "variables",
+                            "values",
+                            "animation-type"
+                        ],
+                        "animation_name": [
+                            "variables",
+                            "values",
+                            "animation-name"
+                        ],
+                        "chance_to_play": {
+                            "value": [
+                                "variables",
+                                "values",
+                                "chance-to-play"
+                            ],
+                            "default": 1.0
+                        },
+                        "min_loops": {
+                            "value": [
+                                "variables",
+                                "values",
+                                "min-loops"
+                            ],
+                            "default": 0
+                        },
+                        "max_loops": {
+                            "value": [
+                                "variables",
+                                "values",
+                                "max-loops"
+                            ],
+                            "default": 0
+                        },
+                        "animation_length": [
+                            "variables",
+                            "values",
+                            "animation-length"
+                        ],
+                        "hideEquip": {
+                            "value": [
+                                "variables",
+                                "values",
+                                "hide-equip"
+                            ],
+                            "default": false
+                        },
+                        "ignoreUpperBody": {
+                            "value": [
+                                "variables",
+                                "values",
+                                "ignore-upper-body"
+                            ],
+                            "default": false
+                        },
+                        "restartable": {
+                            "value": [
+                                "variables",
+                                "values",
+                                "restartable"
+                            ],
+                            "default": true
+                        },
+                        "face_animation_name": {
+                            "value": [
+                                "variables",
+                                "values",
+                                "face-animation-name"
+                            ],
+                            "default": null
+                        },
+                        "priority": {
+                            "value": [
+                                "variables",
+                                "values",
+                                "priority"
+                            ],
+                            "default": null
+                        },
+                        "blendTime": {
+                            "value": [
+                                "variables",
+                                "values",
+                                "blend-time"
+                            ],
+                            "default": null
+                        }
+                    }
+                }
+            ]
+        }
+    }
+}
