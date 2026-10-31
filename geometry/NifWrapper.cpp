@@ -21,6 +21,10 @@
 #include <glm/gtx/euler_angles.hpp>
 
 #include <iostream>
+#include <stdexcept>
+#include <vector>
+#include <string>
+#include <algorithm>
 
 namespace
 {
@@ -290,6 +294,73 @@ nejlika::geometry::Construct* NifWrapper::AddBlock(const std::string& name)
     m_Header.GetBlockTypeIndex().push_back(index);
 
     return block;
+}
+
+void NifWrapper::ReplaceBlock(nejlika::geometry::Construct* oldBlock, nejlika::geometry::Construct* newBlock, const std::string& name)
+{
+    auto it = std::find(m_Blocks.begin(), m_Blocks.end(), oldBlock);
+    if (it != m_Blocks.end())
+    {
+        size_t index = std::distance(m_Blocks.begin(), it);
+        m_Blocks[index] = newBlock;
+
+        auto nameIt = m_BlockNames.find(oldBlock);
+        if (nameIt != m_BlockNames.end())
+        {
+            m_BlockNames.erase(nameIt);
+        }
+        else
+        {
+            throw std::runtime_error("Old block not found in block names map");
+        }
+
+        delete oldBlock;
+    }
+    else
+    {
+        throw std::runtime_error("Old block not found in blocks vector");
+    }
+
+    m_BlockNames[newBlock] = name;
+
+    uint32_t index = -1;
+
+    for (uint32_t i = 0; i < m_Header.GetBlockTypes().size(); i++)
+    {
+        std::string blockName(m_Header.GetBlockTypes()[i].GetValue().begin(), m_Header.GetBlockTypes()[i].GetValue().end());
+
+        if (blockName == name)
+        {
+            index = i;
+            break;
+        }
+    }
+
+    if (index == -1)
+    {
+        index = m_Header.GetBlockTypes().size();
+        nejlika::geometry::SizedString blockType;
+        blockType.SetValue(std::vector<char>(name.begin(), name.end()));
+        blockType.SetLength(name.size());
+
+        m_Header.GetBlockTypes().push_back(blockType);
+    }
+
+    m_Header.GetBlockTypeIndex()[GetBlockIndex(newBlock)] = index;
+}
+
+nejlika::geometry::Construct* NifWrapper::ReplaceBlock(nejlika::geometry::Construct* oldBlock, const std::string& name)
+{
+    auto* newBlock = nejlika::geometry::Factory::Create(name);
+
+    if (!newBlock)
+    {
+        throw std::runtime_error("Failed to create block: " + name);
+    }
+
+    ReplaceBlock(oldBlock, newBlock, name);
+
+    return newBlock;
 }
 
 uint32_t NifWrapper::GetBlockIndex(nejlika::geometry::Construct* block) const
@@ -782,28 +853,34 @@ nejlika::geometry::NiTriShape* NifWrapper::ImportMesh(const MeshImport& mesh)
 
 nejlika::geometry::NiTriShape* NifWrapper::AddMesh(const std::string& name, nejlika::geometry::NiNode* parent)
 {
-    auto* niTriShape = AddBlock<nejlika::geometry::NiTriShape>("NiTriShape");
+    auto* mesh = AddBlock<nejlika::geometry::NiTriShape>("NiTriShape");
 
-    niTriShape->GetName().SetIndex(GetStringIndex(name));
-    niTriShape->SetFlags(16);
-    niTriShape->SetScale(1.0f);
-    niTriShape->SetTranslation(ToGeometry(glm::vec3(0.0f)));
-    niTriShape->SetRotation(ConvertQuatToRotationMatrix(glm::quat(1.0f, 0.0f, 0.0f, 0.0f)));
-
-    niTriShape->SetActiveMaterial(-1);
-    niTriShape->SetDirtyFlag(true);
+    SetupMeshNode(name, mesh);
 
     if (parent)
     {
-        parent->GetChildren().push_back(PointerTo<nejlika::geometry::NiAVObject>(niTriShape));
+        parent->GetChildren().push_back(PointerTo<nejlika::geometry::NiAVObject>(mesh));
         parent->SetNumChildren(parent->GetNumChildren() + 1);
     }
     else
     {
-        m_Footer.GetRoots().push_back(PointerTo<nejlika::geometry::NiObject>(niTriShape));
+        m_Footer.GetRoots().push_back(PointerTo<nejlika::geometry::NiObject>(mesh));
         m_Footer.SetNumRoots(m_Footer.GetRoots().size());
     }
 
+    return mesh;
+}
+
+void NifWrapper::SetupMeshNode(const std::string& name, nejlika::geometry::NiTriShape* mesh)
+{
+    mesh->GetName().SetIndex(GetStringIndex(name));
+    mesh->SetFlags(16);
+    mesh->SetScale(1.0f);
+    mesh->SetTranslation(ToGeometry(glm::vec3(0.0f)));
+    mesh->SetRotation(ConvertQuatToRotationMatrix(glm::quat(1.0f, 0.0f, 0.0f, 0.0f)));
+
+    mesh->SetActiveMaterial(-1);
+    mesh->SetDirtyFlag(true);
     auto* niMaterialProperty = AddBlock<nejlika::geometry::NiMaterialProperty>("NiMaterialProperty");
 
     niMaterialProperty->GetName().SetIndex(GetStringIndex("Material"));
@@ -822,20 +899,29 @@ nejlika::geometry::NiTriShape* NifWrapper::AddMesh(const std::string& name, nejl
     niSpecularProperty->SetNumExtraDataList(0);
     niSpecularProperty->SetFlags(0);
 
-    niTriShape->SetProperties({
+    mesh->SetProperties({
         PointerTo<nejlika::geometry::NiProperty>(niMaterialProperty),
         PointerTo<nejlika::geometry::NiProperty>(niSpecularProperty),
     });
 
-    niTriShape->SetNumProperties(niTriShape->GetProperties().size());
+    mesh->SetNumProperties(mesh->GetProperties().size());
 
     auto* data = AddBlock<nejlika::geometry::NiTriShapeData>("NiTriShapeData");
 
+    data->SetHasNormals(false);
+    data->SetHasVertexColors(false);
+    data->SetHasTriangles(false);
+    data->SetHasVertices(false);
+    data->SetHasUV(false);
+    data->SetNumTrianglePoints(0);
+    data->SetNumTriangles(0);
+    data->SetBSNumUVSets(0);
+    data->SetNumVertices(0);
+    data->SetNumMatchGroups(0);
+
     data->SetConsistencyFlags(nejlika::geometry::ConsistencyType::CT_STATIC);
 
-    niTriShape->SetData(PointerTo<nejlika::geometry::NiGeometryData>(data));
-
-    return niTriShape;
+    mesh->SetData(PointerTo<nejlika::geometry::NiGeometryData>(data));
 }
 
 nejlika::geometry::NiNode* NifWrapper::AddNode(const std::string& name, nejlika::geometry::NiNode* parent)
@@ -843,7 +929,7 @@ nejlika::geometry::NiNode* NifWrapper::AddNode(const std::string& name, nejlika:
     auto* niNode = AddBlock<nejlika::geometry::NiNode>("NiNode");
 
     niNode->GetName().SetIndex(GetStringIndex(name));
-    niNode->SetFlags(272);
+    niNode->SetFlags(258 /*272*/);
     niNode->SetTranslation(ToGeometry(glm::vec3(0.0f)));
     niNode->SetRotation(ConvertQuatToRotationMatrix(glm::quat(1.0f, 0.0f, 0.0f, 0.0f)));
     niNode->SetScale(1.0f);
@@ -1026,7 +1112,7 @@ void NifWrapper::SetMeshIndices(nejlika::geometry::NiTriBasedGeom* mesh, const s
     triangles.clear();
 
     float maxDistance = 0.0f;
-    glm::vec3 center;
+    glm::vec3 center = glm::vec3(0.0f);
 
     for (size_t i = 0; i < indices.size(); i += 3)
     {

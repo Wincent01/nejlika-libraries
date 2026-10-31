@@ -23,6 +23,7 @@
 #include "NiAlphaController.hpp"
 #include "NiFloatInterpolator.hpp"
 #include "NiTextureTransformController.hpp"
+#include "NiAmbientLight.hpp"
 
 #include "Kfm.hpp"
 
@@ -79,6 +80,13 @@ bool nejlika::geometry::Converter::LoadKfm(nejlika::Reader& reader, const std::s
         std::transform(kfPath.begin(), kfPath.end(), kfPath.begin(), ::tolower);
 
         std::filesystem::path kfFullPath = parentPath / kfPath;
+
+        // Check if the KF file exists
+        if (!std::filesystem::exists(kfFullPath))
+        {
+            std::cout << "KF file does not exist: " << kfFullPath.string() << std::endl;
+            continue;
+        }
 
         nejlika::Reader kfReader(kfFullPath.string());
 
@@ -155,6 +163,19 @@ bool nejlika::geometry::Converter::LoadNif(nejlika::Reader& reader, const std::s
         catch (const std::exception& e)
         {
             std::cout << "Failed to read block: " << blockName << " " << e.what() << std::endl;
+
+            // Attempt read again for debugging purposes
+            try
+            {
+                // Reset read head to the start of the block
+                reader.SetReadHead(startHead);
+                block->Read(reader, version, userVersion, 0);
+            }
+            catch (const std::exception& e)
+            {
+                std::cout << "Failed to read block on second attempt: " << blockName << " " << e.what() << std::endl;
+            }
+
             delete block;
         }
         reader.SetReadHead(startHead + blockSizes[i]);
@@ -247,19 +268,11 @@ void nejlika::geometry::Converter::ExportGLTF(std::stringstream& writer)
 {
     tinygltf::Model model;
 
-    // Create a root node
-    tinygltf::Node root;
-    root.name = "Root";
-
     // Add a scene
     tinygltf::Scene scene;
 
     // Create a buffer
     nejlika::Writer buffer;
-
-    // First and foremost, allocate an index for each node recursively
-    model.nodes.reserve(m_Blocks.size() + 1);
-    model.nodes.push_back(root);
 
     std::unordered_set<NiAVObject*> sceneNodeCandidates;
     std::unordered_set<NiAVObject*> nonSceneNodes;
@@ -273,7 +286,13 @@ void nejlika::geometry::Converter::ExportGLTF(std::stringstream& writer)
             continue;
         }
 
-        AllocateNodeIndices(node, model, buffer);
+        // Ignore ambient lights for scene nodes
+        if (dynamic_cast<NiAmbientLight*>(node))
+        {
+            continue;
+        }
+
+        // AllocateNodeIndices(node, model, buffer);
 
         sceneNodeCandidates.insert(node);
 
@@ -286,12 +305,76 @@ void nejlika::geometry::Converter::ExportGLTF(std::stringstream& writer)
         }
     }
 
+    int numberOfRootNodes = 0;
+
     for (auto* node : sceneNodeCandidates)
     {
         if (nonSceneNodes.find(node) == nonSceneNodes.end())
         {
-            root.children.push_back(m_NodeMap[node]);
+            numberOfRootNodes++;
         }
+    }
+
+    if (numberOfRootNodes == 0)
+    {
+        throw std::runtime_error("No root nodes found in the scene");
+    }
+
+    tinygltf::Node* rootNode = nullptr;
+
+    if (numberOfRootNodes > 1)
+    {
+        std::cout << "Warning: Multiple root nodes found in the scene (" << numberOfRootNodes << "). Creating a single root node." << std::endl;
+
+        // Create a root node
+        tinygltf::Node root;
+        root.name = "Root";
+
+        // First and foremost, allocate an index for each node recursively
+        model.nodes.reserve(m_Blocks.size() + 1);
+        model.nodes.push_back(root);
+
+        rootNode = &model.nodes[0];
+
+        for (auto* node : sceneNodeCandidates)
+        {
+            if (nonSceneNodes.find(node) == nonSceneNodes.end())
+            {
+                AllocateNodeIndices(node, model, buffer);
+
+                rootNode->children.push_back(m_NodeMap[node]);
+            }
+        }
+
+        int32_t rootNodeIndex = 0;
+        model.nodes[rootNodeIndex] = *rootNode;
+    }
+    else
+    {
+        // Find the single root node
+        for (auto* node : sceneNodeCandidates)
+        {
+            if (nonSceneNodes.find(node) == nonSceneNodes.end())
+            {
+                AllocateNodeIndices(node, model, buffer);
+
+                const int32_t nodeIndex = m_NodeMap[node];
+
+                if (nodeIndex != 0)
+                {
+                    throw std::runtime_error("Expected root node index to be 0");
+                }
+
+                rootNode = &model.nodes[nodeIndex];
+
+                break;
+            }
+        }
+    }
+
+    for (auto* node : sceneNodeCandidates)
+    {
+        AllocateNodeIndices(node, model, buffer);
     }
 
     // Create the heirarchy
@@ -309,10 +392,7 @@ void nejlika::geometry::Converter::ExportGLTF(std::stringstream& writer)
         ExportGLTFHeirarchy(node, type, model, buffer, 0, 0, false);
     }
 
-    int32_t rootNodeIndex = 0;
-    model.nodes[rootNodeIndex] = root;
-
-    scene.nodes.push_back(rootNodeIndex);
+    scene.nodes.push_back(0);
     model.scenes.push_back(scene);
 
     for (const auto& [path, blocks] : m_AnimationMap)
@@ -431,6 +511,11 @@ int32_t nejlika::geometry::Converter::ExportGLTFHeirarchy(NiAVObject* node, cons
     }
 
     int32_t nodeIndex = m_NodeMap[node];
+
+    if (nodeIndex < 0 || nodeIndex >= static_cast<int32_t>(model.nodes.size()))
+    {
+        throw std::runtime_error("Invalid node index");
+    }
 
     model.nodes[nodeIndex] = gltfNode;
 
@@ -1597,6 +1682,12 @@ void nejlika::geometry::Converter::ExportAnimation(const std::string& name, cons
     {
         if (NiControllerSequence* sequence = dynamic_cast<NiControllerSequence*>(block))
         {
+            const auto targetNameIndex = sequence->GetTargetName().GetIndex();
+            if (targetNameIndex >= header.GetStrings().size())
+                continue;
+
+            const auto& targetName = GetNifString(header, targetNameIndex);
+
             for (const auto& controllerBlock : sequence->GetControlledBlocks())
             {
                 int32_t nodeNameIndex = controllerBlock.GetNodeName().GetIndex();

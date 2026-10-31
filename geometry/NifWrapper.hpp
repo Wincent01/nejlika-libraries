@@ -139,6 +139,23 @@ public:
     nejlika::geometry::Construct* AddBlock(const std::string& name);
 
     /**
+     * @brief Replace a block in the NIF
+     *
+     * @param oldBlock The old block
+     * @param newBlock The new block
+     * @param name The name of the new block
+     */
+    void ReplaceBlock(nejlika::geometry::Construct* oldBlock, nejlika::geometry::Construct* newBlock, const std::string& name);
+
+    /**
+     * @brief Replace a block in the NIF with a new block of the same type
+     *
+     * @param oldBlock The old block
+     * @param name The name of the new block
+     */
+    nejlika::geometry::Construct* ReplaceBlock(nejlika::geometry::Construct* oldBlock, const std::string& name);
+
+    /**
      * @brief Get the block index
      *
      * @param block The block
@@ -218,6 +235,15 @@ public:
     template <typename T> T* AddBlock(const std::string& name) { return dynamic_cast<T*>(AddBlock(name)); }
 
     /**
+     * @brief Replace a block in the NIF
+     *
+     * @tparam T The type of block
+     * @param oldBlock The old block
+     * @param name The name of the new block
+     */
+    template <typename T> T* ReplaceBlock(nejlika::geometry::Construct* oldBlock, const std::string& name) { return dynamic_cast<T*>(ReplaceBlock(oldBlock, name)); }
+
+    /**
      * @brief Get a pointer to a block
      *
      * @tparam T The type of block
@@ -256,6 +282,27 @@ public:
     template <typename T> T* FindBlock(const nejlika::geometry::Pointer<T*>& pointer) const { return pointer.Query(m_Blocks); }
 
     /**
+     * @brief Find blocks by type
+     *
+     * @tparam T The type of block
+     * @return std::vector<T*> The blocks
+     */
+    template <typename T> std::vector<T*> FindBlocksOfType() const
+    {
+        std::vector<T*> results;
+
+        for (auto* block : m_Blocks)
+        {
+            if (T* castedBlock = dynamic_cast<T*>(block))
+            {
+                results.push_back(castedBlock);
+            }
+        }
+
+        return results;
+    }
+
+    /**
      * @brief Get the string index of a string
      *
      * @param str The string
@@ -285,6 +332,13 @@ public:
      * @param parent The parent of the node, or nullptr to add to the root
      */
     nejlika::geometry::NiTriShape* AddMesh(const std::string& name, nejlika::geometry::NiNode* parent);
+
+    /**
+     * @brief Setup a mesh node
+     *
+     * @param mesh The mesh
+     */
+    void SetupMeshNode(const std::string& name, nejlika::geometry::NiTriShape* mesh);
 
     /**
      * @brief Add a node to the NIF
